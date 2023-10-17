@@ -1,12 +1,15 @@
-#include "script.h"
-
+#include "modules/scriptloading/module.h"
 
 int main() {
     // string array
-    const char* files[] = {"scripts/testScript.cpp", "scripts/testScript2.cpp"};
-    compileScripts(files, 2, "testScript.so");
+    ScriptLoaderModule module("modules/cppscript.so"); // we load the cppscript module
+    printf("input extension: %s\n", module.inputExtension); // prints cpp
+    printf("output extension: %s\n", module.outputExtension); // prints so on linux, dll on windows
 
-    Script script = loadScript("testScript.so");
+    const char* files[] = {"scripts/testScript.cpp", "scripts/testScript2.cpp"};
+    module.compileScripts(files, 2, "testScript.so");
+
+    Script script = module.loadScript("./testScript.so");
     script.init();
     script.update(2);
 

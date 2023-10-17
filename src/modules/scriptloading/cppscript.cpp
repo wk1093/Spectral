@@ -1,28 +1,33 @@
-#pragma once
 
 // cross platform dynamic library runtime loading
 #ifdef _WIN32
 #include <windows.h>
 #else
 #include <dlfcn.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "module.h"
 
+
+#ifdef _WIN32
+const char* outputExtension = ".dll";
+#else
+const char* outputExtension = ".so";
 #endif
+const char* inputExtension = ".cpp";
 
 
 typedef void (*ScriptInit)();
 typedef void (*ScriptUpdate)(float dt);
 
-struct Script { // represent a dynamic library
+struct DynamicScript { // represent a dynamic library
 #ifdef _WIN32
     HINSTANCE handle;
 #else
     void* handle;
 #endif
-    ScriptInit init;
-    ScriptUpdate update;
 };
 
 char* getBaseFilename(const char* path) {
@@ -42,7 +47,7 @@ char* getBaseFilename(const char* path) {
     return name;
 }
 
-Script loadScript(const char* path) {
+CEXPORT Script loadScript(const char* path) {
     const char* name = getBaseFilename(path);
 
     // this mangling works with gcc, idk about other compilers, so I display an error message on others
@@ -75,7 +80,8 @@ Script loadScript(const char* path) {
     if (!handle) {
         fprintf(stderr, "Error: %s\n", GetLastError());
     }
-    Script script{handle};
+    DynamicScript dscript{handle};
+    Script script = {(void*)&dscript};
     script.init = (ScriptInit)GetProcAddress(handle, initName);
     if (!script.init) {
         fprintf(stderr, "Error: %s\n", GetLastError());
@@ -89,7 +95,8 @@ Script loadScript(const char* path) {
     if (!handle) {
         fprintf(stderr, "Error: %s\n", dlerror());
     }
-    Script script{handle};
+    DynamicScript dscript{handle};
+    Script script = {(void*)&dscript};
     script.init = (ScriptInit)dlsym(handle, initName);
     if (!script.init) {
         fprintf(stderr, "Error: %s\n", dlerror());
@@ -102,7 +109,7 @@ Script loadScript(const char* path) {
     return script;
 }
 
-void compileScript(const char* scriptPath, const char* outputPath) {
+CEXPORT void compileScript(const char* scriptPath, const char* outputPath) {
     // given location of cpp file, compile it to a shared library
     // TODO: include dir
     //system(("gcc -Iinclude -fPIC -shared -o " + std::string(outputPath) + " " + std::string(scriptPath)).c_str());
@@ -112,7 +119,7 @@ void compileScript(const char* scriptPath, const char* outputPath) {
 
 }
 
-void compileScripts(const char** paths, size_t paths_num, const char* outputPath) {
+CEXPORT void compileScripts(const char** paths, size_t paths_num, const char* outputPath) {
     // given location of cpp files, compile it to a shared library
     size_t paths_size = 0;
     for (int i = 0; i < paths_num; i++) {
