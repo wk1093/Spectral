@@ -1,17 +1,30 @@
 #include "modules/scriptloading/module.h"
+#include "modules/window/module.h"
 
 int main() {
     // string array
-    ScriptLoaderModule module("modules/cppscript.so"); // we load the cppscript module
-    printf("input extension: %s\n", module.inputExtension); // prints cpp
-    printf("output extension: %s\n", module.outputExtension); // prints so on linux, dll on windows
+//    ScriptLoaderModule module("modules/cppscript.so"); // we load the cppscript module
+//    printf("input extension: %s\n", module.inputExtension); // prints cpp
+//    printf("output extension: %s\n", module.outputExtension); // prints so on linux, dll on windows
+//
+//    const char* files[] = {"scripts/testScript.cpp", "scripts/testScript2.cpp"};
+//    module.compileScripts(files, 2, "testScripts.so", "../src/include");
+//
+//    Script script = module.loadScript("./testScripts.so", "testScript2");
+//    script.init();
+//    script.update(2);
 
-    const char* files[] = {"scripts/testScript.cpp", "scripts/testScript2.cpp"};
-    module.compileScripts(files, 2, "testScript.so");
+    WindowModule winm("modules/glfwwin.so");
 
-    Script script = module.loadScript("./testScript.so");
-    script.init();
-    script.update(2);
+    sWindow win = winm.loadWindow("test", 800, 600);
+
+    while (!winm.shouldClose(win)) {
+        winm.updateWindow(win);
+
+        winm.swapBuffers(win);
+    }
+
+    winm.destroyWindow(win);
 
     return 0;
 

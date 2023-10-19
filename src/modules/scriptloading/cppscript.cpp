@@ -47,8 +47,7 @@ char* getBaseFilename(const char* path) {
     return name;
 }
 
-CEXPORT Script loadScript(const char* path) {
-    const char* name = getBaseFilename(path);
+CEXPORT Script loadScript(const char* path, const char* scriptName) {
 
     // this mangling works with gcc, idk about other compilers, so I display an error message on others
 #if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__) || defined(__clang__)
@@ -57,18 +56,18 @@ CEXPORT Script loadScript(const char* path) {
     // _ZN10testScript6updateEf
     // _ZN + length of name + 6updateEf
     char* length = (char*)malloc(10);
-    sprintf(length, "%lu", strlen(name));
+    sprintf(length, "%lu", strlen(scriptName));
 
 
-    char* initName = (char*)malloc(strlen(name)+strlen(length)+11);
+    char* initName = (char*)malloc(strlen(scriptName)+strlen(length)+11);
     strcpy(initName, "_ZN");
     strcat(initName, length);
-    strcat(initName, name);
+    strcat(initName, scriptName);
     strcat(initName, "4initEv");
-    char* updateName = (char*)malloc(strlen(name)+strlen(length)+13);
+    char* updateName = (char*)malloc(strlen(scriptName)+strlen(length)+13);
     strcpy(updateName, "_ZN");
     strcat(updateName, length);
-    strcat(updateName, name);
+    strcat(updateName, scriptName);
     strcat(updateName, "6updateEf");
 #else
 #error "This compiler is not supported"
@@ -109,17 +108,19 @@ CEXPORT Script loadScript(const char* path) {
     return script;
 }
 
-CEXPORT void compileScript(const char* scriptPath, const char* outputPath) {
+CEXPORT void compileScript(const char* scriptPath, const char* outputPath, const char* includeDir) {
     // given location of cpp file, compile it to a shared library
-    // TODO: include dir
-    //system(("gcc -Iinclude -fPIC -shared -o " + std::string(outputPath) + " " + std::string(scriptPath)).c_str());
     char* command = (char*)malloc(strlen(scriptPath) + strlen(outputPath) + 100);
-    sprintf(command, "gcc -Iinclude -fPIC -shared -o %s %s", outputPath, scriptPath);
+#ifndef SCRIPT_INCLUDE_DIR
+    sprintf(command, "gcc -I%s -fPIC -shared -o %s %s", includeDir, outputPath, scriptPath);
+#else
+    sprintf(command, "gcc -I%s -I%s -fPIC -shared -o %s %s", includeDir, SCRIPT_INCLUDE_DIR, outputPath, scriptPath);
+#endif
     system(command);
 
 }
 
-CEXPORT void compileScripts(const char** paths, size_t paths_num, const char* outputPath) {
+CEXPORT void compileScripts(const char** paths, size_t paths_num, const char* outputPath, const char* includeDir) {
     // given location of cpp files, compile it to a shared library
     size_t paths_size = 0;
     for (int i = 0; i < paths_num; i++) {
@@ -132,6 +133,10 @@ CEXPORT void compileScripts(const char** paths, size_t paths_num, const char* ou
         strcat(paths_str, " ");
     }
     char* command = (char*)malloc(strlen(paths_str) + strlen(outputPath) + 100);
-    sprintf(command, "gcc -Iinclude -fPIC -shared -o %s %s", outputPath, paths_str);
+#ifndef SCRIPT_INCLUDE_DIR
+    sprintf(command, "gcc -I%s -fPIC -shared -o %s %s", includeDir, outputPath, paths_str);
+#else
+    sprintf(command, "gcc -I%s -I%s -fPIC -shared -o %s %s", includeDir, SCRIPT_INCLUDE_DIR, outputPath, paths_str);
+#endif
     system(command);
 }

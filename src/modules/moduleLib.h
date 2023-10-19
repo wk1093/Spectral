@@ -7,6 +7,13 @@
 #endif
 #include <stdio.h>
 
+#ifdef _WIN32
+#define CEXPORT extern "C" __declspec(dllexport)
+#else
+#define CEXPORT extern "C"
+#endif
+
+
 struct Module {
     // inherited
 };

@@ -9,12 +9,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
-#define CEXPORT extern "C" __declspec(dllexport)
-#else
-#define CEXPORT extern "C"
-#endif
-
 typedef void (*ScriptInit)();
 typedef void (*ScriptUpdate)(float dt);
 
@@ -24,13 +18,10 @@ struct Script {
     ScriptUpdate update;
 };
 
-// TODO: module loader
 namespace scrload {
-    typedef Script (*ScriptLoader)(const char *path);
-
-    typedef void (*ScriptCompiler)(const char *scriptPath, const char *outputPath);
-
-    typedef void (*MultiScriptCompiler)(const char **paths, size_t paths_num, const char *outputPath);
+    typedef Script (*ScriptLoader)(const char *path, const char *scriptName);
+    typedef void (*ScriptCompiler)(const char *scriptPath, const char *outputPath, const char *scriptName);
+    typedef void (*MultiScriptCompiler)(const char **paths, size_t paths_num, const char *outputPath, const char *scriptName);
 }
 struct ScriptLoaderModule : public Module {
     scrload::ScriptLoader loadScript;
@@ -41,7 +32,6 @@ struct ScriptLoaderModule : public Module {
     DynamicLibrary lib;
 
     explicit ScriptLoaderModule(const char* dynlib) : lib(dynlib) {
-        // TODO: load functions and extensions
         loadScript = (scrload::ScriptLoader)lib.getSymbol("loadScript");
         compileScript = (scrload::ScriptCompiler)lib.getSymbol("compileScript");
         compileScripts = (scrload::MultiScriptCompiler)lib.getSymbol("compileScripts");
