@@ -1,5 +1,6 @@
 #include "modules/scriptloading/module.h"
 #include "modules/window/module.h"
+#include "modules/engineui/module.h"
 
 int main() {
     // string array
@@ -14,12 +15,16 @@ int main() {
 //    script.init();
 //    script.update(2);
 
-    WindowModule winm("modules/glfwwin.so");
+    WindowModule winm("modules/sfwin.so");
 
     sWindow win = winm.loadWindow("test", 800, 600);
 
     while (!winm.shouldClose(win)) {
         winm.updateWindow(win);
+
+        if (winm.isKeyPressed(win, Key::A)) {
+            printf("A pressed\n");
+        }
 
         winm.swapBuffers(win);
     }
