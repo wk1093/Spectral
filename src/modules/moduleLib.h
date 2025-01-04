@@ -13,6 +13,14 @@
 #define CEXPORT extern "C"
 #endif
 
+#ifdef _WIN32
+const char* outputSuffix = ".dll";
+#else
+const char* outputSuffix = ".so";
+#endif
+
+const char* spectralSuffix = ".spectral";
+
 
 struct Module {
     // inherited
@@ -25,6 +33,11 @@ struct DynamicLibrary {
     void* handle;
 #endif
     DynamicLibrary(const char* path) {
+        load(path);
+    }
+
+    private:
+        void load(const char* path) {
 #ifdef _WIN32
         handle = LoadLibraryA(path);
 #else
@@ -39,6 +52,19 @@ struct DynamicLibrary {
 #endif
         }
     }
+public:
+
+    DynamicLibrary(const char* path, const char* ident) {
+        // "modules/" + ident + "_" + path + EXTENSION
+        char* fullPath = (char*)malloc(strlen(path) + strlen(ident) + 9) + strlen(spectralSuffix);
+        strcpy(fullPath, "modules/");
+        strcat(fullPath, ident);
+        strcat(fullPath, "_");
+        strcat(fullPath, path);
+        strcat(fullPath, spectralSuffix);
+
+        load(fullPath);
+    }
 
     ~DynamicLibrary() {
 #ifdef _WIN32
@@ -51,7 +77,7 @@ struct DynamicLibrary {
     void* getSymbol(const char* name) {
         void* sym;
 #ifdef _WIN32
-        sym = GetProcAddress(handle, name);
+        sym = (void*)GetProcAddress(handle, name);
 #else
         sym = dlsym(handle, name);
 #endif
@@ -64,5 +90,13 @@ struct DynamicLibrary {
 #endif
         }
         return sym;
+    }
+
+    bool valid() {
+#ifdef _WIN32
+        return handle != NULL;
+#else
+        return handle != NULL;
+#endif
     }
 };

@@ -1,6 +1,6 @@
 #pragma once
 #include "../moduleLib.h"
-#include "../window/module.h"
+#include "../win/module.h"
 
 struct EngineUI {
     void* internal;
@@ -18,7 +18,7 @@ struct EngineUIModule : public Module {
     engineui::EngineUIDraw draw;
     DynamicLibrary lib;
 
-    explicit EngineUIModule(const char* dynlib) : lib(dynlib) {
+    explicit EngineUIModule(const char* dynlib) : lib(dynlib, "eui") {
         loadUI = (engineui::EngineUILoader)lib.getSymbol("loadUI");
         destroyUI = (engineui::EngineUIDestructor)lib.getSymbol("destroyUI");
         draw = (engineui::EngineUIDraw)lib.getSymbol("draw");

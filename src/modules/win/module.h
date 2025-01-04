@@ -48,7 +48,7 @@ struct WindowModule : Module {
     window::WindowSetMousePosition setMousePosition;
     DynamicLibrary lib;
 
-    explicit WindowModule(const char* dynlib) : lib(dynlib) {
+    explicit WindowModule(const char* dynlib) : lib(dynlib, "win") {
         loadWindow = (window::WindowLoader)lib.getSymbol("loadWindow");
         destroyWindow = (window::WindowDestructor)lib.getSymbol("destroyWindow");
         updateWindow = (window::WindowUpdate)lib.getSymbol("updateWindow");

@@ -11,12 +11,8 @@
 #include "module.h"
 
 
-#ifdef _WIN32
-const char* outputExtension = ".dll";
-#else
-const char* outputExtension = ".so";
-#endif
-const char* inputExtension = ".cpp";
+CEXPORT const char* inputExtension = ".cpp";
+CEXPORT const char* outputExtension = outputSuffix;
 
 
 typedef void (*ScriptInit)();
@@ -122,11 +118,12 @@ CEXPORT void compileScript(const char* scriptPath, const char* outputPath, const
 
 CEXPORT void compileScripts(const char** paths, size_t paths_num, const char* outputPath, const char* includeDir) {
     // given location of cpp files, compile it to a shared library
-    size_t paths_size = 0;
+    size_t paths_size = 1;
     for (int i = 0; i < paths_num; i++) {
         paths_size += strlen(paths[i]) + 1;
     }
     char* paths_str = (char*)malloc(paths_size);
+    paths_str[0] = '\0';
     // put them all together with a space in between
     for (int i = 0; i < paths_num; i++) {
         strcat(paths_str, paths[i]);

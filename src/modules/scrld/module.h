@@ -31,7 +31,7 @@ struct ScriptLoaderModule : public Module {
     char* outputExtension;
     DynamicLibrary lib;
 
-    explicit ScriptLoaderModule(const char* dynlib) : lib(dynlib) {
+    explicit ScriptLoaderModule(const char* dynlib) : lib(dynlib, "scrld") {
         loadScript = (scrload::ScriptLoader)lib.getSymbol("loadScript");
         compileScript = (scrload::ScriptCompiler)lib.getSymbol("compileScript");
         compileScripts = (scrload::MultiScriptCompiler)lib.getSymbol("compileScripts");

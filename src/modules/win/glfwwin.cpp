@@ -66,13 +66,11 @@ CEXPORT void destroyWindow(sWindow window) {
 }
 
 CEXPORT void updateWindow(sWindow window) {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glfwPollEvents();
 }
 
 CEXPORT void swapBuffers(sWindow window) {
     glfwSwapBuffers((GLFWwindow*)window.internal);
-    glfwPollEvents();
 }
 
 CEXPORT bool shouldClose(sWindow window) {

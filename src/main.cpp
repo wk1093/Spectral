@@ -1,10 +1,8 @@
-#include "modules/scriptloading/module.h"
-#include "modules/window/module.h"
-#include "modules/engineui/module.h"
+#include "modules/scrld/module.h"
+#include "modules/win/module.h"
 
 int main() {
-    // string array
-//    ScriptLoaderModule module("modules/cppscript.so"); // we load the cppscript module
+//    ScriptLoaderModule module("cpp"); // we load the cppscript module
 //    printf("input extension: %s\n", module.inputExtension); // prints cpp
 //    printf("output extension: %s\n", module.outputExtension); // prints so on linux, dll on windows
 //
@@ -15,7 +13,11 @@ int main() {
 //    script.init();
 //    script.update(2);
 
-    WindowModule winm("modules/sfwin.so");
+    WindowModule winm("sf");
+    if (!winm.lib.valid()) {
+        printf("Error loading window module\n");
+        return 1;
+    }
 
     sWindow win = winm.loadWindow("test", 800, 600);
 
