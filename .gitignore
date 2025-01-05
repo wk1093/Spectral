@@ -3,4 +3,5 @@ cmake-build*/
 *.so
 *.exe
 *.dll
-*.spectral
+*.splmod
+*.splscr

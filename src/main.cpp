@@ -1,19 +1,21 @@
 #include "modules/scrld/module.h"
 #include "modules/win/module.h"
 
-int main() {
-//    ScriptLoaderModule module("cpp"); // we load the cppscript module
-//    printf("input extension: %s\n", module.inputExtension); // prints cpp
-//    printf("output extension: %s\n", module.outputExtension); // prints so on linux, dll on windows
-//
-//    const char* files[] = {"scripts/testScript.cpp", "scripts/testScript2.cpp"};
-//    module.compileScripts(files, 2, "testScripts.so", "../src/include");
-//
-//    Script script = module.loadScript("./testScripts.so", "testScript2");
-//    script.init();
-//    script.update(2);
+#include <iostream>
 
-    WindowModule winm("sf");
+int main() {
+    ScriptLoaderModule module("cpp"); // we load the cppscript module
+    printf("input extension: %s\n", module.inputExtension);
+    printf("output extension: %s\n", module.outputExtension);
+
+    const char* files[] = {"scripts/testScript.cpp", "scripts/testScript2.cpp"};
+    module.compileScripts(files, 2, "testScripts", "../src/include");
+
+    Script script = module.loadScript("./testScripts", "testScript2");
+    script.init();
+    script.update(2);
+
+    WindowModule winm("eogll");
     if (!winm.lib.valid()) {
         printf("Error loading window module\n");
         return 1;

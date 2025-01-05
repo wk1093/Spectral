@@ -19,7 +19,7 @@ const char* outputSuffix = ".dll";
 const char* outputSuffix = ".so";
 #endif
 
-const char* spectralSuffix = ".spectral";
+const char* spectralSuffix = ".splmod";
 
 
 struct Module {
@@ -37,7 +37,11 @@ struct DynamicLibrary {
     }
 
     private:
-        void load(const char* path) {
+        void load(const char* path_in) {
+        // add a single . to the end
+        char* path = (char*)malloc(strlen(path_in) + 2);
+        strcpy(path, path_in);
+        strcat(path, ".");
 #ifdef _WIN32
         handle = LoadLibraryA(path);
 #else
@@ -51,17 +55,14 @@ struct DynamicLibrary {
             printf("Error: %s\n", dlerror());
 #endif
         }
+        free(path);
     }
 public:
 
     DynamicLibrary(const char* path, const char* ident) {
         // "modules/" + ident + "_" + path + EXTENSION
-        char* fullPath = (char*)malloc(strlen(path) + strlen(ident) + 9) + strlen(spectralSuffix);
-        strcpy(fullPath, "modules/");
-        strcat(fullPath, ident);
-        strcat(fullPath, "_");
-        strcat(fullPath, path);
-        strcat(fullPath, spectralSuffix);
+        char* fullPath = (char*)malloc(9 + strlen(ident) + 1 + strlen(path) + strlen(spectralSuffix) + 1);
+        sprintf(fullPath, "modules/%s_%s%s", ident, path, spectralSuffix);
 
         load(fullPath);
     }

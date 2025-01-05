@@ -12,8 +12,7 @@
 
 
 CEXPORT const char* inputExtension = ".cpp";
-CEXPORT const char* outputExtension = outputSuffix;
-
+CEXPORT const char* outputExtension = ".splscr";
 
 typedef void (*ScriptInit)();
 typedef void (*ScriptUpdate)(float dt);
@@ -43,7 +42,12 @@ char* getBaseFilename(const char* path) {
     return name;
 }
 
-CEXPORT Script loadScript(const char* path, const char* scriptName) {
+CEXPORT Script loadScript(const char* path_in, const char* scriptName) {
+    // add extension
+    char* path = (char*)malloc(strlen(path_in) + strlen(outputExtension) + 1);
+    strcpy(path, path_in);
+    strcat(path, outputExtension);
+
 
     // this mangling works with gcc, idk about other compilers, so I display an error message on others
 #if defined(__GNUC__) || defined(__MINGW32__) || defined(__MINGW64__) || defined(__clang__)
@@ -104,7 +108,11 @@ CEXPORT Script loadScript(const char* path, const char* scriptName) {
     return script;
 }
 
-CEXPORT void compileScript(const char* scriptPath, const char* outputPath, const char* includeDir) {
+CEXPORT void compileScript(const char* scriptPath, const char* outputPath_in, const char* includeDir) {
+    // add extension
+    char* outputPath = (char*)malloc(strlen(outputPath_in) + strlen(outputExtension) + 1);
+    strcpy(outputPath, outputPath_in);
+    strcat(outputPath, outputExtension);
     // given location of cpp file, compile it to a shared library
     char* command = (char*)malloc(strlen(scriptPath) + strlen(outputPath) + 100);
 #ifndef SCRIPT_INCLUDE_DIR
@@ -116,7 +124,11 @@ CEXPORT void compileScript(const char* scriptPath, const char* outputPath, const
 
 }
 
-CEXPORT void compileScripts(const char** paths, size_t paths_num, const char* outputPath, const char* includeDir) {
+CEXPORT void compileScripts(const char** paths, size_t paths_num, const char* outputPath_in, const char* includeDir) {
+    // add extension
+    char* outputPath = (char*)malloc(strlen(outputPath_in) + strlen(outputExtension) + 1);
+    strcpy(outputPath, outputPath_in);
+    strcat(outputPath, outputExtension);
     // given location of cpp files, compile it to a shared library
     size_t paths_size = 1;
     for (int i = 0; i < paths_num; i++) {
