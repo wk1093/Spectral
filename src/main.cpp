@@ -1,30 +1,29 @@
 #include "modules/scrld/module.h"
 #include "modules/win/module.h"
+#include "modules/gfx/module.h"
 
 #include <iostream>
 
 int main() {
-    ScriptLoaderModule module("cpp"); // we load the cppscript module
-    printf("input extension: %s\n", module.inputExtension);
-    printf("output extension: %s\n", module.outputExtension);
-
-    const char* files[] = {"scripts/testScript.cpp", "scripts/testScript2.cpp"};
-    module.compileScripts(files, 2, "testScripts", "../src/include");
-
-    Script script = module.loadScript("./testScripts", "testScript2");
-    script.init();
-    script.update(2);
-
-    WindowModule winm("eogll");
+    WindowModule winm("glfw");
     if (!winm.lib.valid()) {
         printf("Error loading window module\n");
         return 1;
     }
 
+    GraphicsModule gfxm("eogll");
+    if (!gfxm.lib.valid()) {
+        printf("Error loading graphics module\n");
+        return 1;
+    }
+
     sWindow win = winm.loadWindow("test", 800, 600);
+    gfxm.init(&win);
 
     while (!winm.shouldClose(win)) {
         winm.updateWindow(win);
+        gfxm.setClearColor(0.2f, 0.3f, 0.4f, 1.0f);
+        gfxm.clear();
 
         if (winm.isKeyPressed(win, Key::A)) {
             printf("A pressed\n");
@@ -36,5 +35,4 @@ int main() {
     winm.destroyWindow(win);
 
     return 0;
-
 }

@@ -3,8 +3,11 @@
 
 #include <stdio.h>
 
+struct WindowModule;
+
 struct sWindow {
     void* internal;
+    WindowModule* creator;
 };
 
 // Required for compatibility with different windowing libraries
@@ -35,7 +38,7 @@ namespace window {
 }
 
 struct WindowModule : Module {
-    window::WindowLoader loadWindow;
+    window::WindowLoader internal_loadWindow;
     window::WindowDestructor destroyWindow;
     window::WindowUpdate updateWindow;
     window::WindowSwapBuffers swapBuffers;
@@ -46,10 +49,15 @@ struct WindowModule : Module {
     window::WindowIsMouseButtonPressed isMouseButtonPressed;
     window::WindowGetMousePosition getMousePosition;
     window::WindowSetMousePosition setMousePosition;
-    DynamicLibrary lib;
 
-    explicit WindowModule(const char* dynlib) : lib(dynlib, "win") {
-        loadWindow = (window::WindowLoader)lib.getSymbol("loadWindow");
+    sWindow loadWindow(const char* name, int width, int height) {
+        sWindow w = internal_loadWindow(name, width, height);
+        w.creator = this;
+        return w;
+    }
+
+    explicit WindowModule(const char* dynlib) : Module(dynlib, "win") {
+        internal_loadWindow = (window::WindowLoader)lib.getSymbol("loadWindow");
         destroyWindow = (window::WindowDestructor)lib.getSymbol("destroyWindow");
         updateWindow = (window::WindowUpdate)lib.getSymbol("updateWindow");
         swapBuffers = (window::WindowSwapBuffers)lib.getSymbol("swapBuffers");

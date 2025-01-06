@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include "module.h"
 
-
 CEXPORT const char* inputExtension = ".cpp";
 CEXPORT const char* outputExtension = ".splscr";
 

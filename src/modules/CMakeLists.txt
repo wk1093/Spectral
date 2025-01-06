@@ -1,6 +1,20 @@
 
 include(FetchContent)
 
+# make sure glfw is linked dynamically (to prevent context errors)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+set(CMAKE_DEBUG_POSTFIX "")
+set(EOGLL_DYNAMIC ON CACHE BOOL "" FORCE)
+
+set(CMAKE_CXX_STANDARD 17)
+
+# make it so all included libs will output their dynamic libs to the bin/lib folder
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib")
 FetchContent_Declare(
         glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
@@ -23,8 +37,6 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/wk1093/EOGLL.git
 )
 FetchContent_MakeAvailable(eogll)
-
-set(CMAKE_DEBUG_POSTFIX "")
 
 add_library(scrld_cpp SHARED scrld/cppscript.cpp)
 set_target_properties(scrld_cpp PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
@@ -55,10 +67,37 @@ set_target_properties(win_eogll PROPERTIES SUFFIX ".splmod")
 target_link_libraries(win_eogll eogll)
 target_include_directories(win_eogll PUBLIC ${glfw_BINARY_DIR}/src)
 
+add_library(gfx_eogll SHARED gfx/eogll.cpp)
+set_target_properties(gfx_eogll PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
+set_target_properties(gfx_eogll PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
+set_target_properties(gfx_eogll PROPERTIES PREFIX "")
+set_target_properties(gfx_eogll PROPERTIES SUFFIX ".splmod")
+target_link_libraries(gfx_eogll eogll)
+
 add_custom_target(
         SpectralModules ALL
         DEPENDS scrld_cpp
         DEPENDS win_glfw
         DEPENDS win_sf
         DEPENDS win_eogll
+        DEPENDS gfx_eogll
 )
+
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib")
+#add_custom_command(TARGET SpectralModules POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "$<TARGET_FILE:glfw>"
+#        "${CMAKE_SOURCE_DIR}/bin/lib/")
+#add_custom_command(TARGET SpectralModules POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "$<TARGET_FILE:sfml-graphics>"
+#        "${CMAKE_SOURCE_DIR}/bin/lib/")
+#add_custom_command(TARGET SpectralModules POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "$<TARGET_FILE:sfml-window>"
+#        "${CMAKE_SOURCE_DIR}/bin/lib/")
+#add_custom_command(TARGET SpectralModules POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "$<TARGET_FILE:sfml-system>"
+#        "${CMAKE_SOURCE_DIR}/bin/lib/")

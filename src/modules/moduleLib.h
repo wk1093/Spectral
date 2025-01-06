@@ -4,6 +4,7 @@
 #include <windows.h>
 #else
 #include <dlfcn.h>
+#include <unistd.h>
 #endif
 #include <stdio.h>
 
@@ -13,6 +14,27 @@
 #define CEXPORT extern "C"
 #endif
 
+#include <filesystem>
+
+#include <cstring>
+
+std::filesystem::path getexepath() {
+#ifdef _WIN32
+    wchar_t path[MAX_PATH] = { 0 };
+    GetModuleFileNameW(NULL, path, MAX_PATH);
+    return path;
+#else
+#define PATH_MAX 4096
+    char result[PATH_MAX];
+    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    return std::string(result, (count > 0) ? count : 0);
+#endif
+}
+
+std::filesystem::path getexedir() {
+    return getexepath().parent_path();
+}
+
 #ifdef _WIN32
 const char* outputSuffix = ".dll";
 #else
@@ -21,27 +43,31 @@ const char* outputSuffix = ".so";
 
 const char* spectralSuffix = ".splmod";
 
-
-struct Module {
-    // inherited
-};
-
 struct DynamicLibrary {
 #ifdef _WIN32
     HINSTANCE handle;
 #else
     void* handle;
 #endif
-    DynamicLibrary(const char* path) {
-        load(path);
-    }
+public:
+    const char* mod_name;
+    const char* mod_imp;
 
-    private:
-        void load(const char* path_in) {
+private:
+    void load(const char* path_in) {
         // add a single . to the end
+#ifdef _WIN32
         char* path = (char*)malloc(strlen(path_in) + 2);
         strcpy(path, path_in);
         strcat(path, ".");
+        if (!SetDllDirectoryA("lib")) {
+            printf("Error setting DLL directory\n");
+            printf("Error code: %d\n", GetLastError());
+        }
+#else
+        char* path = (char*)malloc(strlen(path_in) + 1);
+        strcpy(path, path_in);
+#endif
 #ifdef _WIN32
         handle = LoadLibraryA(path);
 #else
@@ -49,6 +75,7 @@ struct DynamicLibrary {
 #endif
         if (!handle) {
             printf("Error loading library %s\n", path);
+            handle = NULL;
 #ifdef _WIN32
             printf("Error code: %d\n", GetLastError());
 #else
@@ -59,12 +86,22 @@ struct DynamicLibrary {
     }
 public:
 
+    DynamicLibrary() {
+        mod_name = nullptr;
+        mod_imp = nullptr;
+        handle = NULL;
+    }
+
     DynamicLibrary(const char* path, const char* ident) {
-        // "modules/" + ident + "_" + path + EXTENSION
+        mod_name = ident;
+        mod_imp = path;
+        load(makePath(path, ident));
+    }
+
+    static char* makePath(const char* path, const char* ident) {
         char* fullPath = (char*)malloc(9 + strlen(ident) + 1 + strlen(path) + strlen(spectralSuffix) + 1);
         sprintf(fullPath, "modules/%s_%s%s", ident, path, spectralSuffix);
-
-        load(fullPath);
+        return fullPath;
     }
 
     ~DynamicLibrary() {
@@ -77,6 +114,10 @@ public:
 
     void* getSymbol(const char* name) {
         void* sym;
+        if (!handle) {
+            printf("Error: Library not loaded\n");
+            return NULL;
+        }
 #ifdef _WIN32
         sym = (void*)GetProcAddress(handle, name);
 #else
@@ -85,7 +126,7 @@ public:
         if (!sym) {
             printf("Error loading symbol %s\n", name);
 #ifdef _WIN32
-            printf("Error code: %d\n", GetLastError());
+            printf("Error code: %ld\n", GetLastError());
 #else
             printf("Error: %s\n", dlerror());
 #endif
@@ -94,10 +135,30 @@ public:
     }
 
     bool valid() {
-#ifdef _WIN32
         return handle != NULL;
-#else
-        return handle != NULL;
-#endif
+    }
+};
+
+struct Module {
+    DynamicLibrary lib;
+    explicit Module(const char* path, const char* ident) : lib(path, ident) {
+        if (!lib.valid()) {
+            printf("Error loading module %s\n", path);
+            return;
+        }
+        std::filesystem::path p = getexedir();
+        char* pth = DynamicLibrary::makePath(path, ident);
+        if (!std::filesystem::exists(p / pth)) {
+            printf("Error: Module %s.%s not found\n", ident, path);
+            return;
+        } else {
+            printf("Module %s.%s loaded\n", ident, path);
+        }
+
+
+
+
+
+
     }
 };

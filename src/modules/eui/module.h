@@ -2,6 +2,10 @@
 #include "../moduleLib.h"
 #include "../win/module.h"
 
+CEXPORT const char* required_files[] = {
+};
+CEXPORT size_t required_files_count = 0;
+
 struct EngineUI {
     void* internal;
 };
@@ -16,9 +20,8 @@ struct EngineUIModule : public Module {
     engineui::EngineUILoader loadUI;
     engineui::EngineUIDestructor destroyUI;
     engineui::EngineUIDraw draw;
-    DynamicLibrary lib;
 
-    explicit EngineUIModule(const char* dynlib) : lib(dynlib, "eui") {
+    explicit EngineUIModule(const char* dynlib) : Module(dynlib, "eui") {
         loadUI = (engineui::EngineUILoader)lib.getSymbol("loadUI");
         destroyUI = (engineui::EngineUIDestructor)lib.getSymbol("destroyUI");
         draw = (engineui::EngineUIDraw)lib.getSymbol("draw");
