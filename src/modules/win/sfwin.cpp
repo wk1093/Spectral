@@ -61,7 +61,6 @@ CEXPORT void updateWindow(sWindow window) {
             ((sf::RenderWindow*)window.internal)->close();
         }
     }
-    ((sf::RenderWindow*)window.internal)->clear(sf::Color::Black);
 }
 
 CEXPORT void swapBuffers(sWindow window) {

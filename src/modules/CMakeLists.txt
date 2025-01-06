@@ -38,41 +38,36 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(eogll)
 
-add_library(scrld_cpp SHARED scrld/cppscript.cpp)
-set_target_properties(scrld_cpp PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-set_target_properties(scrld_cpp PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-set_target_properties(scrld_cpp PROPERTIES PREFIX "")
-set_target_properties(scrld_cpp PROPERTIES SUFFIX ".splmod")
+macro(add_module name source)
+    add_library(${name} SHARED ${source})
+    set_target_properties(${name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
+    set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
+    set_target_properties(${name} PROPERTIES PREFIX "")
+    set_target_properties(${name} PROPERTIES SUFFIX ".splmod")
+endmacro()
 
-add_library(win_glfw SHARED win/glfwwin.cpp)
-set_target_properties(win_glfw PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-set_target_properties(win_glfw PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-set_target_properties(win_glfw PROPERTIES PREFIX "")
-set_target_properties(win_glfw PROPERTIES SUFFIX ".splmod")
+
+add_module(scrld_cpp scrld/cppscript.cpp)
+
+add_module(win_glfw win/glfwwin.cpp)
 target_link_libraries(win_glfw glfw)
 target_include_directories(win_glfw PUBLIC ${glfw_BINARY_DIR}/src)
 
-add_library(win_sf SHARED win/sfwin.cpp)
-set_target_properties(win_sf PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-set_target_properties(win_sf PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-set_target_properties(win_sf PROPERTIES PREFIX "")
-set_target_properties(win_sf PROPERTIES SUFFIX ".splmod")
+add_module(win_sf win/sfwin.cpp)
 target_link_libraries(win_sf sfml-graphics sfml-window sfml-system)
 
-add_library(win_eogll SHARED win/eogllwin.cpp)
-set_target_properties(win_eogll PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-set_target_properties(win_eogll PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-set_target_properties(win_eogll PROPERTIES PREFIX "")
-set_target_properties(win_eogll PROPERTIES SUFFIX ".splmod")
+add_module(win_eogll win/eogllwin.cpp)
 target_link_libraries(win_eogll eogll)
 target_include_directories(win_eogll PUBLIC ${glfw_BINARY_DIR}/src)
 
-add_library(gfx_eogll SHARED gfx/eogll.cpp)
-set_target_properties(gfx_eogll PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-set_target_properties(gfx_eogll PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-set_target_properties(gfx_eogll PROPERTIES PREFIX "")
-set_target_properties(gfx_eogll PROPERTIES SUFFIX ".splmod")
+add_module(gfx_eogll gfx/eogll.cpp)
 target_link_libraries(gfx_eogll eogll)
+
+add_module(gfx_sf gfx/sf.cpp)
+target_link_libraries(gfx_sf sfml-graphics sfml-window sfml-system opengl32)
+
+add_module(gfx_glad gfx/glad.cpp)
+target_link_libraries(gfx_glad glad opengl32)
 
 add_custom_target(
         SpectralModules ALL
@@ -81,23 +76,9 @@ add_custom_target(
         DEPENDS win_sf
         DEPENDS win_eogll
         DEPENDS gfx_eogll
+        DEPENDS gfx_sf
+        DEPENDS gfx_glad
 )
 
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib")
-#add_custom_command(TARGET SpectralModules POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#        "$<TARGET_FILE:glfw>"
-#        "${CMAKE_SOURCE_DIR}/bin/lib/")
-#add_custom_command(TARGET SpectralModules POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#        "$<TARGET_FILE:sfml-graphics>"
-#        "${CMAKE_SOURCE_DIR}/bin/lib/")
-#add_custom_command(TARGET SpectralModules POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#        "$<TARGET_FILE:sfml-window>"
-#        "${CMAKE_SOURCE_DIR}/bin/lib/")
-#add_custom_command(TARGET SpectralModules POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#        "$<TARGET_FILE:sfml-system>"
-#        "${CMAKE_SOURCE_DIR}/bin/lib/")

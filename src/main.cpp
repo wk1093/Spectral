@@ -11,7 +11,7 @@ int main() {
         return 1;
     }
 
-    GraphicsModule gfxm("eogll");
+    GraphicsModule gfxm("glad");
     if (!gfxm.lib.valid()) {
         printf("Error loading graphics module\n");
         return 1;
@@ -20,9 +20,10 @@ int main() {
     sWindow win = winm.loadWindow("test", 800, 600);
     gfxm.init(&win);
 
+    gfxm.setClearColor(0.2f, 0.3f, 0.4f, 1.0f);
+
     while (!winm.shouldClose(win)) {
         winm.updateWindow(win);
-        gfxm.setClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         gfxm.clear();
 
         if (winm.isKeyPressed(win, Key::A)) {
