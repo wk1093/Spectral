@@ -5,13 +5,13 @@
 #include <iostream>
 
 int main() {
-    WindowModule winm("glfw");
+    WindowModule winm("eogll");
     if (!winm.lib.valid()) {
         printf("Error loading window module\n");
         return 1;
     }
 
-    GraphicsModule gfxm("glad");
+    GraphicsModule gfxm("eogll");
     if (!gfxm.lib.valid()) {
         printf("Error loading graphics module\n");
         return 1;
@@ -29,6 +29,8 @@ int main() {
         if (winm.isKeyPressed(win, Key::A)) {
             printf("A pressed\n");
         }
+
+        gfxm.debugTriangle();
 
         winm.swapBuffers(win);
     }

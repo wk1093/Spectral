@@ -61,10 +61,7 @@ target_link_libraries(win_eogll eogll)
 target_include_directories(win_eogll PUBLIC ${glfw_BINARY_DIR}/src)
 
 add_module(gfx_eogll gfx/eogll.cpp)
-target_link_libraries(gfx_eogll eogll)
-
-add_module(gfx_sf gfx/sf.cpp)
-target_link_libraries(gfx_sf sfml-graphics sfml-window sfml-system opengl32)
+target_link_libraries(gfx_eogll eogll opengl32)
 
 add_module(gfx_glad gfx/glad.cpp)
 target_link_libraries(gfx_glad glad opengl32)
@@ -76,7 +73,6 @@ add_custom_target(
         DEPENDS win_sf
         DEPENDS win_eogll
         DEPENDS gfx_eogll
-        DEPENDS gfx_sf
         DEPENDS gfx_glad
 )
 
