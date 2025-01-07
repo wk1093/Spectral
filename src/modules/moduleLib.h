@@ -6,7 +6,9 @@
 #include <dlfcn.h>
 #include <unistd.h>
 #endif
-#include <stdio.h>
+#include <cstdio>
+#include <fstream>
+#include <string>
 
 #ifdef _WIN32
 #define CEXPORT extern "C" __declspec(dllexport)
@@ -33,6 +35,15 @@ std::filesystem::path getexepath() {
 
 std::filesystem::path getexedir() {
     return getexepath().parent_path();
+}
+
+bool readFile(const char* path, std::string& out) {
+    std::ifstream file(path);
+    if (!file.is_open()) {
+        return false;
+    }
+    out = std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    return true;
 }
 
 #ifdef _WIN32
