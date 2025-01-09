@@ -110,8 +110,8 @@ public:
     }
 
     static char* makePath(const char* path, const char* ident) {
-        char* fullPath = (char*)malloc(9 + strlen(ident) + 1 + strlen(path) + strlen(spectralSuffix) + 1);
-        sprintf(fullPath, "modules/%s_%s%s", ident, path, spectralSuffix);
+        char* fullPath = (char*)malloc(9 + strlen(ident)*2 + 3 + strlen(path) + strlen(spectralSuffix) + 1);
+        sprintf(fullPath, "modules/%s/%s_%s%s", ident, ident, path, spectralSuffix);
         return fullPath;
     }
 

@@ -3,6 +3,10 @@
 
 #include "module.h"
 
+CEXPORT const char* getShaderType() {
+    return "glsl";
+}
+
 CEXPORT void init(sWindow* win) {
     if (!gladLoadGL((GLADloadfunc)getProcAddress)) {
         printf("Error loading OpenGL\n");

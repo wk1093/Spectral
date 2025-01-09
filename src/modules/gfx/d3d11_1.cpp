@@ -4,6 +4,10 @@
 
 #include "module.h"
 
+CEXPORT const char* getShaderType() {
+    return "hlsl";
+}
+
 struct sD3D11_1Context {
     HWND hwnd;
     ID3D11Device1* device;
@@ -165,6 +169,11 @@ CEXPORT void setClearColor(float r, float g, float b, float a) {
 
 CEXPORT void clear() {
     __d3d11_1_context.deviceContext->ClearRenderTargetView(__d3d11_1_context.frameBufferView, __clearColor);
+    RECT rect;
+    GetClientRect(__d3d11_1_context.hwnd, &rect);
+    D3D11_VIEWPORT viewport = {0.0f, 0.0f, (float)(rect.right - rect.left), (float)(rect.bottom - rect.top), 0.0f, 1.0f};
+    __d3d11_1_context.deviceContext->RSSetViewports(1, &viewport);
+    __d3d11_1_context.deviceContext->OMSetRenderTargets(1, &__d3d11_1_context.frameBufferView, 0);
 }
 
 CEXPORT void present() {
@@ -174,7 +183,6 @@ CEXPORT void present() {
 struct sInternalMesh {
     ID3D11Buffer* vertexBuffer;
     ID3D11Buffer* indexBuffer;
-    UINT numVerts;
     UINT stride;
     UINT offset;
 };
@@ -188,15 +196,60 @@ struct sInternalShader {
 };
 
 struct sInternalShaderProgram {
-    // TODO: Implement
+    sInternalShader vertexShader;
+    sInternalShader fragmentShader;
+    // sInternalShader geometryShader;
+    ID3D11InputLayout* inputLayout;
 };
 
 CEXPORT sMesh createMesh(sShader vertexShader, sVertex* vertices, size_t vertexSize, sIndex* indices, size_t indexSize) {
+    ID3D11Buffer* vertexBuffer;
+    {
+        D3D11_BUFFER_DESC bufferDesc = {};
+        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        bufferDesc.ByteWidth = vertexSize;
+        bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.MiscFlags = 0;
 
+        D3D11_SUBRESOURCE_DATA subResourceData = {};
+        subResourceData.pSysMem = vertices;
+
+        HRESULT hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, &subResourceData, &vertexBuffer);
+        if (FAILED(hResult)) {
+            MessageBoxA(0, "CreateBuffer() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+    }
+
+    ID3D11Buffer* indexBuffer;
+    {
+        D3D11_BUFFER_DESC bufferDesc = {};
+        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        bufferDesc.ByteWidth = indexSize;
+        bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.MiscFlags = 0;
+
+        D3D11_SUBRESOURCE_DATA subResourceData = {};
+        subResourceData.pSysMem = indices;
+
+        HRESULT hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, &subResourceData, &indexBuffer);
+        if (FAILED(hResult)) {
+            MessageBoxA(0, "CreateBuffer() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+    }
+
+    return {new sInternalMesh{vertexBuffer, indexBuffer, sizeof(sVertex), 0}};
 }
 
 CEXPORT void drawMesh(sMesh mesh) {
-
+    auto* internal = (sInternalMesh*)mesh.internal;
+    __d3d11_1_context.deviceContext->IASetVertexBuffers(0, 1, &internal->vertexBuffer, &internal->stride, &internal->offset);
+    __d3d11_1_context.deviceContext->IASetIndexBuffer(internal->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+    __d3d11_1_context.deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    __d3d11_1_context.deviceContext->DrawIndexed(3, 0, 0);
 }
 
 CEXPORT sShader createShader(const char* source, sShaderType type) {
@@ -212,6 +265,12 @@ CEXPORT sShader createShader(const char* source, sShaderType type) {
                 printf("ERROR CODE: %lu\n", GetLastError());
                 errorBlob->Release();
             }
+            hResult = __d3d11_1_context.device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &vertexShader);
+            if (FAILED(hResult)) {
+                MessageBoxA(0, "CreateVertexShader() failed", "Fatal Error", MB_OK);
+                printf("ERROR CODE: %lu\n", GetLastError());
+            }
+
             return {new sInternalShader{sShaderType::VERTEX, vertexShader, nullptr, nullptr, shaderBlob}};
         } break;
         case sShaderType::FRAGMENT: {
@@ -223,6 +282,11 @@ CEXPORT sShader createShader(const char* source, sShaderType type) {
                 printf("ERROR CODE: %lu\n", GetLastError());
                 errorBlob->Release();
             }
+            hResult = __d3d11_1_context.device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &pixelShader);
+            if (FAILED(hResult)) {
+                MessageBoxA(0, "CreatePixelShader() failed", "Fatal Error", MB_OK);
+                printf("ERROR CODE: %lu\n", GetLastError());
+            }
             return {new sInternalShader{sShaderType::FRAGMENT, nullptr, pixelShader, nullptr, shaderBlob}};
         } break;
         case sShaderType::GEOMETRY: {
@@ -230,6 +294,8 @@ CEXPORT sShader createShader(const char* source, sShaderType type) {
             return {nullptr};
         } break;
     }
+
+    return {nullptr};
 }
 
 CEXPORT sShader loadShader(const char* path, sShaderType type) {
@@ -242,9 +308,55 @@ CEXPORT sShader loadShader(const char* path, sShaderType type) {
 }
 
 CEXPORT void useShaderProgram(sShaderProgram shader) {
-
+    auto* internal = (sInternalShaderProgram*)shader.internal;
+    __d3d11_1_context.deviceContext->IASetInputLayout(internal->inputLayout);
+    __d3d11_1_context.deviceContext->VSSetShader(internal->vertexShader.vertexShader, 0, 0);
+    __d3d11_1_context.deviceContext->PSSetShader(internal->fragmentShader.pixelShader, 0, 0);
 }
 
 CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
+    sInternalShader vertexShader{};
+    sInternalShader fragmentShader{};
 
+    for (size_t i = 0; i < count; i++) {
+        auto* shader = (sInternalShader*)shaders[i].internal;
+        switch(shader->type) {
+            case sShaderType::VERTEX:
+                vertexShader = *shader;
+                break;
+            case sShaderType::FRAGMENT:
+                fragmentShader = *shader;
+                break;
+            case sShaderType::GEOMETRY:
+                printf("GEOMETRY SHADER UNIMPLEMENTED\n");
+                return {nullptr};
+        }
+    }
+    if (!vertexShader.shaderBlob) {
+        MessageBoxA(0, "Vertex shader not found", "Fatal Error", MB_OK);
+        return {nullptr};
+    }
+    if (!fragmentShader.shaderBlob) {
+        MessageBoxA(0, "Fragment shader not found", "Fatal Error", MB_OK);
+        return {nullptr};
+    }
+    ID3D11InputLayout* inputLayout;
+    {
+        D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = {
+                {"POS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+                {"COL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+        };
+
+        HRESULT hResult = __d3d11_1_context.device->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc),
+                                                                     vertexShader.shaderBlob->GetBufferPointer(),
+                                                                     vertexShader.shaderBlob->GetBufferSize(), &inputLayout);
+        if (FAILED(hResult)) {
+            MessageBoxA(0, "CreateInputLayout() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+        vertexShader.shaderBlob->Release();
+    }
+    fragmentShader.shaderBlob->Release();
+
+    return {new sInternalShaderProgram{vertexShader, fragmentShader, inputLayout}};
 }

@@ -4,6 +4,10 @@
 #include "module.h"
 #include <fstream>
 
+CEXPORT const char* getShaderType() {
+    return "glsl";
+}
+
 CEXPORT void init(sWindow* win) {
     if (strcmp(win->creator->lib.mod_imp, "eogll") == 0) {
         auto* w = (EogllWindow*)win->internal;

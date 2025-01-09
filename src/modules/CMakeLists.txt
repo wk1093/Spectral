@@ -40,46 +40,52 @@ FetchContent_MakeAvailable(eogll)
 
 Find_Package(OpenGL REQUIRED)
 
-macro(add_module name source)
-    add_library(${name} SHARED ${source})
-    set_target_properties(${name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-    set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
-    set_target_properties(${name} PROPERTIES PREFIX "")
-    set_target_properties(${name} PROPERTIES SUFFIX ".splmod")
+macro(add_module mod impl source)
+    add_library(${mod}_${impl} SHARED ${source})
+    set_target_properties(${mod}_${impl} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules/${mod}")
+    set_target_properties(${mod}_${impl} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules/${mod}")
+    set_target_properties(${mod}_${impl} PROPERTIES PREFIX "")
+    set_target_properties(${mod}_${impl} PROPERTIES SUFFIX ".splmod")
     # debug
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        target_compile_definitions(${name} PUBLIC "DEBUG_BUILD")
+        target_compile_definitions(${mod}_${impl} PUBLIC "DEBUG_BUILD")
     endif()
 endmacro()
 
 
-add_module(scrld_cpp scrld/cppscript.cpp)
+add_module(scrld cpp scrld/cppscript.cpp)
 
-add_module(win_glfw_gl win/glfwwin.cpp)
+add_module(win glfw_gl win/glfwwin.cpp)
 target_link_libraries(win_glfw_gl glfw)
 target_compile_definitions(win_glfw_gl PUBLIC "SPECTRAL_GLFW_OPENGL")
 target_include_directories(win_glfw_gl PUBLIC ${glfw_BINARY_DIR}/src)
 
-add_module(win_glfw_noapi win/glfwwin.cpp)
+add_module(win glfw_noapi win/glfwwin.cpp)
 target_link_libraries(win_glfw_noapi glfw)
 target_compile_definitions(win_glfw_noapi PUBLIC "SPECTRAL_GLFW_NOAPI")
 target_include_directories(win_glfw_noapi PUBLIC ${glfw_BINARY_DIR}/src)
 
-add_module(win_sf win/sfwin.cpp)
+add_module(win sf win/sfwin.cpp)
 target_link_libraries(win_sf sfml-graphics sfml-window sfml-system)
 
-add_module(win_eogll win/eogllwin.cpp)
+add_module(win eogll win/eogllwin.cpp)
 target_link_libraries(win_eogll eogll)
 target_include_directories(win_eogll PUBLIC ${glfw_BINARY_DIR}/src)
 
-add_module(gfx_eogll gfx/eogll.cpp)
+add_module(gfx eogll gfx/eogll.cpp)
 target_link_libraries(gfx_eogll eogll opengl32)
 
-add_module(gfx_glad gfx/glad.cpp)
+add_module(gfx glad gfx/glad.cpp)
 target_link_libraries(gfx_glad glad opengl32)
 
-add_module(gfx_d3d11_1 gfx/d3d11_1.cpp)
+add_module(gfx d3d11_1 gfx/d3d11_1.cpp)
 target_link_libraries(gfx_d3d11_1 d3d11 d3dcompiler dxgi)
+
+add_module(shdr spsl_glsl shdr/spsl.cpp)
+target_compile_definitions(shdr_spsl_glsl PUBLIC "SPECTRAL_OUTPUT_GLSL")
+
+add_module(shdr spsl_hlsl shdr/spsl.cpp)
+target_compile_definitions(shdr_spsl_hlsl PUBLIC "SPECTRAL_OUTPUT_HLSL")
 
 
 add_custom_target(
@@ -92,6 +98,8 @@ add_custom_target(
         DEPENDS gfx_eogll
         DEPENDS gfx_glad
         DEPENDS gfx_d3d11_1
+        DEPENDS shdr_spsl_glsl
+        DEPENDS shdr_spsl_hlsl
 )
 
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")

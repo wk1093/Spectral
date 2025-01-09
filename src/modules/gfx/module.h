@@ -49,6 +49,7 @@ namespace graphics {
     typedef sShader (*CreateShader)(const char* source, sShaderType type);
     typedef sShaderProgram (*CreateShaderProgram)(sShader* shaders, size_t count);
     typedef void (*Present)();
+    typedef const char* (*GetShaderType)();
 }
 
 struct GraphicsModule : Module {
@@ -62,6 +63,7 @@ struct GraphicsModule : Module {
     graphics::CreateShaderProgram internal_createShaderProgram;
     graphics::CreateShader createShader;
     graphics::Present present;
+    graphics::GetShaderType getShaderType;
 
     sMesh createMesh(sShader vertexShader, sVertex* vertices, size_t vertexCount, sIndex* indices, size_t indexCount) {
         sMesh mesh = internal_createMesh(vertexShader, vertices, vertexCount, indices, indexCount);
@@ -90,5 +92,6 @@ struct GraphicsModule : Module {
         internal_createShaderProgram = (graphics::CreateShaderProgram)lib.getSymbol("createShaderProgram");
         createShader = (graphics::CreateShader)lib.getSymbol("createShader");
         present = (graphics::Present)lib.getSymbol("present");
+        getShaderType = (graphics::GetShaderType)lib.getSymbol("getShaderType");
     }
 };
