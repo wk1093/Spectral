@@ -1,4 +1,3 @@
-
 #include <GLFW/glfw3.h>
 #include <glfw_config.h>
 #ifdef _WIN32
@@ -46,6 +45,11 @@ CEXPORT sWindow loadWindow(const char* title, int width, int height) {
         printf("Error initializing GLFW\n");
         return {nullptr};
     }
+#ifdef SPECTRAL_GLFW_OPENGL
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+#elif defined(SPECTRAL_GLFW_NOAPI)
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#endif
     glfwWindowHint(GLFW_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);

@@ -79,10 +79,13 @@ CEXPORT void setShouldClose(sWindow window, bool value) {
 
 CEXPORT void* getHandle(sWindow window) {
     sf::WindowHandle handle = ((sf::RenderWindow*)window.internal)->getSystemHandle();
-    auto* ptr = new sf::WindowHandle;
-    *ptr = handle;
-    printf("handle: %lu\n", handle);
+#if defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
+    auto* ptr = new unsigned long;
+    *ptr = (unsigned long)handle;
     return ptr;
+#else
+    return (void*)handle;
+#endif
 }
 
 CEXPORT bool isKeyPressed(sWindow window, Key key) {

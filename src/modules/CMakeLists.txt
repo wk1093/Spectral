@@ -38,20 +38,32 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(eogll)
 
+Find_Package(OpenGL REQUIRED)
+
 macro(add_module name source)
     add_library(${name} SHARED ${source})
     set_target_properties(${name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
     set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
     set_target_properties(${name} PROPERTIES PREFIX "")
     set_target_properties(${name} PROPERTIES SUFFIX ".splmod")
+    # debug
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_compile_definitions(${name} PUBLIC "DEBUG_BUILD")
+    endif()
 endmacro()
 
 
 add_module(scrld_cpp scrld/cppscript.cpp)
 
-add_module(win_glfw win/glfwwin.cpp)
-target_link_libraries(win_glfw glfw)
-target_include_directories(win_glfw PUBLIC ${glfw_BINARY_DIR}/src)
+add_module(win_glfw_gl win/glfwwin.cpp)
+target_link_libraries(win_glfw_gl glfw)
+target_compile_definitions(win_glfw_gl PUBLIC "SPECTRAL_GLFW_OPENGL")
+target_include_directories(win_glfw_gl PUBLIC ${glfw_BINARY_DIR}/src)
+
+add_module(win_glfw_noapi win/glfwwin.cpp)
+target_link_libraries(win_glfw_noapi glfw)
+target_compile_definitions(win_glfw_noapi PUBLIC "SPECTRAL_GLFW_NOAPI")
+target_include_directories(win_glfw_noapi PUBLIC ${glfw_BINARY_DIR}/src)
 
 add_module(win_sf win/sfwin.cpp)
 target_link_libraries(win_sf sfml-graphics sfml-window sfml-system)
@@ -66,14 +78,20 @@ target_link_libraries(gfx_eogll eogll opengl32)
 add_module(gfx_glad gfx/glad.cpp)
 target_link_libraries(gfx_glad glad opengl32)
 
+add_module(gfx_d3d11_1 gfx/d3d11_1.cpp)
+target_link_libraries(gfx_d3d11_1 d3d11 d3dcompiler dxgi)
+
+
 add_custom_target(
         SpectralModules ALL
         DEPENDS scrld_cpp
-        DEPENDS win_glfw
+        DEPENDS win_glfw_gl
+        DEPENDS win_glfw_noapi
         DEPENDS win_sf
         DEPENDS win_eogll
         DEPENDS gfx_eogll
         DEPENDS gfx_glad
+        DEPENDS gfx_d3d11_1
 )
 
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
