@@ -12,9 +12,42 @@ set(EOGLL_DYNAMIC ON CACHE BOOL "" FORCE)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# the library names used to be mod_impl.splmod (ex: win_glfw_gl.splmod)
+# but this causes issues with mutli-platform builds, so now it is mod_impl.plat.splmod (ex: win_glfw_gl.win_x86_64.splmod)
+# this is to prevent conflicts between different platforms
+# the platform is determined by the CMAKE_SYSTEM_NAME variable
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(SPECTRAL_PLATFORM "win")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(SPECTRAL_PLATFORM "lin")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(SPECTRAL_PLATFORM "mac")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set(SPECTRAL_PLATFORM "and")
+    message(WARNING "Android is not tested and may not work")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    set(SPECTRAL_PLATFORM "ios")
+    message(WARNING "iOS is not tested and may not work")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+    set(SPECTRAL_PLATFORM "bsd")
+    message(WARNING "FreeBSD is not tested and may not work")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "CYGWIN")
+    set(SPECTRAL_PLATFORM "cyg")
+    message(WARNING "Cygwin is not tested and may not work")
+else()
+    set(SPECTRAL_PLATFORM "unk")
+    message(WARNING "Unknown platform, this may not work")
+endif()
+
+# add the platform onto it
+set(SPECTRAL_FULLPLAT "${SPECTRAL_PLATFORM}_${CMAKE_SYSTEM_PROCESSOR}" CACHE STRING "The full platform name")
+
+
+
+
 # make it so all included libs will output their dynamic libs to the bin/lib folder
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
 FetchContent_Declare(
         glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
@@ -42,10 +75,11 @@ Find_Package(OpenGL REQUIRED)
 
 macro(add_module mod impl source)
     add_library(${mod}_${impl} SHARED ${source})
-    set_target_properties(${mod}_${impl} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules/${mod}")
-    set_target_properties(${mod}_${impl} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules/${mod}")
+    set_target_properties(${mod}_${impl} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules/${SPECTRAL_FULLPLAT}/${mod}")
+    set_target_properties(${mod}_${impl} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules/${SPECTRAL_FULLPLAT}/${mod}")
     set_target_properties(${mod}_${impl} PROPERTIES PREFIX "")
     set_target_properties(${mod}_${impl} PROPERTIES SUFFIX ".splmod")
+    target_compile_definitions(${mod}_${impl} PUBLIC "SPECTRAL_PLATFORM=\"${SPECTRAL_FULLPLAT}\"")
     # debug
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         target_compile_definitions(${mod}_${impl} PUBLIC "DEBUG_BUILD")

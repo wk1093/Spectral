@@ -10,6 +10,10 @@
 #include <fstream>
 #include <string>
 
+#ifndef SPECTRAL_PLATFORM
+#define SPECTRAL_PLATFORM "unknown"
+#endif
+
 #ifdef _WIN32
 #define CEXPORT extern "C" __declspec(dllexport)
 #else
@@ -71,7 +75,10 @@ private:
         char* path = (char*)malloc(strlen(path_in) + 2);
         strcpy(path, path_in);
         strcat(path, ".");
-        if (!SetDllDirectoryA("lib")) {
+        char* setdlldir = (char*)malloc(strlen(SPECTRAL_PLATFORM) + 5);
+        strcpy(setdlldir, "lib/");
+        strcat(setdlldir, SPECTRAL_PLATFORM);
+        if (!SetDllDirectoryA(setdlldir)) {
             printf("Error setting DLL directory\n");
             printf("Error code: %d\n", GetLastError());
         }
@@ -110,8 +117,9 @@ public:
     }
 
     static char* makePath(const char* path, const char* ident) {
-        char* fullPath = (char*)malloc(9 + strlen(ident)*2 + 3 + strlen(path) + strlen(spectralSuffix) + 1);
-        sprintf(fullPath, "modules/%s/%s_%s%s", ident, ident, path, spectralSuffix);
+
+        char* fullPath = (char*)malloc(10+strlen(ident)*2+strlen(path)+1+strlen(SPECTRAL_PLATFORM)+strlen(spectralSuffix)+10);
+        sprintf(fullPath, "modules/%s/%s/%s_%s%s", SPECTRAL_PLATFORM, ident, ident, path, spectralSuffix);
         return fullPath;
     }
 

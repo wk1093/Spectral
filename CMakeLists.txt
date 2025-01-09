@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.26)
 project(Spectral)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_EXE_LINKER_FLAGS "-Wl,-rpath,lib -Wl,-rpath-link,lib")
-set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-rpath,lib -Wl,-rpath-link,lib")
+set(CMAKE_EXE_LINKER_FLAGS "-Wl,-rpath,lib/${SPECTRAL_FULLPLAT} -Wl,-rpath-link,lib/${SPECTRAL_FULLPLAT}")
+set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-rpath,lib/${SPECTRAL_FULLPLAT} -Wl,-rpath-link,lib/${SPECTRAL_FULLPLAT}")
 
 include_directories(src/include)
 
@@ -14,5 +14,7 @@ add_executable(Spectral src/main.cpp)
 add_dependencies(Spectral SpectralModules)
 
 set_target_properties(Spectral PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set_target_properties(Spectral PROPERTIES SUFFIX ".${SPECTRAL_FULLPLAT}${CMAKE_EXECUTABLE_SUFFIX}")
+target_compile_definitions(Spectral PUBLIC "SPECTRAL_PLATFORM=\"${SPECTRAL_FULLPLAT}\"")
 # set SCRIPT_INCLUDE_DIR to ../include define
 

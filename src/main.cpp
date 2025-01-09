@@ -2,12 +2,12 @@
 #include "modules/gfx/module.h"
 
 int main(int argc, char** argv) {
-    if (argc < 3) {
-        printf("Usage: %s <window_module> <graphics_module>\n", argv[0]);
-        return 1;
+    const char* window_module = "glfw_noapi";
+    const char* graphics_module = "d3d11_1";
+    if (argc == 3) {
+        window_module = argv[1];
+        graphics_module = argv[2];
     }
-    const char* window_module = argv[1];
-    const char* graphics_module = argv[2];
 
     WindowModule winm(window_module);
     if (!winm.lib.valid()) {
