@@ -2,10 +2,6 @@
 #include "../moduleLib.h"
 #include "../win/module.h"
 
-CEXPORT const char* required_files[] = {
-};
-CEXPORT size_t required_files_count = 0;
-
 struct EngineUI {
     void* internal;
 };
