@@ -1,7 +1,12 @@
 
 include(FetchContent)
 
-# make sure glfw is linked dynamically (to prevent context errors)
+set(SPEC_GLFW ON CACHE BOOL "" FORCE)
+set(SPEC_EOGLL OFF CACHE BOOL "" FORCE)
+set(SPEC_SFML OFF CACHE BOOL "" FORCE)
+set(SPEC_GLAD ON CACHE BOOL "" FORCE)
+set(SPEC_DX11 ON CACHE BOOL "" FORCE)
+
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -9,6 +14,7 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 set(CMAKE_DEBUG_POSTFIX "")
 set(EOGLL_DYNAMIC ON CACHE BOOL "" FORCE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -48,28 +54,35 @@ set(SPECTRAL_FULLPLAT "${SPECTRAL_PLATFORM}_${CMAKE_SYSTEM_PROCESSOR}" CACHE STR
 # make it so all included libs will output their dynamic libs to the bin/lib folder
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
-FetchContent_Declare(
-        glfw
-        GIT_REPOSITORY https://github.com/glfw/glfw.git
-        GIT_TAG 3.3.8
-)
-FetchContent_MakeAvailable(glfw)
-
-FetchContent_Declare(
-        sfml
-        GIT_REPOSITORY https://github.com/SFML/SFML.git
-        GIT_TAG 2.6.0
-)
-FetchContent_MakeAvailable(sfml)
-set_target_properties(sfml-graphics PROPERTIES POSITION_INDEPENDENT_CODE ON)
-set_target_properties(sfml-window PROPERTIES POSITION_INDEPENDENT_CODE ON)
-set_target_properties(sfml-system PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
-FetchContent_Declare(
-        eogll
-        GIT_REPOSITORY https://github.com/wk1093/EOGLL.git
-)
-FetchContent_MakeAvailable(eogll)
+if(SPEC_GLFW)
+    FetchContent_Declare(
+            glfw
+            GIT_REPOSITORY https://github.com/glfw/glfw.git
+            GIT_TAG 3.3.8
+    )
+    FetchContent_MakeAvailable(glfw)
+endif()
+if(SPEC_SFML)
+    FetchContent_Declare(
+            sfml
+            GIT_REPOSITORY https://github.com/SFML/SFML.git
+            GIT_TAG 2.6.0
+    )
+    FetchContent_MakeAvailable(sfml)
+    set_target_properties(sfml-graphics PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    set_target_properties(sfml-window PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    set_target_properties(sfml-system PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+if(SPEC_EOGLL)
+    FetchContent_Declare(
+            eogll
+            GIT_REPOSITORY https://github.com/wk1093/EOGLL.git
+    )
+    FetchContent_MakeAvailable(eogll)
+elseif(SPEC_GLAD)
+    # Eogll normally provides GLAD, but if it is not being used, we need to provide it ourselves
+    add_subdirectory(${eogll_SOURCE_DIR}/thirdparty/glad ${CMAKE_BINARY_DIR}/glad)
+endif()
 
 Find_Package(OpenGL REQUIRED)
 
@@ -89,32 +102,38 @@ endmacro()
 
 add_module(scrld cpp scrld/cppscript.cpp)
 
-add_module(win glfw_gl win/glfwwin.cpp)
-target_link_libraries(win_glfw_gl glfw)
-target_compile_definitions(win_glfw_gl PUBLIC "SPECTRAL_GLFW_OPENGL")
-target_include_directories(win_glfw_gl PUBLIC ${glfw_BINARY_DIR}/src)
+if(SPEC_GLFW)
+    add_module(win glfw_gl win/glfwwin.cpp)
+    target_link_libraries(win_glfw_gl glfw)
+    target_compile_definitions(win_glfw_gl PUBLIC "SPECTRAL_GLFW_OPENGL")
+    target_include_directories(win_glfw_gl PUBLIC ${glfw_BINARY_DIR}/src)
 
-add_module(win glfw_noapi win/glfwwin.cpp)
-target_link_libraries(win_glfw_noapi glfw)
-target_compile_definitions(win_glfw_noapi PUBLIC "SPECTRAL_GLFW_NOAPI")
-target_include_directories(win_glfw_noapi PUBLIC ${glfw_BINARY_DIR}/src)
+    add_module(win glfw_noapi win/glfwwin.cpp)
+    target_link_libraries(win_glfw_noapi glfw)
+    target_compile_definitions(win_glfw_noapi PUBLIC "SPECTRAL_GLFW_NOAPI")
+    target_include_directories(win_glfw_noapi PUBLIC ${glfw_BINARY_DIR}/src)
+endif()
 
-add_module(win sf win/sfwin.cpp)
-target_link_libraries(win_sf sfml-graphics sfml-window sfml-system)
+if(SPEC_SFML)
+    add_module(win sf win/sfwin.cpp)
+    target_link_libraries(win_sf sfml-graphics sfml-window sfml-system)
+endif()
+if(SPEC_EOGLL)
+    add_module(win eogll win/eogllwin.cpp)
+    target_link_libraries(win_eogll eogll)
+    target_include_directories(win_eogll PUBLIC ${glfw_BINARY_DIR}/src)
 
-add_module(win eogll win/eogllwin.cpp)
-target_link_libraries(win_eogll eogll)
-target_include_directories(win_eogll PUBLIC ${glfw_BINARY_DIR}/src)
-
-add_module(gfx eogll gfx/eogll.cpp)
-target_link_libraries(gfx_eogll eogll opengl32)
-
-add_module(gfx glad gfx/glad.cpp)
-target_link_libraries(gfx_glad glad opengl32)
-
-add_module(gfx d3d11_1 gfx/d3d11_1.cpp)
-target_link_libraries(gfx_d3d11_1 d3d11 d3dcompiler dxgi)
-
+    add_module(gfx eogll gfx/eogll.cpp)
+    target_link_libraries(gfx_eogll eogll opengl32)
+endif()
+if(SPEC_GLAD)
+    add_module(gfx glad gfx/glad.cpp)
+    target_link_libraries(gfx_glad glad opengl32)
+endif()
+if(SPEC_DX11)
+    add_module(gfx d3d11_1 gfx/d3d11_1.cpp)
+    target_link_libraries(gfx_d3d11_1 d3d11 d3dcompiler dxgi)
+endif()
 add_module(shdr spsl_glsl shdr/spsl.cpp)
 target_compile_definitions(shdr_spsl_glsl PUBLIC "SPECTRAL_OUTPUT_GLSL")
 
@@ -125,16 +144,25 @@ target_compile_definitions(shdr_spsl_hlsl PUBLIC "SPECTRAL_OUTPUT_HLSL")
 add_custom_target(
         SpectralModules ALL
         DEPENDS scrld_cpp
-        DEPENDS win_glfw_gl
-        DEPENDS win_glfw_noapi
-        DEPENDS win_sf
-        DEPENDS win_eogll
-        DEPENDS gfx_eogll
-        DEPENDS gfx_glad
-        DEPENDS gfx_d3d11_1
         DEPENDS shdr_spsl_glsl
         DEPENDS shdr_spsl_hlsl
 )
+if(SPEC_GLFW)
+    add_dependencies(SpectralModules win_glfw_gl win_glfw_noapi)
+endif()
+if(SPEC_SFML)
+    add_dependencies(SpectralModules win_sf)
+endif()
+if(SPEC_EOGLL)
+    add_dependencies(SpectralModules win_eogll gfx_eogll)
+endif()
+if(SPEC_GLAD)
+    add_dependencies(SpectralModules gfx_glad)
+endif()
+if(SPEC_DX11)
+    add_dependencies(SpectralModules gfx_d3d11_1)
+endif()
+
 
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib")
