@@ -27,7 +27,13 @@ int main(int argc, char** argv) {
 
     gfxm.setClearColor(0.2f, 0.3f, 0.4f, 1.0f);
 
-    sVertex vertices[] = {
+    sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3});
+
+
+    struct {
+        float position[3];
+        float color[3];
+    } vertices[] = {
             {{0.0f, 0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
             {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
             {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}}
@@ -38,17 +44,19 @@ int main(int argc, char** argv) {
     sShader vert{};
     sShader frag{};
     if (strcmp(graphics_module, "d3d11_1") == 0) {
-        vert = gfxm.loadShader("shaders/vert.hlsl", sShaderType::VERTEX);
+        vert = gfxm.loadShader("shaders/vert.hlsl", sShaderType::VERTEX, vertDef);
         frag = gfxm.loadShader("shaders/frag.hlsl", sShaderType::FRAGMENT);
         printf("HLSL shaders\n");
     } else {
-        vert = gfxm.loadShader("shaders/vert.glsl", sShaderType::VERTEX);
+        vert = gfxm.loadShader("shaders/vert.glsl", sShaderType::VERTEX, vertDef);
         frag = gfxm.loadShader("shaders/frag.glsl", sShaderType::FRAGMENT);
         printf("GLSL shaders\n");
     }
     sShaderProgram shader = gfxm.createShaderProgram({vert, frag});
 
+
     sMesh mesh = gfxm.createMesh(vert, vertices, sizeof(vertices), indices, sizeof(indices));
+
 
     while (!winm.shouldClose(win)) {
         winm.updateWindow(win);

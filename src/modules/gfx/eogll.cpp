@@ -36,14 +36,21 @@ CEXPORT void clear() {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-CEXPORT sMesh createMesh(sShader vertexShader, sVertex* vertices, size_t vertexSize, sIndex* indices, size_t indexSize) {
+struct sInternalShader {
+    unsigned int shader;
+    sVertexDefinition* vertDef;
+};
+
+CEXPORT sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexSize, sIndex* indices, size_t indexSize) {
     unsigned int vao = eogllGenVertexArray();
     unsigned int vbo = eogllGenBuffer(vao, GL_ARRAY_BUFFER, vertexSize, vertices, GL_STATIC_DRAW);
     unsigned int ebo = eogllGenBuffer(vao, GL_ELEMENT_ARRAY_BUFFER, indexSize, indices, GL_STATIC_DRAW);
 
     EogllAttribBuilder builder = eogllCreateAttribBuilder();
-    eogllAddAttribute(&builder, GL_FLOAT, 3);
-    eogllAddAttribute(&builder, GL_FLOAT, 3);
+    sVertexDefinition* vertDef = ((sInternalShader*)vertexShader.internal)->vertDef;
+    for (size_t i = 0; i < vertDef->count; i++) {
+        eogllAddAttribute(&builder, GL_FLOAT, vertDef->elements[i]);
+    }
     eogllBuildAttributes(&builder, vao);
 
     auto* mesh = (EogllBufferObject*)malloc(sizeof(EogllBufferObject));
@@ -56,11 +63,15 @@ CEXPORT void drawMesh(sMesh mesh) {
     eogllDrawBufferObject((EogllBufferObject*)mesh.internal, GL_TRIANGLES);
 }
 
-CEXPORT sShader createShader(const char* source, sShaderType type) {
+CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefinition* vertDef) {
     unsigned int glType;
     switch (type) {
         case sShaderType::VERTEX:
             glType = GL_VERTEX_SHADER;
+            if (vertDef == nullptr) {
+                printf("Vertex shader requires vertex definition\n");
+                return {nullptr};
+            }
             break;
         case sShaderType::FRAGMENT:
             glType = GL_FRAGMENT_SHADER;
@@ -86,22 +97,14 @@ CEXPORT sShader createShader(const char* source, sShaderType type) {
         return {nullptr};
     }
 
-    unsigned int* internal = (unsigned int*)malloc(sizeof(unsigned int));
-    *internal = shader;
+    sInternalShader* internal = (sInternalShader*)malloc(sizeof(sInternalShader));
+    internal->shader = shader;
+    internal->vertDef = vertDef;
     return {internal};
 }
 
-CEXPORT sShader loadShader(const char* path, sShaderType type) {
-    std::string source;
-    if (!readFile(path, source)) {
-        printf("Error reading file\n");
-        return {nullptr};
-    }
-    return createShader(source.c_str(), type);
-}
-
 CEXPORT void useShaderProgram(sShaderProgram shader) {
-    glUseProgram(*(unsigned int*)shader.internal);
+    glUseProgram(((sInternalShader*)shader.internal)->shader);
 }
 
 CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {

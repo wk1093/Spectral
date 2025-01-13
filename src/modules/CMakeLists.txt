@@ -18,9 +18,6 @@ set(BUILD_HOGLL OFF CACHE BOOL "" FORCE)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# the library names used to be mod_impl.splmod (ex: win_glfw_gl.splmod)
-# but this causes issues with mutli-platform builds, so now it is mod_impl.plat.splmod (ex: win_glfw_gl.win_x86_64.splmod)
-# this is to prevent conflicts between different platforms
 # the platform is determined by the CMAKE_SYSTEM_NAME variable
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(SPECTRAL_PLATFORM "win")
