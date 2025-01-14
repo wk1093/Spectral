@@ -150,3 +150,105 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
 CEXPORT void present() {
 
 }
+
+struct sInternalUniforms {
+    sUniformDefinition def;
+    sShaderProgram program;
+};
+
+CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def) {
+    sInternalUniforms* internal = (sInternalUniforms*)malloc(sizeof(sInternalUniforms));
+    internal->def = def;
+    internal->program = program;
+    return {internal};
+}
+
+CEXPORT void setUniforms(sUniforms uniforms, void* data) {
+
+    sInternalUniforms internal = *(sInternalUniforms*)uniforms.internal;
+    sUniformDefinition def = internal.def;
+
+    size_t offset = 0;
+    for (size_t i = 0; i < internal.def.count; i++) {
+        sUniformElement element = internal.def.elements[i];
+        unsigned int location = glGetUniformLocation(*(unsigned int*)internal.program.internal, element.name);
+        switch (element.type) {
+            case sUniformType::FLOAT:
+                if (element.county == 1) {
+                    switch (element.countx) {
+                    case 1:
+                        glUniform1fv(location, 1, (float*)data + offset);
+                        break;
+                    case 2:
+                        glUniform2fv(location, 1, (float*)data + offset);
+
+                        break;
+                    case 3:
+                        glUniform3fv(location, 1, (float*)data + offset);
+                        break;
+                    case 4:
+                        glUniform4fv(location, 1, (float*)data + offset);
+                        break;
+                    default:
+                        glUniform1fv(location, element.countx, (float*)data + offset);
+                    }
+                    offset += uniformElementSize(element);
+                } else if (element.countx == element.county) {
+                    switch (element.countx) {
+                        case 2:
+                            glUniform2fv(location, 1, (float*)data + offset);
+                            offset += uniformElementSize(element);
+                            break;
+                        case 3:
+                            glUniform3fv(location, 1, (float*)data + offset);
+                            offset += uniformElementSize(element);
+                            break;
+                        case 4:
+                            glUniform4fv(location, 1, (float*)data + offset);
+                            offset += uniformElementSize(element);
+                            break;
+                        default:
+                            printf("Invalid matrix size\n");
+                            return;
+                    }
+                } else {
+                    printf("Invalid matrix size\n");
+                    return;
+                }
+                break;
+            case sUniformType::INT:
+                if (element.county != 1) {
+                    printf("Invalid uniform type: no int matrices\n");
+                    return;
+                }
+                switch (element.countx) {
+                    case 1:
+                        glUniform1iv(location, 1, (int*)data + offset);
+                        break;
+                    case 2:
+                        glUniform2iv(location, 1, (int*)data + offset);
+                        break;
+                    case 3:
+                        glUniform3iv(location, 1, (int*)data + offset);
+                        break;
+                    case 4:
+                        glUniform4iv(location, 1, (int*)data + offset);
+                        break;
+                    default:
+                        glUniform1iv(location, element.countx, (int*)data + offset);
+                }
+                offset += uniformElementSize(element);
+                break;
+            case sUniformType::BOOL:
+                if (element.county != 1) {
+                    printf("Invalid uniform type: no bool matrices\n");
+                    return;
+                }
+                glUniform1iv(location, element.countx, (int*)data + offset);
+                offset += uniformElementSize(element);
+                break;
+            default:
+                printf("Invalid uniform type\n");
+        }
+    }
+}

@@ -2,9 +2,11 @@
 #include "modules/gfx/module.h"
 #include "modules/shdr/module.h"
 
+#include <cmath>
+
 int main(int argc, char** argv) {
-    const char* window_module = "glfw_noapi";
-    const char* graphics_module = "d3d11_1";
+    const char* window_module = "glfw_gl";
+    const char* graphics_module = "glad";
     if (argc == 3) {
         window_module = argv[1];
         graphics_module = argv[2];
@@ -52,7 +54,9 @@ int main(int argc, char** argv) {
         {sShaderType::VERTEX, "uTestMatrix", sUniformType::FLOAT, 4, 4}
     };
 
-    // sUniforms uniforms = gfxm.createUniforms(shader, uniformDef);
+    printf("before create unif\n");
+    sUniforms uniforms = gfxm.createUniforms(shader, uniformDef);
+    printf("create unif\n");
 
 #pragma pack(push,1)
     struct ShaderData {
@@ -73,12 +77,15 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    unsigned int i = 0;
+
     while (!winm.shouldClose(win)) {
         winm.updateWindow(win);
         gfxm.clear();
 
-        // gfxm.setUniforms(uniforms, &shaderData);
+        shaderData.colorMult[0] = sinf(i++ * 0.1f) * 0.5f + 0.5f;
         gfxm.useShaderProgram(shader);
+        gfxm.setUniforms(uniforms, &shaderData);
         gfxm.drawMesh(mesh);
 
         gfxm.present();

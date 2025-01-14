@@ -60,6 +60,12 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
         source.replace(fsin, 6, "in");
     }
 
+    while (true) {
+        size_t unif = source.find("#UNIFORM");
+        if (unif == std::string::npos) break;
+        source.replace(unif, 8, "uniform");
+    }
+
     // spsl_position -> gl_Position
     while (true) {
         size_t pos = source.find("spsl_position");
@@ -84,6 +90,19 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
     }
 
     preprocess(source);
+
+    std::string unifs;
+
+    while (true) {
+        size_t unif = source.find("#UNIFORM");
+        if (unif == std::string::npos) break;
+        size_t eof = source.find("\n", unif);
+        std::string line = source.substr(unif + 8, eof - unif - 8);
+        unifs += line + "\n";
+        source.replace(unif, eof - unif, "");
+    }
+
+    source = "cbuffer SPSL_Uniforms {\n" + unifs + "};\n" + source;
 
     if (type == sShaderType::VERTEX) {
         std::string inputs;

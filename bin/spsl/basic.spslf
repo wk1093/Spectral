@@ -1,5 +1,7 @@
 #FS_IN vec3 color_out;
 
+#UNIFORM vec3 uColorMult;
+
 void main() {
-    spsl_fragcolor = vec4(color_out, 1.0);
+    spsl_fragcolor = vec4(color_out*uColorMult, 1.0);
 }

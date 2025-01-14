@@ -342,10 +342,6 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
     }
     ID3D11InputLayout* inputLayout;
     {
-        // D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = {
-        //         {"POS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        //         {"COL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-        // };
         D3D11_INPUT_ELEMENT_DESC inputElementDesc[15] = {{0}};
         int offset = 0;
         if (vertexShader.vertDef == nullptr) {
@@ -375,4 +371,76 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
     fragmentShader.shaderBlob->Release();
 
     return {new sInternalShaderProgram{vertexShader, fragmentShader, inputLayout}};
+}
+
+struct sInternalUniforms {
+    sUniformDefinition fragmentPart;
+    sUniformDefinition vertexPart;
+    sShaderProgram program;
+    ID3D11Buffer* fragmentBuffer;
+    ID3D11Buffer* vertexBuffer;
+};
+
+CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def) {
+    printf("Creating uniforms\n");
+    sInternalUniforms* internal = (sInternalUniforms*)malloc(sizeof(sInternalUniforms));
+    if (!internal) {
+        MessageBoxA(0, "malloc() failed", "Fatal Error", MB_OK);
+        printf("ERROR CODE: %lu\n", GetLastError());
+    }
+    internal->program = program;
+    printf("asdsad\n");
+    internal->fragmentPart = getPartialf(def, sShaderType::FRAGMENT);
+    internal->vertexPart = getPartialf(def, sShaderType::VERTEX);
+    printf("bufsedsdec\n");
+
+    D3D11_BUFFER_DESC bufferDesc{};
+    bufferDesc.ByteWidth = internal->fragmentPart.size();
+    bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    bufferDesc.MiscFlags = 0;
+    bufferDesc.StructureByteStride = 0;
+
+    D3D11_SUBRESOURCE_DATA subResourceData{};
+    uint8_t fakeBuffer[internal->fragmentPart.size()] = {0};
+    subResourceData.pSysMem = fakeBuffer;
+    subResourceData.SysMemPitch = 0;
+    subResourceData.SysMemSlicePitch = 0;
+    printf("Creating fragment buffer\n");
+    HRESULT hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, &subResourceData, &internal->fragmentBuffer);
+    printf("Created fragment buffer\n");
+    if (FAILED(hResult)) {
+        MessageBoxA(0, "CreateBuffer() failed", "Fatal Error", MB_OK);
+        printf("ERROR CODE: %lu\n", GetLastError());
+    }
+
+    bufferDesc.ByteWidth = internal->vertexPart.size();
+    uint8_t fakeBuffer2[internal->vertexPart.size()] = {0};
+    subResourceData.pSysMem = fakeBuffer2;
+    printf("Creating vertex buffer\n");
+    hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, &subResourceData, &internal->vertexBuffer);
+    printf("Created vertex buffer\n");
+    if (FAILED(hResult)) {
+        MessageBoxA(0, "CreateBuffer() failed", "Fatal Error", MB_OK);
+        printf("ERROR CODE: %lu\n", GetLastError());
+    }
+
+    return {internal};
+}
+
+CEXPORT void setUniforms(sUniforms uniforms, void* data) {
+    auto* internal = (sInternalUniforms*)uniforms.internal;
+    D3D11_MAPPED_SUBRESOURCE mappedResource;
+    __d3d11_1_context.deviceContext->Map(internal->fragmentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    memcpy(mappedResource.pData, data, internal->fragmentPart.size());
+    __d3d11_1_context.deviceContext->Unmap(internal->fragmentBuffer, 0);
+
+    __d3d11_1_context.deviceContext->PSSetConstantBuffers(0, 1, &internal->fragmentBuffer);
+
+    __d3d11_1_context.deviceContext->Map(internal->vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    memcpy(mappedResource.pData, (char*)data + internal->fragmentPart.size(), internal->vertexPart.size());
+    __d3d11_1_context.deviceContext->Unmap(internal->vertexBuffer, 0);
+
+    __d3d11_1_context.deviceContext->VSSetConstantBuffers(0, 1, &internal->vertexBuffer);
 }

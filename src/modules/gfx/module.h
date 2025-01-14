@@ -33,6 +33,12 @@ size_t uniformTypeSize(sUniformType type) {
     return 0;
 }
 
+enum sShaderType {
+    VERTEX,
+    FRAGMENT,
+    GEOMETRY
+};
+
 struct sUniformElement {
     sShaderType shaderType;
     const char* name;
@@ -40,9 +46,13 @@ struct sUniformElement {
     size_t countx;
     size_t county=1;
 
-    sUniformElement(sShaderType shaderType, const char* name, sUniformType type, size_t countx, size_t county) : name(name), type(type), countx(countx), county(county) {}
-    sUniformElement(sShaderType shaderType, const char* name, sUniformType type, size_t countx) : name(name), type(type), countx(countx) {}
+    sUniformElement(sShaderType shaderType, const char* name, sUniformType type, size_t countx, size_t county) : shaderType(shaderType), name(name), type(type), countx(countx), county(county) {}
+    sUniformElement(sShaderType shaderType, const char* name, sUniformType type, size_t countx) : shaderType(shaderType), name(name), type(type), countx(countx) {}
 };
+
+size_t uniformElementSize(sUniformElement element) {
+    return element.countx * element.county * uniformTypeSize(element.type);
+}
 
 // typedef sUniformElement sUniformDefinition[];
 
@@ -67,6 +77,33 @@ struct sUniformDefinition {
         }
         return size;
     }
+
+    sUniformDefinition() : elements(nullptr), count(0) {}
+    sUniformDefinition(sUniformElement* elements, size_t count) : elements(elements), count(count) {}
+};
+
+sUniformDefinition getPartialf(sUniformDefinition def, sShaderType type) {
+    size_t count = 0;
+    for (size_t i = 0; i < def.count; i++) {
+        if (def.elements[i].shaderType == type) {
+            count++;
+        }
+    }
+    sUniformElement* elements = (sUniformElement*)malloc(sizeof(sUniformElement) * count);
+    if (elements == nullptr) {
+        printf("ERROR: Malloc failed\n");
+    }
+    size_t j = 0;
+    for (size_t i = 0; i < def.count; i++) {
+        if (def.elements[i].shaderType == type) {
+            elements[j++] = def.elements[i];
+        }
+    }
+    return {elements, count};
+}
+
+struct sUniforms {
+    void* internal;
 };
 
 struct sMesh {
@@ -76,12 +113,6 @@ struct sMesh {
 
 struct sShader {
     void* internal;
-};
-
-enum sShaderType {
-    VERTEX,
-    FRAGMENT,
-    GEOMETRY
 };
 
 struct GraphicsModule;
@@ -103,6 +134,8 @@ namespace graphics {
     typedef sShaderProgram (*CreateShaderProgram)(sShader* shaders, size_t count);
     typedef void (*Present)();
     typedef const char* (*GetShaderType)();
+    typedef sUniforms (*CreateUniforms)(sShaderProgram program, sUniformDefinition def);
+    typedef void (*SetUniforms)(sUniforms uniforms, void* data);
 }
 
 struct GraphicsModule : Module {
@@ -116,6 +149,8 @@ struct GraphicsModule : Module {
     graphics::CreateShader internal_createShader;
     graphics::Present present;
     graphics::GetShaderType getShaderType;
+    graphics::CreateUniforms createUniforms;
+    graphics::SetUniforms setUniforms;
 
     sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexCount, sIndex* indices, size_t indexCount) {
         sMesh mesh = internal_createMesh(vertexShader, vertices, vertexCount, indices, indexCount);
@@ -180,5 +215,7 @@ struct GraphicsModule : Module {
         internal_createShader = (graphics::CreateShader)lib.getSymbol("createShader");
         present = (graphics::Present)lib.getSymbol("present");
         getShaderType = (graphics::GetShaderType)lib.getSymbol("getShaderType");
+        createUniforms = (graphics::CreateUniforms)lib.getSymbol("createUniforms");
+        setUniforms = (graphics::SetUniforms)lib.getSymbol("setUniforms");
     }
 };
