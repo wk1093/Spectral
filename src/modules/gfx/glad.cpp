@@ -202,15 +202,15 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
                 } else if (element.countx == element.county) {
                     switch (element.countx) {
                         case 2:
-                            glUniform2fv(location, 1, (float*)curData);
+                            glUniformMatrix2fv(location, 1, GL_FALSE, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         case 3:
-                            glUniform3fv(location, 1, (float*)curData);
+                            glUniformMatrix3fv(location, 1, GL_FALSE, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         case 4:
-                            glUniform4fv(location, 1, (float*)curData);
+                            glUniformMatrix4fv(location, 1, GL_FALSE, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         default:

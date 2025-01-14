@@ -5,8 +5,8 @@
 #include <cmath>
 
 int main(int argc, char** argv) {
-    const char* window_module = "eogll";
-    const char* graphics_module = "eogll";
+    const char* window_module = "glfw_gl";
+    const char* graphics_module = "glad";
     if (argc == 3) {
         window_module = argv[1];
         graphics_module = argv[2];
@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     GraphicsModule gfxm(graphics_module);
     if (!gfxm.lib.valid()) return 1;
 
-    ShaderModule shdr("spsl", gfxm.getShaderType()); // input format, then output format
+    ShaderModule shdr("spsl", gfxm.getShaderType());
     if (!shdr.lib.valid()) return 1;
 
     std::string window_title = "Test (win_" + std::string(window_module) + ", gfx_" + std::string(graphics_module) + ")";
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
         float colorMult[3] = {1.0f, 1.0f, 1.0f};
         float time = 0.0f;
         float testMatrix[4][4] = {
-            {1.0f, 0.0f, 0.0f, 0.0f},
+            {1.8f, 0.0f, 0.0f, 0.0f},
             {0.0f, 1.0f, 0.0f, 0.0f},
             {0.0f, 0.0f, 1.0f, 0.0f},
             {0.0f, 0.0f, 0.0f, 1.0f}

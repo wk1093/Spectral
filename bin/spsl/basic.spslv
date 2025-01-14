@@ -2,7 +2,9 @@
 #VS_IN vec3 color;
 #VS_OUT vec3 color_out;
 
+#UNIFORM mat4 uTestMatrix;
+
 void main() {
-    spsl_position = vec4(pos, 1.0);
+    spsl_position = mul(uTestMatrix, vec4(pos, 1.0));
     color_out = color;
 }
