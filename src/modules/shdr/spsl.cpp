@@ -74,11 +74,22 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
     }
     if (type == sShaderType::FRAGMENT) {
         source = "out vec4 spsl_fragcolor;\n" + source;
+        // spsl_fragpos -> gl_FragCoord
+        while (true) {
+            size_t pos = source.find("spsl_fragpos");
+            if (pos == std::string::npos) break;
+            source.replace(pos, 12, "gl_FragCoord");
+        }
     }
 
     source = "#version 330 core\n" + source;
     // that is all for now
-    return gfxm->createShader(source.c_str(), type, vertDef);
+    sShader s = gfxm->createShader(source.c_str(), type, vertDef);
+    if (s.internal == nullptr) {
+        printf("Failed to compile shader %s\n", path);
+        printf("Generated source:\n%s\n", source.c_str());
+    }
+    return s;
 }
 
 sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef) {

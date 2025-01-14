@@ -172,39 +172,40 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
     for (size_t i = 0; i < internal.def.count; i++) {
         sUniformElement element = internal.def.elements[i];
         unsigned int location = glGetUniformLocation(*(unsigned int*)internal.program.internal, element.name);
+        void* curData = (void*)(data + offset);
         switch (element.type) {
             case sUniformType::FLOAT:
                 if (element.county == 1) {
                     switch (element.countx) {
                     case 1:
-                        glUniform1fv(location, 1, (float*)data + offset);
+                        glUniform1fv(location, 1, (float*)curData);
                         break;
                     case 2:
-                        glUniform2fv(location, 1, (float*)data + offset);
+                        glUniform2fv(location, 1, (float*)curData);
 
                         break;
                     case 3:
-                        glUniform3fv(location, 1, (float*)data + offset);
+                        glUniform3fv(location, 1, (float*)curData);
                         break;
                     case 4:
-                        glUniform4fv(location, 1, (float*)data + offset);
+                        glUniform4fv(location, 1, (float*)curData);
                         break;
                     default:
-                        glUniform1fv(location, element.countx, (float*)data + offset);
+                        glUniform1fv(location, element.countx, (float*)curData);
                     }
                     offset += uniformElementSize(element);
                 } else if (element.countx == element.county) {
                     switch (element.countx) {
                         case 2:
-                            glUniform2fv(location, 1, (float*)data + offset);
+                            glUniform2fv(location, 1, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         case 3:
-                            glUniform3fv(location, 1, (float*)data + offset);
+                            glUniform3fv(location, 1, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         case 4:
-                            glUniform4fv(location, 1, (float*)data + offset);
+                            glUniform4fv(location, 1, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         default:
@@ -223,19 +224,19 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
                 }
                 switch (element.countx) {
                     case 1:
-                        glUniform1iv(location, 1, (int*)data + offset);
+                        glUniform1iv(location, 1, (int*)curData);
                         break;
                     case 2:
-                        glUniform2iv(location, 1, (int*)data + offset);
+                        glUniform2iv(location, 1, (int*)curData);
                         break;
                     case 3:
-                        glUniform3iv(location, 1, (int*)data + offset);
+                        glUniform3iv(location, 1, (int*)curData);
                         break;
                     case 4:
-                        glUniform4iv(location, 1, (int*)data + offset);
+                        glUniform4iv(location, 1, (int*)curData);
                         break;
                     default:
-                        glUniform1iv(location, element.countx, (int*)data + offset);
+                        glUniform1iv(location, element.countx, (int*)curData);
                 }
                 offset += uniformElementSize(element);
                 break;
@@ -244,7 +245,7 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
                     printf("Invalid uniform type: no bool matrices\n");
                     return;
                 }
-                glUniform1iv(location, element.countx, (int*)data + offset);
+                glUniform1iv(location, element.countx, (int*)curData);
                 offset += uniformElementSize(element);
                 break;
             default:

@@ -5,8 +5,8 @@
 #include <cmath>
 
 int main(int argc, char** argv) {
-    const char* window_module = "glfw_gl";
-    const char* graphics_module = "glad";
+    const char* window_module = "glfw_noapi";
+    const char* graphics_module = "d3d11_1";
     if (argc == 3) {
         window_module = argv[1];
         graphics_module = argv[2];
@@ -54,9 +54,7 @@ int main(int argc, char** argv) {
         {sShaderType::VERTEX, "uTestMatrix", sUniformType::FLOAT, 4, 4}
     };
 
-    printf("before create unif\n");
     sUniforms uniforms = gfxm.createUniforms(shader, uniformDef);
-    printf("create unif\n");
 
 #pragma pack(push,1)
     struct ShaderData {
@@ -80,10 +78,11 @@ int main(int argc, char** argv) {
     unsigned int i = 0;
 
     while (!winm.shouldClose(win)) {
-        winm.updateWindow(win);
+        winm.updateWindow(&win);
         gfxm.clear();
 
         shaderData.colorMult[0] = sinf(i++ * 0.1f) * 0.5f + 0.5f;
+        shaderData.time = (float)winm.getTime(win);
         gfxm.useShaderProgram(shader);
         gfxm.setUniforms(uniforms, &shaderData);
         gfxm.drawMesh(mesh);

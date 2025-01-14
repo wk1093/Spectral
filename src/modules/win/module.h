@@ -2,12 +2,16 @@
 #include "../moduleLib.h"
 
 #include <stdio.h>
+#include <chrono>
 
 struct WindowModule;
 
 struct sWindow {
     void* internal;
     WindowModule* creator;
+    double dt;
+    double lastTime;
+    std::chrono::high_resolution_clock::time_point startTime;
 };
 
 // Required for compatibility with different windowing libraries
@@ -40,7 +44,7 @@ namespace window {
 struct WindowModule : Module {
     window::WindowLoader internal_loadWindow;
     window::WindowDestructor destroyWindow;
-    window::WindowUpdate updateWindow;
+    window::WindowUpdate internal_updateWindow;
     window::WindowSwapBuffers swapBuffers;
     window::WindowShouldClose shouldClose;
     window::WindowSetShouldClose setShouldClose;
@@ -53,13 +57,26 @@ struct WindowModule : Module {
     sWindow loadWindow(const char* name, int width, int height) {
         sWindow w = internal_loadWindow(name, width, height);
         w.creator = this;
+        w.startTime = std::chrono::high_resolution_clock::now();
         return w;
+    }
+
+    void updateWindow(sWindow* window) {
+        internal_updateWindow(*window);
+        double cur = getTime(*window);
+        window->dt = cur - window->lastTime;
+        window->lastTime = cur;
+    }
+
+    double getTime(sWindow window) {
+        auto now = std::chrono::high_resolution_clock::now();
+        return std::chrono::duration<double>(now - window.startTime).count();
     }
 
     explicit WindowModule(const char* dynlib) : Module(dynlib, "win") {
         internal_loadWindow = (window::WindowLoader)lib.getSymbol("loadWindow");
         destroyWindow = (window::WindowDestructor)lib.getSymbol("destroyWindow");
-        updateWindow = (window::WindowUpdate)lib.getSymbol("updateWindow");
+        internal_updateWindow = (window::WindowUpdate)lib.getSymbol("updateWindow");
         swapBuffers = (window::WindowSwapBuffers)lib.getSymbol("swapBuffers");
         shouldClose = (window::WindowShouldClose)lib.getSymbol("shouldClose");
         setShouldClose = (window::WindowSetShouldClose)lib.getSymbol("setShouldClose");
