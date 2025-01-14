@@ -154,12 +154,17 @@ CEXPORT void present() {
 struct sInternalUniforms {
     sUniformDefinition def;
     sShaderProgram program;
+    int* locations;
 };
 
 CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def) {
     sInternalUniforms* internal = (sInternalUniforms*)malloc(sizeof(sInternalUniforms));
     internal->def = def;
     internal->program = program;
+    internal->locations = (int*)malloc(sizeof(int) * def.count);
+    for (size_t i = 0; i < def.count; i++) {
+        internal->locations[i] = glGetUniformLocation(*(unsigned int*)program.internal, def.elements[i].name);
+    }
     return {internal};
 }
 
@@ -169,10 +174,10 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
     sUniformDefinition def = internal.def;
 
     size_t offset = 0;
-    for (size_t i = 0; i < internal.def.count; i++) {
-        sUniformElement element = internal.def.elements[i];
-        unsigned int location = glGetUniformLocation(*(unsigned int*)internal.program.internal, element.name);
-        void* curData = (void*)(data + offset);
+    for (size_t i = 0; i < def.count; i++) {
+        sUniformElement element = def.elements[i];
+        int location = internal.locations[i];
+        void* curData = (void*)((size_t)data + offset);
         switch (element.type) {
             case sUniformType::FLOAT:
                 if (element.county == 1) {

@@ -173,11 +173,5 @@ struct Module {
         } else {
             printf("Module %s.%s loaded\n", ident, path);
         }
-
-
-
-
-
-
     }
 };
