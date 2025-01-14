@@ -15,6 +15,7 @@ bool strendw(const char* a, const char* b) {
 
 sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef);
 sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef);
+void preprocess(std::string& source);
 
 CEXPORT sShader compile(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef) {
 #ifdef SPECTRAL_OUTPUT_GLSL
@@ -27,12 +28,13 @@ CEXPORT sShader compile(GraphicsModule* gfxm, const char* path, sShaderType type
 }
 
 sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef) {
-    printf("Compiling SPSL -> GLSL shader %s\n", path);
     std::string source;
     if (!readFile(path, source)) {
         printf("Failed to read file %s\n", path);
         return sShader();
     }
+
+    preprocess(source);
 
     // first pass: #VS_IN -> layouts
     // second pass: #VS_OUT -> outputs
@@ -69,19 +71,20 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
     }
 
     source = "#version 330 core\n" + source;
-    printf("GLSL source:\n%s\n", source.c_str());
     // that is all for now
     return gfxm->createShader(source.c_str(), type, vertDef);
 }
 
 sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef) {
-    printf("Compiling SPSL -> HLSL shader %s\n", path);
     std::string source;
     
     if (!readFile(path, source)) {
         printf("Failed to read file %s\n", path);
         return sShader();
     }
+
+    preprocess(source);
+
     if (type == sShaderType::VERTEX) {
         std::string inputs;
         std::string outputs;
@@ -131,7 +134,6 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
             size_t last_space = line.rfind(" ", semicolon);
             std::string name = line.substr(last_space + 1, semicolon - last_space - 1);
             output_names.push_back(name);
-            printf("Output name: '%s'\n", name.c_str());
             source.replace(vsout, eol - vsout, "");
             outputs += line + "C_" + name + "e;\n";
         }
@@ -190,7 +192,6 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
 
         source = "struct SPSL_VS_Input {\n" + inputs + "};\nstruct SPSL_VS_Output {\nfloat4 position : SV_POSITION;" + outputs + "};\n" + source;
 
-        printf("HLSL source:\n%s\n", source.c_str());
         return gfxm->createShader(source.c_str(), type, vertDef);
     } else {
         std::string inputs;
@@ -252,10 +253,51 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
         
         source = "struct SPSL_FS_Input {\nfloat4 position : SV_POSITION;" + inputs + "};\n" + source;
 
-        printf("HLSL source:\n%s\n", source.c_str());
         sShader s = gfxm->createShader(source.c_str(), type, vertDef);
-        printf("Shader created\n");
         return s;
     }
 
+}
+
+void preprocess(std::string& source) {
+    // only one little thing we do here for now
+    // #ifgl and #endifgl
+    // #ifhl and #endifhl
+    // everything in between is removed if the output format is not GLSL or HLSL respectively
+#ifdef SPECTRAL_OUTPUT_GLSL
+    std::string to_remove = "#ifhl";
+    std::string to_remove_end = "#endifhl";
+    std::string to_keep = "#ifgl";
+    std::string to_keep_end = "#endifgl";
+#elif defined(SPECTRAL_OUTPUT_HLSL)
+    std::string to_remove = "#ifgl";
+    std::string to_remove_end = "#endifgl";
+    std::string to_keep = "#ifhl";
+    std::string to_keep_end = "#endifhl";
+#else
+#error "Invalid shader output format"
+#endif
+    while (true) {
+        size_t ifremove = source.find(to_remove);
+        if (ifremove == std::string::npos) break;
+        size_t ifremove_end = source.find(to_remove_end, ifremove);
+        if (ifremove_end == std::string::npos) {
+            printf("Unterminated %s\n", to_remove.c_str());
+            break;
+        }
+        source.replace(ifremove, ifremove_end - ifremove + to_remove_end.size(), "");
+    }
+
+    while (true) {
+        size_t ifkeep = source.find(to_keep);
+        if (ifkeep == std::string::npos) break;
+        size_t ifkeep_end = source.find(to_keep_end, ifkeep);
+        if (ifkeep_end == std::string::npos) {
+            printf("Unterminated %s\n", to_keep.c_str());
+            break;
+        }
+        // just remove the #if and #endif, but keep the inside
+        source.replace(ifkeep, to_keep.size(), "");
+        source.replace(ifkeep_end, to_keep_end.size(), "");
+    }
 }

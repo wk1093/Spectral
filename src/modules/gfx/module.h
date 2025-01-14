@@ -15,6 +15,60 @@ struct sVertexDefinition {
     size_t count;
 };
 
+enum class sUniformType {
+    FLOAT,
+    INT,
+    BOOL
+};
+
+size_t uniformTypeSize(sUniformType type) {
+    switch (type) {
+        case sUniformType::FLOAT:
+            return sizeof(float);
+        case sUniformType::INT:
+            return sizeof(int);
+        case sUniformType::BOOL:
+            return sizeof(bool);
+    }
+    return 0;
+}
+
+struct sUniformElement {
+    sShaderType shaderType;
+    const char* name;
+    sUniformType type;
+    size_t countx;
+    size_t county=1;
+
+    sUniformElement(sShaderType shaderType, const char* name, sUniformType type, size_t countx, size_t county) : name(name), type(type), countx(countx), county(county) {}
+    sUniformElement(sShaderType shaderType, const char* name, sUniformType type, size_t countx) : name(name), type(type), countx(countx) {}
+};
+
+// typedef sUniformElement sUniformDefinition[];
+
+struct sUniformDefinition {
+    sUniformElement* elements;
+    size_t count;
+
+    sUniformDefinition(std::initializer_list<sUniformElement> elements) {
+        // we cant just cast begin to a pointer, because the array will be destroyed
+        this->elements = (sUniformElement*)malloc(sizeof(sUniformElement) * elements.size());
+        this->count = elements.size();
+        size_t i = 0;
+        for (auto it = elements.begin(); it != elements.end(); it++) {
+            this->elements[i++] = *it;
+        }
+    }
+
+    size_t size() {
+        size_t size = 0;
+        for (size_t i = 0; i < count; i++) {
+            size += elements[i].countx * elements[i].county * uniformTypeSize(elements[i].type);
+        }
+        return size;
+    }
+};
+
 struct sMesh {
     void* internal;
     GraphicsModule* creator;

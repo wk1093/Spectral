@@ -11,21 +11,12 @@ int main(int argc, char** argv) {
     }
 
     WindowModule winm(window_module);
-    if (!winm.lib.valid()) {
-        printf("Error loading window module\n");
-        return 1;
-    }
+    if (!winm.lib.valid()) return 1;
     GraphicsModule gfxm(graphics_module);
-    if (!gfxm.lib.valid()) {
-        printf("Error loading graphics module\n");
-        return 1;
-    }
+    if (!gfxm.lib.valid()) return 1;
 
     ShaderModule shdr("spsl", gfxm.getShaderType()); // input format, then output format
-    if (!shdr.lib.valid()) {
-        printf("Error loading shader module\n");
-        return 1;
-    }
+    if (!shdr.lib.valid()) return 1;
 
     std::string window_title = "Test (win_" + std::string(window_module) + ", gfx_" + std::string(graphics_module) + ")";
 
@@ -55,10 +46,38 @@ int main(int argc, char** argv) {
 
     sMesh mesh = gfxm.createMesh(vert, vertices, sizeof(vertices), indices, sizeof(indices));
 
+    sUniformDefinition uniformDef = {
+        {sShaderType::FRAGMENT, "uColorMult", sUniformType::FLOAT, 3},
+        {sShaderType::FRAGMENT, "uTime", sUniformType::FLOAT, 1},
+        {sShaderType::VERTEX, "uTestMatrix", sUniformType::FLOAT, 4, 4}
+    };
+
+    // sUniforms uniforms = gfxm.createUniforms(shader, uniformDef);
+
+#pragma pack(push,1)
+    struct ShaderData {
+        float colorMult[3] = {1.0f, 1.0f, 1.0f};
+        float time = 0.0f;
+        float testMatrix[4][4] = {
+            {1.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 1.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 1.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 1.0f}
+        };
+    } shaderData;
+#pragma pack(pop)
+    if (uniformDef.size() != sizeof(ShaderData)) {
+        printf("ERROR: Uniform definition size does not match shader data size\n");
+        printf("Uniform definition size: %d\n", uniformDef.size());
+        printf("Shader data size: %d\n", sizeof(ShaderData));
+        return 1;
+    }
+
     while (!winm.shouldClose(win)) {
         winm.updateWindow(win);
         gfxm.clear();
 
+        // gfxm.setUniforms(uniforms, &shaderData);
         gfxm.useShaderProgram(shader);
         gfxm.drawMesh(mesh);
 
