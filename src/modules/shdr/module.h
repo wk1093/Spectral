@@ -13,13 +13,17 @@ const char* combine_strs_with_delim(const char* a, const char* b, char delim) {
 }
 
 namespace shader {
-     typedef sShader (*Compile)(GraphicsModule* gfxm, const char* path, sShaderType type);
+     typedef sShader (*Compile)(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef);
 }
 
 struct ShaderModule : Module {
-    shader::Compile compile;
+    shader::Compile internal_compile;
+
+    sShader compile(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef=nullptr) {
+        return internal_compile(gfxm, path, type, vertDef);
+    }
 
     explicit ShaderModule(const char* dynlib, const char* dynp2) : Module(combine_strs_with_delim(dynlib, dynp2, '_'), "shdr") {
-        compile = (shader::Compile)lib.getSymbol("compile");
+        internal_compile = (shader::Compile)lib.getSymbol("compile");
     }
 };

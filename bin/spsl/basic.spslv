@@ -1,0 +1,8 @@
+#VS_IN vec3 pos;
+#VS_IN vec3 color;
+#VS_OUT vec3 color_out;
+
+void main() {
+    spsl_position = vec4(pos, 1.0);
+    color_out = color;
+}
