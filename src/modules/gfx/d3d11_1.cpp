@@ -1,6 +1,7 @@
 #include <d3d11_1.h>
 #include <d3dcompiler.h>
 #include <cmath>
+#include <vector>
 
 #include "module.h"
 
@@ -350,15 +351,16 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
             printf("Too many vertex elements!");
         }
         unsigned int offset2 = 0;
+        std::vector<std::string*> strs;
         for (int i = 0; i < vertexShader.vertDef->count; i++) {
-            printf("el: %s\n", ("C_"+std::to_string(i)+"e").c_str());
+            std::string* str = new std::string("C_"+std::to_string(i)+"e");
+            strs.push_back(str);
             if (i == 0)
                 inputElementDesc[i] = {"C_0e", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0};
             else
-                inputElementDesc[i] = {("C_"+std::to_string(i)+"e").c_str(), 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offset2, D3D11_INPUT_PER_VERTEX_DATA, 0};
+                inputElementDesc[i] = {str->c_str(), 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offset2, D3D11_INPUT_PER_VERTEX_DATA, 0};
             offset2 += vertexShader.vertDef->elements[i] * sizeof(float);
         }
-
 
         HRESULT hResult = __d3d11_1_context.device->CreateInputLayout(inputElementDesc, vertexShader.vertDef->count,
                                                                      vertexShader.shaderBlob->GetBufferPointer(),
@@ -384,7 +386,6 @@ struct sInternalUniforms {
 };
 
 CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def) {
-    printf("Creating uniforms\n");
     sInternalUniforms* internal = (sInternalUniforms*)malloc(sizeof(sInternalUniforms));
     if (!internal) {
         MessageBoxA(0, "malloc() failed", "Fatal Error", MB_OK);

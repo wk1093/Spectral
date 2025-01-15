@@ -5,8 +5,8 @@
 #include <cmath>
 
 int main(int argc, char** argv) {
-    const char* window_module = "glfw_noapi";
-    const char* graphics_module = "d3d11_1";
+    const char* window_module = "glfw_gl";
+    const char* graphics_module = "glad";
     if (argc == 3) {
         window_module = argv[1];
         graphics_module = argv[2];
