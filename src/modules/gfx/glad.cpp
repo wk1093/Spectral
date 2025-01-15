@@ -13,6 +13,16 @@ CEXPORT void init(sWindow* win) {
         printf("Make sure you have a valid OpenGL context\n");
         printf("Using window module '%s'\n", win->creator->lib.mod_imp);
     }
+    // make sure depth testing is enabled
+    glEnable(GL_DEPTH_TEST);
+    // make sure backface culling is enabled
+    // glEnable(GL_CULL_FACE);
+    // glCullFace(GL_BACK);
+    // glFrontFace(GL_CCW);
+    // enable blending
+    // glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 }
 
 CEXPORT void setClearColor(float r, float g, float b, float a) {

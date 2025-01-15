@@ -7,11 +7,10 @@
 #VS_OUT vec3 normal_out;
 
 #UNIFORM mat4 uProj;
-
-#UNIFORM mat4 uTestMatrix;
+#UNIFORM mat4 uView;
 
 void main() {
-    spsl_position = mul(uProj, vec4(pos, 1.0));
+    spsl_position = mul(uProj, mul(uView, vec4(pos, 1.0)));
     vertex_pos = spsl_position;
     obj_color = color;
     normal_out = normal;

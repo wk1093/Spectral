@@ -85,20 +85,33 @@ int main(int argc, char** argv) {
     sUniformDefinition uniformDef = {
         {sShaderType::FRAGMENT, "uColorMult", sUniformType::FLOAT, 3},
         {sShaderType::FRAGMENT, "uTime", sUniformType::FLOAT, 1},
-        {sShaderType::VERTEX, "uProj", sUniformType::FLOAT, 4, 4}
+        {sShaderType::VERTEX, "uProj", sUniformType::FLOAT, 4, 4},
+        {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
     };
 
     sUniforms uniforms = gfxm.createUniforms(shader, uniformDef);
+    static const float fov = 90.0f;
+    static const float nearp = 0.1f;
+    static const float farp = 100.0f;
+
+    static const float matscale = 1 / tanf(fov * 0.5f * 3.14159f / 180.0f);
 
 #pragma pack(push,1)
     struct ShaderData {
         float colorMult[3] = {1.0f, 1.0f, 1.0f};
         float time = 0.0f;
         float proj[4][4] = {
+            {matscale, 0.0f, 0.0f, 0.0f},
+            {0.0f, matscale, 0.0f, 0.0f},
+            {0.0f, 0.0f, -farp / (farp-nearp), -1.0f},
+            {0.0f, 0.0f, -(farp*nearp) / (farp-nearp), 1.0f}
+        };
+        // premade matrix to move the camera back (move everything forward)
+        float view[4][4] = {
             {1.0f, 0.0f, 0.0f, 0.0f},
             {0.0f, 1.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 1.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 1.0f}
+            {0.0f, 0.0f, 1.0f, -20.0f},
+            {0.0f, 0.0f, 1.0f, 1.0f}
         };
     } shaderData;
 #pragma pack(pop)
@@ -115,7 +128,7 @@ int main(int argc, char** argv) {
         winm.updateWindow(&win);
         gfxm.clear();
 
-        shaderData.colorMult[0] = sinf(i++ * 0.1f) * 0.5f + 0.5f;
+        // shaderData.colorMult[0] = sinf(i++ * 0.1f) * 0.5f + 0.5f;
         shaderData.time = (float)winm.getTime(win);
         gfxm.useShaderProgram(shader);
         gfxm.setUniforms(uniforms, &shaderData);
