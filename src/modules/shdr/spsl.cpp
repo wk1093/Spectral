@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 
+//#define DEBUG_SHADER
+
 bool strbegw(const char* a, const char* b) {
     return strncmp(a, b, strlen(b)) == 0;
 }
@@ -40,6 +42,8 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
     // second pass: #VS_OUT -> outputs
     // third pass: names
     // fourth pass: uniforms NOT IMPLEMENTED YET
+
+    source = "#define mul(a,b) ((a)*(b))\n" + source;
 
     size_t currentLayout = 0;
     while (true) {
@@ -84,6 +88,17 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
 
     source = "#version 330 core\n" + source;
     // that is all for now
+#ifdef DEBUG_SHADER
+    // write to file with same name but with .glsl extension
+    std::string outpath = path + std::string(".glsl");
+    FILE* f = fopen(outpath.c_str(), "w");
+    if (f == nullptr) {
+        printf("Failed to write to file %s\n", outpath.c_str());
+    } else {
+        fwrite(source.c_str(), 1, source.size(), f);
+        fclose(f);
+    }
+#endif
     sShader s = gfxm->createShader(source.c_str(), type, vertDef);
     if (s.internal == nullptr) {
         printf("Failed to compile shader %s\n", path);
@@ -115,19 +130,30 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
 
     source = "cbuffer SPSL_Uniforms {\n" + unifs + "};\n" + source;
 
+    // vecX -> floatX
+    while (true) {
+        size_t vec = source.find("vec");
+        if (vec == std::string::npos) break;
+        // make sure the next character is a digit and then after that cannot be a letter/digit/underscore/identifier
+        if (isdigit(source[vec + 3]) && !isalnum(source[vec + 4]) && source[vec + 4] != '_') {
+            source.replace(vec, 3, "float");
+        }
+    }
+
+    // matX -> floatXxX
+    while (true) {
+        size_t mat = source.find("mat");
+        if (mat == std::string::npos) break;
+        if (isdigit(source[mat + 3]) && !isalnum(source[mat + 4]) && source[mat + 4] != '_') {
+            source.replace(mat, 3, "float");
+            source.insert(mat + 5, "x");
+            source.insert(mat + 5, 1, source[mat + 6]);
+        }
+    }
+
     if (type == sShaderType::VERTEX) {
         std::string inputs;
         std::string outputs;
-
-        // first pass: vecX -> floatX
-        while (true) {
-            size_t vec = source.find("vec");
-            if (vec == std::string::npos) break;
-            // make sure the next character is a digit and then after that cannot be a letter/digit/underscore/identifier
-            if (isdigit(source[vec + 3]) && !isalnum(source[vec + 4]) && source[vec + 4] != '_') {
-                source.replace(vec, 3, "float");
-            }
-        }
 
         // second pass: #VS_IN -> inputs
         size_t input_count = 0;
@@ -222,19 +248,26 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
 
         source = "struct SPSL_VS_Input {\n" + inputs + "};\nstruct SPSL_VS_Output {\nfloat4 position : SV_POSITION;" + outputs + "};\n" + source;
 
-        return gfxm->createShader(source.c_str(), type, vertDef);
+
+#ifdef DEBUG_SHADER
+        // write to file with same name but with .hlsl extension
+        std::string outpath = path + std::string(".hlsl");
+        FILE* f = fopen(outpath.c_str(), "w");
+        if (f == nullptr) {
+            printf("Failed to write to file %s\n", outpath.c_str());
+        } else {
+            fwrite(source.c_str(), 1, source.size(), f);
+            fclose(f);
+        }
+#endif
+        sShader s = gfxm->createShader(source.c_str(), type, vertDef);
+        if (s.internal == nullptr) {
+            printf("Failed to compile shader %s\n", path);
+            printf("Generated source:\n%s\n", source.c_str());
+        }
+        return s;
     } else {
         std::string inputs;
-
-        // first pass: vecX -> floatX
-        while (true) {
-            size_t vec = source.find("vec");
-            if (vec == std::string::npos) break;
-            // make sure the next character is a digit and then after that cannot be a letter/digit/underscore/identifier
-            if (isdigit(source[vec + 3]) && !isalnum(source[vec + 4]) && source[vec + 4] != '_') {
-                source.replace(vec, 3, "float");
-            }
-        }
 
         // second pass: #FS_IN -> inputs
         std::vector<std::string> input_names;
@@ -283,7 +316,22 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
         
         source = "struct SPSL_FS_Input {\nfloat4 position : SV_POSITION;" + inputs + "};\n" + source;
 
+#ifdef DEBUG_SHADER
+        // write to file with same name but with .hlsl extension
+        std::string outpath = path + std::string(".hlsl");
+        FILE* f = fopen(outpath.c_str(), "w");
+        if (f == nullptr) {
+            printf("Failed to write to file %s\n", outpath.c_str());
+        } else {
+            fwrite(source.c_str(), 1, source.size(), f);
+            fclose(f);
+        }
+#endif
         sShader s = gfxm->createShader(source.c_str(), type, vertDef);
+        if (s.internal == nullptr) {
+            printf("Failed to compile shader %s\n", path);
+            printf("Generated source:\n%s\n", source.c_str());
+        }
         return s;
     }
 

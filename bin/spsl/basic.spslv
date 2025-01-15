@@ -8,6 +8,8 @@
 
 #UNIFORM mat4 uProj;
 
+#UNIFORM mat4 uTestMatrix;
+
 void main() {
     spsl_position = mul(uProj, vec4(pos, 1.0));
     vertex_pos = spsl_position;

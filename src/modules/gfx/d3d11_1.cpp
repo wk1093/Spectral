@@ -389,10 +389,8 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
         printf("ERROR CODE: %lu\n", GetLastError());
     }
     internal->program = program;
-    printf("asdsad\n");
     internal->fragmentPart = getPartialf(def, sShaderType::FRAGMENT);
     internal->vertexPart = getPartialf(def, sShaderType::VERTEX);
-    printf("bufsedsdec\n");
 
     D3D11_BUFFER_DESC bufferDesc{};
     bufferDesc.ByteWidth = internal->fragmentPart.size();
@@ -403,24 +401,20 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
     bufferDesc.StructureByteStride = 0;
 
     D3D11_SUBRESOURCE_DATA subResourceData{};
-    uint8_t fakeBuffer[internal->fragmentPart.size()] = {0};
+    uint8_t* fakeBuffer = new uint8_t[internal->fragmentPart.size()];
     subResourceData.pSysMem = fakeBuffer;
     subResourceData.SysMemPitch = 0;
     subResourceData.SysMemSlicePitch = 0;
-    printf("Creating fragment buffer\n");
     HRESULT hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, &subResourceData, &internal->fragmentBuffer);
-    printf("Created fragment buffer\n");
     if (FAILED(hResult)) {
         MessageBoxA(0, "CreateBuffer() failed", "Fatal Error", MB_OK);
         printf("ERROR CODE: %lu\n", GetLastError());
     }
 
     bufferDesc.ByteWidth = internal->vertexPart.size();
-    uint8_t fakeBuffer2[internal->vertexPart.size()] = {0};
+    uint8_t* fakeBuffer2 = new uint8_t[internal->vertexPart.size()];
     subResourceData.pSysMem = fakeBuffer2;
-    printf("Creating vertex buffer\n");
     hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, &subResourceData, &internal->vertexBuffer);
-    printf("Created vertex buffer\n");
     if (FAILED(hResult)) {
         MessageBoxA(0, "CreateBuffer() failed", "Fatal Error", MB_OK);
         printf("ERROR CODE: %lu\n", GetLastError());
