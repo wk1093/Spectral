@@ -1,8 +1,16 @@
 #VS_IN vec3 pos;
+#VS_IN vec3 normal;
 #VS_IN vec3 color;
-#VS_OUT vec3 color_out;
+
+#VS_OUT vec3 obj_color;
+#VS_OUT vec4 vertex_pos;
+#VS_OUT vec3 normal_out;
+
+#UNIFORM mat4 uProj;
 
 void main() {
-    spsl_position = vec4(pos, 1.0);
-    color_out = color;
+    spsl_position = mul(uProj, vec4(pos, 1.0));
+    vertex_pos = spsl_position;
+    obj_color = color;
+    normal_out = normal;
 }
