@@ -5,8 +5,8 @@
 #include <cmath>
 
 int main(int argc, char** argv) {
-    const char* window_module = "glfw_gl";
-    const char* graphics_module = "glad";
+    const char* window_module = "glfw_noapi";
+    const char* graphics_module = "d3d11_1";
     if (argc == 3) {
         window_module = argv[1];
         graphics_module = argv[2];
@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
     sShader vert{};
     sShader frag{};
     vert = shdr.compile(&gfxm, "spsl/basic.spslv", sShaderType::VERTEX, vertDef);
-    frag = shdr.compile(&gfxm, "spsl/basic.spslf", sShaderType::FRAGMENT, vertDef);
+    frag = shdr.compile(&gfxm, "spsl/basic.spslf", sShaderType::FRAGMENT);
     sShaderProgram shader = gfxm.createShaderProgram({vert, frag});
 
     sMesh mesh = gfxm.createMesh(vert, vertices, sizeof(vertices), indices, sizeof(indices));

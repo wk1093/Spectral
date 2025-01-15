@@ -343,18 +343,20 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
     ID3D11InputLayout* inputLayout;
     {
         D3D11_INPUT_ELEMENT_DESC inputElementDesc[15] = {{0}};
-        int offset = 0;
         if (vertexShader.vertDef == nullptr) {
             printf("Invald Vertex Data!");
         }
         if (vertexShader.vertDef->count > 15) {
             printf("Too many vertex elements!");
         }
+        unsigned int offset2 = 0;
         for (int i = 0; i < vertexShader.vertDef->count; i++) {
+            printf("el: %s\n", ("C_"+std::to_string(i)+"e").c_str());
             if (i == 0)
-                inputElementDesc[i] = {("C_"+std::to_string(i)+"e").c_str(), 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0};
+                inputElementDesc[i] = {"C_0e", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0};
             else
-                inputElementDesc[i] = {("C_"+std::to_string(i)+"e").c_str(), 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0};
+                inputElementDesc[i] = {("C_"+std::to_string(i)+"e").c_str(), 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offset2, D3D11_INPUT_PER_VERTEX_DATA, 0};
+            offset2 += vertexShader.vertDef->elements[i] * sizeof(float);
         }
 
 

@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-//#define DEBUG_SHADER
+#define DEBUG_SHADER
 
 bool strbegw(const char* a, const char* b) {
     return strncmp(a, b, strlen(b)) == 0;
@@ -217,12 +217,21 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
         source.replace(main, close_brace - main + 1, "SPSL_VS_Output main(SPSL_VS_Input input) { SPSL_VS_Output output; " + main_body + " return output; }");
 
         // fifth pass: turn all input names into input.name
-        size_t offset = 0;
         for (size_t i = 0; i < output_names.size(); i++) {
+            size_t offset = 0;
             while (true) {
                 size_t pos = source.find(output_names[i], offset);
                 if (pos == std::string::npos) break;
                 if (pos > 0 && source[pos - 1] == '.') {
+                    offset = pos + 1;
+                    continue;
+                }
+                // if there is any identifier-like character before or after the name, skip it
+                if (pos > 0 && (isalnum(source[pos - 1]) || source[pos - 1] == '_')) {
+                    offset = pos + output_names[i].size();
+                    continue;
+                }
+                if (pos + output_names[i].size() < source.size() && (isalnum(source[pos + output_names[i].size()]) || source[pos + output_names[i].size()] == '_')) {
                     offset = pos + output_names[i].size();
                     continue;
                 }
@@ -230,13 +239,22 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
             }
         }
 
-        offset = 0;
         for (size_t i = 0; i < input_names.size(); i++) {
+            size_t offset = 0;
             while (true) {
                 size_t pos = source.find(input_names[i], offset);
                 if (pos == std::string::npos) break;
                 // if the name has input. in front of it, skip it
                 if (pos > 0 && source[pos - 1] == '.') {
+                    offset = pos + input_names[i].size();
+                    continue;
+                }
+                // if there is any identifier-like character before or after the name, skip it
+                if (pos > 0 && (isalnum(source[pos - 1]) || source[pos - 1] == '_')) {
+                    offset = pos + input_names[i].size();
+                    continue;
+                }
+                if (pos + input_names[i].size() < source.size() && (isalnum(source[pos + input_names[i].size()]) || source[pos + input_names[i].size()] == '_')) {
                     offset = pos + input_names[i].size();
                     continue;
                 }
@@ -293,12 +311,21 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
         }
 
         // input names
-        size_t offset = 0;
         for (size_t i = 0; i < input_names.size(); i++) {
+            size_t offset = 0;
             while (true) {
                 size_t pos = source.find(input_names[i], offset);
                 if (pos == std::string::npos) break;
                 if (pos > 0 && source[pos - 1] == '.') {
+                    offset = pos + input_names[i].size();
+                    continue;
+                }
+                // if there is any identifier-like character before or after the name, skip it
+                if (pos > 0 && (isalnum(source[pos - 1]) || source[pos - 1] == '_')) {
+                    offset = pos + input_names[i].size();
+                    continue;
+                }
+                if (pos + input_names[i].size() < source.size() && (isalnum(source[pos + input_names[i].size()]) || source[pos + input_names[i].size()] == '_')) {
                     offset = pos + input_names[i].size();
                     continue;
                 }
