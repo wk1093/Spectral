@@ -26,6 +26,12 @@ CEXPORT void init(sWindow* win) {
         printf("GLFW with no API can't be used with OpenGL\n");
         printf("Select glfw_gl instead of glfw_noapi\n");
     }
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
+
 }
 
 CEXPORT void setClearColor(float r, float g, float b, float a) {
@@ -33,7 +39,7 @@ CEXPORT void setClearColor(float r, float g, float b, float a) {
 }
 
 CEXPORT void clear() {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 struct sInternalShader {
@@ -183,15 +189,15 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
                 } else if (element.countx == element.county) {
                     switch (element.countx) {
                         case 2:
-                            glUniform2fv(location, 1, (float*)curData);
+                            glUniformMatrix2fv(location, 1, GL_FALSE, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         case 3:
-                            glUniform3fv(location, 1, (float*)curData);
+                            glUniformMatrix3fv(location, 1, GL_FALSE, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         case 4:
-                            glUniform4fv(location, 1, (float*)curData);
+                            glUniformMatrix4fv(location, 1, GL_FALSE, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         default:

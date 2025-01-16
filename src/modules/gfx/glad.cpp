@@ -125,9 +125,6 @@ CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefini
         return {nullptr};
     }
 
-    // unsigned int* internal = (unsigned int*)malloc(sizeof(unsigned int));
-    // *internal = shader;
-    // return {internal};
     sInternalShader* internal = (sInternalShader*)malloc(sizeof(sInternalShader));
     internal->shader = shader;
     internal->vertDef = vertDef;

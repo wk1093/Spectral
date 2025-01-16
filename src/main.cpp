@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
 
     const char* window_module;
     const char* graphics_module;
-    bool use_dx = true;
+    bool use_dx = false;
     if (use_dx) {
         window_module = "glfw_noapi";
         graphics_module = "d3d11_1";
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
 
     sIndex indices[] = {
         0, 1, 2, 2, 3, 0,
-        4, 5, 6, 6, 7, 4,
+        6, 5, 4, 4, 7, 6,
         8, 9, 10, 10, 11, 8,
         14, 13, 12, 12, 15, 14,
         16, 17, 18, 18, 19, 16,
@@ -148,9 +148,48 @@ int main(int argc, char** argv) {
 
     unsigned int i = 0;
 
+    float speed = 5.0f;
+
+    winm.setMousePosition(win, 400, 300);
+
     while (!winm.shouldClose(win)) {
         winm.updateWindow(&win);
         gfxm.clear();
+
+        float mousex, mousey;
+        winm.getMousePosition(win, &mousex, &mousey);
+        float dx = mousex - 400;
+        float dy = mousey - 300;
+
+        winm.setMousePosition(win, 400, 300);
+
+        // Mouse look
+        shaderData.view[3][0] += dx * 0.01f;
+        shaderData.view[3][1] -= dy * 0.01f;
+        
+        if (winm.isKeyPressed(win, Key::Escape)) {
+            winm.setShouldClose(win, true);
+        }
+
+        // WASD
+        if (winm.isKeyPressed(win, Key::W)) {
+            shaderData.view[3][2] += speed * win.dt;
+        }
+        if (winm.isKeyPressed(win, Key::S)) {
+            shaderData.view[3][2] -= speed * win.dt;
+        }
+        if (winm.isKeyPressed(win, Key::A)) {
+            shaderData.view[3][0] += speed * win.dt;
+        }
+        if (winm.isKeyPressed(win, Key::D)) {
+            shaderData.view[3][0] -= speed * win.dt;
+        }
+        if (winm.isKeyPressed(win, Key::Q)) {
+            shaderData.view[3][1] += speed * win.dt;
+        }
+        if (winm.isKeyPressed(win, Key::E)) {
+            shaderData.view[3][1] -= speed * win.dt;
+        }
 
         shaderData.colorMult[0] = sinf(i++ * 0.1f) * 0.5f + 0.5f;
         shaderData.time = (float)winm.getTime(win);
