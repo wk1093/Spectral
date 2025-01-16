@@ -15,6 +15,8 @@ CEXPORT void init(sWindow* win) {
     }
     // make sure depth testing is enabled
     glEnable(GL_DEPTH_TEST);
+    // wireframe
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // make sure backface culling is enabled
     // glEnable(GL_CULL_FACE);
     // glCullFace(GL_BACK);
@@ -30,7 +32,7 @@ CEXPORT void setClearColor(float r, float g, float b, float a) {
 }
 
 CEXPORT void clear() {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 struct sInternalMesh {
@@ -212,15 +214,15 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
                 } else if (element.countx == element.county) {
                     switch (element.countx) {
                         case 2:
-                            glUniformMatrix2fv(location, 1, GL_FALSE, (float*)curData);
+                            glUniformMatrix2fv(location, 1, GL_TRUE, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         case 3:
-                            glUniformMatrix3fv(location, 1, GL_FALSE, (float*)curData);
+                            glUniformMatrix3fv(location, 1, GL_TRUE, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         case 4:
-                            glUniformMatrix4fv(location, 1, GL_FALSE, (float*)curData);
+                            glUniformMatrix4fv(location, 1, GL_TRUE, (float*)curData);
                             offset += uniformElementSize(element);
                             break;
                         default:

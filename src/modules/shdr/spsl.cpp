@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-// #define DEBUG_SHADER
+#define DEBUG_SHADER
 
 bool strbegw(const char* a, const char* b) {
     return strncmp(a, b, strlen(b)) == 0;

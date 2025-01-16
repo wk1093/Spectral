@@ -10,7 +10,7 @@
 #UNIFORM mat4 uView;
 
 void main() {
-    spsl_position = mul(uProj, mul(uView, vec4(pos, 1.0)));
+    spsl_position = vec4(pos, 1.0);
     vertex_pos = pos;
     obj_color = color;
     normal_out = normal;

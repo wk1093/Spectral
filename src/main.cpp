@@ -5,8 +5,8 @@
 #include <cmath>
 
 int main(int argc, char** argv) {
-    const char* window_module = "glfw_gl";
-    const char* graphics_module = "glad";
+    const char* window_module = "glfw_noapi";
+    const char* graphics_module = "d3d11_1";
     if (argc == 3) {
         window_module = argv[1];
         graphics_module = argv[2];
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 3});
 
     // basic cube
-    struct {
+    struct Vertex {
         float position[3];
         float normal[3];
         float color[3];
@@ -40,39 +40,52 @@ int main(int argc, char** argv) {
         {{1.0f, -1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},
         {{1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},
         {{-1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 0.0f}},
-        // back
-        {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f, 0.0f}},
-        {{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}},
-        {{1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 0.0f}},
-        // top
-        {{-1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        {{1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{1.0f, 1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-1.0f, 1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
-        // bottom
-        {{-1.0f, -1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        {{1.0f, -1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
-        // right
-        {{1.0f, -1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        {{1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{1.0f, 1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
-        // left
-        {{-1.0f, -1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        {{-1.0f, -1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{-1.0f, 1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-1.0f, 1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}}
+        // // back
+        // {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f, 0.0f}},
+        // {{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}},
+        // {{1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
+        // {{-1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 0.0f}},
+        // // top
+        // {{-1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        // {{1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+        // {{1.0f, 1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        // {{-1.0f, 1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
+        // // bottom
+        // {{-1.0f, -1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        // {{1.0f, -1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+        // {{1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        // {{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
+        // // right
+        // {{1.0f, -1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        // {{1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+        // {{1.0f, 1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        // {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
+        // // left
+        // {{-1.0f, -1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        // {{-1.0f, -1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+        // {{-1.0f, 1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        // {{-1.0f, 1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}}
     };
+
+    size_t vertSize = 0;
+    for (int i = 0; i < vertDef->count; i++) {
+        vertSize += vertDef->elements[i] * sizeof(float);
+    }
+    if (vertSize != sizeof(Vertex)) {
+        printf("ERROR: Vertex definition size does not match vertex size\n");
+        printf("Vertex definition size: %d\n", vertSize);
+        printf("Vertex size: %d\n", sizeof(Vertex));
+        return 1;
+    }
+
+
     sIndex indices[] = {
         0, 1, 2, 2, 3, 0,
-        4, 5, 6, 6, 7, 4,
-        8, 9, 10, 10, 11, 8,
-        12, 13, 14, 14, 15, 12,
-        16, 17, 18, 18, 19, 16,
-        20, 21, 22, 22, 23, 20
+        // 4, 5, 6, 6, 7, 4,
+        // 8, 9, 10, 10, 11, 8,
+        // 12, 13, 14, 14, 15, 12,
+        // 16, 17, 18, 18, 19, 16,
+        // 20, 21, 22, 22, 23, 20
     };
     sShader vert{};
     sShader frag{};
@@ -90,28 +103,36 @@ int main(int argc, char** argv) {
     };
 
     sUniforms uniforms = gfxm.createUniforms(shader, uniformDef);
-    static const float fov = 90.0f;
-    static const float nearp = 0.1f;
-    static const float farp = 100.0f;
+    static const float fov = 80.0f;
+    static const float nearp = 0.001f;
+    static const float farp = 1000.0f;
+    static const float aspect_ratio = 800.0f / 600.0f;
 
-    static const float matscale = 1 / tanf(fov * 0.5f * 3.14159f / 180.0f);
+    static const float matscale = 1.0f / tanf(fov * 0.5f * 3.14159f / 180.0f);
 
 #pragma pack(push,1)
     struct ShaderData {
         float colorMult[3] = {1.0f, 1.0f, 1.0f};
         float time = 0.0f;
+        // float proj[4][4] = {
+        //     {matscale / aspect_ratio, 0.0f, 0.0f, 0.0f},
+        //     {0.0f, matscale, 0.0f, 0.0f},
+        //     {0.0f, 0.0f, -farp / (farp-nearp), -1.0f},
+        //     {0.0f, 0.0f, -(farp*nearp) / (farp-nearp), 1.0f}
+        // };
+        // flip matrix because of row-major vs column-major
         float proj[4][4] = {
-            {matscale, 0.0f, 0.0f, 0.0f},
+            {matscale / aspect_ratio, 0.0f, 0.0f, 0.0f},
             {0.0f, matscale, 0.0f, 0.0f},
-            {0.0f, 0.0f, -farp / (farp-nearp), -1.0f},
-            {0.0f, 0.0f, -(farp*nearp) / (farp-nearp), 1.0f}
+            {0.0f, 0.0f, -farp / (farp-nearp), -(farp*nearp) / (farp-nearp)},
+            {0.0f, 0.0f, -1.0f, 1.0f}
         };
         // premade matrix to move the camera back (move everything forward)
         float view[4][4] = {
-            {1.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 1.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 1.0f, -20.0f},
-            {0.0f, 0.0f, 1.0f, 1.0f}
+            {1.0f, 0.0f, 0.0f, 3.0f},
+            {0.0f, 1.0f, 0.0f, 3.0f},
+            {0.0f, 0.0f, 1.0f, -10.0f},
+            {0.0f, 0.0f, 0.0f, 1.0f}
         };
     } shaderData;
 #pragma pack(pop)

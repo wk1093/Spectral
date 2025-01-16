@@ -186,6 +186,7 @@ struct sInternalMesh {
     ID3D11Buffer* indexBuffer;
     UINT stride;
     UINT offset;
+    size_t numIndices;
 };
 
 struct sInternalShader {
@@ -247,7 +248,7 @@ CEXPORT sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexSize
     for (int i = 0; i < vd->count; i++) {
         sizeofVertex += vd->elements[i];
     }
-    return {new sInternalMesh{vertexBuffer, indexBuffer, sizeofVertex * (unsigned int)(sizeof(float)), 0}};
+    return {new sInternalMesh{vertexBuffer, indexBuffer, sizeofVertex * (unsigned int)(sizeof(float)), 0, indexSize / sizeof(sIndex)}};
 }
 
 CEXPORT void drawMesh(sMesh mesh) {
@@ -255,7 +256,7 @@ CEXPORT void drawMesh(sMesh mesh) {
     __d3d11_1_context.deviceContext->IASetVertexBuffers(0, 1, &internal->vertexBuffer, &internal->stride, &internal->offset);
     __d3d11_1_context.deviceContext->IASetIndexBuffer(internal->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
     __d3d11_1_context.deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    __d3d11_1_context.deviceContext->DrawIndexed(3, 0, 0);
+    __d3d11_1_context.deviceContext->DrawIndexed(internal->numIndices, 0, 0);
 }
 
 CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefinition* vertDef) {
@@ -355,12 +356,30 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
         for (int i = 0; i < vertexShader.vertDef->count; i++) {
             std::string* str = new std::string("C_"+std::to_string(i)+"e");
             strs.push_back(str);
-            if (i == 0)
-                inputElementDesc[i] = {"C_0e", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0};
-            else
-                inputElementDesc[i] = {str->c_str(), 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offset2, D3D11_INPUT_PER_VERTEX_DATA, 0};
+            inputElementDesc[i].SemanticName = str->c_str();
+            inputElementDesc[i].SemanticIndex = 0;
+            // inputElementDesc[i].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+            switch (vertexShader.vertDef->elements[i]) {
+                case 1:
+                    inputElementDesc[i].Format = DXGI_FORMAT_R32_FLOAT;
+                    break;
+                case 2:
+                    inputElementDesc[i].Format = DXGI_FORMAT_R32G32_FLOAT;
+                    break;
+                case 3:
+                    inputElementDesc[i].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+                    break;
+                case 4:
+                    inputElementDesc[i].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+                    break;
+            }
+            inputElementDesc[i].InputSlot = 0;
+            inputElementDesc[i].AlignedByteOffset = offset2;
+            inputElementDesc[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+            inputElementDesc[i].InstanceDataStepRate = 0;
             offset2 += vertexShader.vertDef->elements[i] * sizeof(float);
         }
+        printf("Offset: %d\n", offset2);
 
         HRESULT hResult = __d3d11_1_context.device->CreateInputLayout(inputElementDesc, vertexShader.vertDef->count,
                                                                      vertexShader.shaderBlob->GetBufferPointer(),

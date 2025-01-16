@@ -1,9 +1,12 @@
-#FS_IN vec3 obj_color;
-#FS_IN vec3 vertex_pos;
-#FS_IN vec3 normal_out;
+#version 330 core
+out vec4 spsl_fragcolor;
+#define mul(a,b) ((a)*(b))
+in vec3 obj_color;
+in vec3 vertex_pos;
+in vec3 normal_out;
 
-#UNIFORM vec3 uColorMult;
-#UNIFORM float uTime;
+uniform vec3 uColorMult;
+uniform float uTime;
 
 void main() {
     vec3 lightPos = vec3(0.0, 5.0, 1.0);
