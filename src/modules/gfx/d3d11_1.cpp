@@ -231,7 +231,6 @@ CEXPORT void clear() {
     __d3d11_1_context.deviceContext->RSSetState(__d3d11_1_context.rasterizerState);
     __d3d11_1_context.deviceContext->OMSetDepthStencilState(__d3d11_1_context.depthStencilState, 0);
     __d3d11_1_context.deviceContext->OMSetRenderTargets(1, &__d3d11_1_context.frameBufferView, __d3d11_1_context.depthStencilView);
-    __d3d11_1_context.deviceContext->OMSetRenderTargets(1, &__d3d11_1_context.frameBufferView, 0);
 }
 
 CEXPORT void present() {
