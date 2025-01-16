@@ -1,15 +1,14 @@
 #include "modules/win/module.h"
 #include "modules/gfx/module.h"
 #include "modules/shdr/module.h"
+#include "modules/math/module.h" // doesn't need to be loaded, because all the functions are inlined and the module is header-only
 
 #include <cmath>
 
 int main(int argc, char** argv) {
-
-
     const char* window_module;
     const char* graphics_module;
-    bool use_dx = false;
+    bool use_dx = true;
     if (use_dx) {
         window_module = "glfw_noapi";
         graphics_module = "d3d11_1";
@@ -35,7 +34,7 @@ int main(int argc, char** argv) {
     sWindow win = winm.loadWindow(window_title.c_str(), 800, 600);
     gfxm.init(&win);
 
-    gfxm.setClearColor(0.2f, 0.3f, 0.4f, 1.0f);
+    gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 3});
 
@@ -46,35 +45,35 @@ int main(int argc, char** argv) {
         float color[3];
     } vertices[] = {
         // front
-        {{-1.0f, -1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}},
-        {{1.0f, -1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},
-        {{1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 0.0f}},
+        {{-1.0f, -1.0f, 1.0f},  {0.0f, 0.0f, 1.0f},  {0.3f, 0.4f, 0.5f}},
+        {{1.0f, -1.0f, 1.0f},   {0.0f, 0.0f, 1.0f},  {0.3f, 0.4f, 0.5f}},
+        {{1.0f, 1.0f, 1.0f},    {0.0f, 0.0f, 1.0f},  {0.3f, 0.4f, 0.5f}},
+        {{-1.0f, 1.0f, 1.0f},   {0.0f, 0.0f, 1.0f},  {0.3f, 0.4f, 0.5f}},
         // back
-        {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f, 0.0f}},
-        {{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}},
-        {{1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 0.0f}},
+        {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.3f, 0.4f, 0.5f}},
+        {{1.0f, -1.0f, -1.0f},  {0.0f, 0.0f, -1.0f}, {0.3f, 0.4f, 0.5f}},
+        {{1.0f, 1.0f, -1.0f},   {0.0f, 0.0f, -1.0f}, {0.3f, 0.4f, 0.5f}},
+        {{-1.0f, 1.0f, -1.0f},  {0.0f, 0.0f, -1.0f}, {0.3f, 0.4f, 0.5f}},
         // top
-        {{-1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        {{1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{1.0f, 1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-1.0f, 1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
+        {{-1.0f, 1.0f, 1.0f},   {0.0f, 1.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
+        {{1.0f, 1.0f, 1.0f},    {0.0f, 1.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
+        {{1.0f, 1.0f, -1.0f},   {0.0f, 1.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
+        {{-1.0f, 1.0f, -1.0f},  {0.0f, 1.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
         // bottom
-        {{-1.0f, -1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        {{1.0f, -1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
+        {{-1.0f, -1.0f, 1.0f},  {0.0f, -1.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
+        {{1.0f, -1.0f, 1.0f},   {0.0f, -1.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
+        {{1.0f, -1.0f, -1.0f},  {0.0f, -1.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
+        {{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
         // right
-        {{1.0f, -1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        {{1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{1.0f, 1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
+        {{1.0f, -1.0f, 1.0f},   {1.0f, 0.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
+        {{1.0f, -1.0f, -1.0f},  {1.0f, 0.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
+        {{1.0f, 1.0f, -1.0f},   {1.0f, 0.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
+        {{1.0f, 1.0f, 1.0f},    {1.0f, 0.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
         // left
-        {{-1.0f, -1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        {{-1.0f, -1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{-1.0f, 1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-1.0f, 1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}}
+        {{-1.0f, -1.0f, 1.0f},  {-1.0f, 0.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
+        {{-1.0f, -1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
+        {{-1.0f, 1.0f, -1.0f},  {-1.0f, 0.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
+        {{-1.0f, 1.0f, 1.0f},   {-1.0f, 0.0f, 0.0f}, {0.3f, 0.4f, 0.5f}}
     };
 
     size_t vertSize = 0;
@@ -106,8 +105,8 @@ int main(int argc, char** argv) {
     sMesh mesh = gfxm.createMesh(vert, vertices, sizeof(vertices), indices, sizeof(indices));
 
     sUniformDefinition uniformDef = {
-        {sShaderType::FRAGMENT, "uColorMult", sUniformType::FLOAT, 3},
         {sShaderType::FRAGMENT, "uTime", sUniformType::FLOAT, 1},
+        {sShaderType::FRAGMENT, "uViewPos", sUniformType::FLOAT, 3},
         {sShaderType::VERTEX, "uProj", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
     };
@@ -122,21 +121,11 @@ int main(int argc, char** argv) {
 
 #pragma pack(push,1)
     struct ShaderData {
-        float colorMult[3] = {1.0f, 1.0f, 1.0f};
         float time = 0.0f;
+        vec3 viewPos = {0.0f, 0.0f, 0.0f};
 
-        float proj[4][4] = {
-            {matscale / aspect_ratio, 0.0f, 0.0f, 0.0f},
-            {0.0f, matscale, 0.0f, 0.0f},
-            {0.0f, 0.0f, -farp / (farp-nearp), -1.0f},
-            {0.0f, 0.0f, -farp*nearp / (farp-nearp), 1.0f}
-        };
-        float view[4][4] = {
-            {1.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 1.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 1.0f, 0.0f},
-            {-3.0f, -3.0f, -10.0f, 1.0f}
-        };
+        mat4 proj = perspective(fov, aspect_ratio, nearp, farp);
+        mat4 view = identity();
     } shaderData;
 #pragma pack(pop)
     if (uniformDef.size() != sizeof(ShaderData)) {
@@ -148,7 +137,11 @@ int main(int argc, char** argv) {
 
     unsigned int i = 0;
 
+    sCamera camera = {};
+    camera.pos = {3.0f, 3.0f, 10.0f};
+
     float speed = 5.0f;
+    float sensitivity = 0.001f;
 
     winm.setMousePosition(win, 400, 300);
 
@@ -160,39 +153,48 @@ int main(int argc, char** argv) {
         winm.getMousePosition(win, &mousex, &mousey);
         float dx = mousex - 400;
         float dy = mousey - 300;
+        
+        if (winm.getTime(win) < 0.1) {
+            dx = 0;
+            dy = 0;
+        }
 
         winm.setMousePosition(win, 400, 300);
-
-        // Mouse look
-        shaderData.view[3][0] += dx * 0.01f;
-        shaderData.view[3][1] -= dy * 0.01f;
         
         if (winm.isKeyPressed(win, Key::Escape)) {
             winm.setShouldClose(win, true);
         }
 
-        // WASD
+        // // WASD
         if (winm.isKeyPressed(win, Key::W)) {
-            shaderData.view[3][2] += speed * win.dt;
+            camMove(&camera, camera.forward, speed * win.dt);
         }
         if (winm.isKeyPressed(win, Key::S)) {
-            shaderData.view[3][2] -= speed * win.dt;
+            camMove(&camera, camera.back(), speed * win.dt);
         }
         if (winm.isKeyPressed(win, Key::A)) {
-            shaderData.view[3][0] += speed * win.dt;
+            camMove(&camera, camera.left(), speed * win.dt);
         }
         if (winm.isKeyPressed(win, Key::D)) {
-            shaderData.view[3][0] -= speed * win.dt;
+            camMove(&camera, camera.right(), speed * win.dt);
         }
         if (winm.isKeyPressed(win, Key::Q)) {
-            shaderData.view[3][1] += speed * win.dt;
+            camMove(&camera, camera.down(), speed * win.dt);
         }
         if (winm.isKeyPressed(win, Key::E)) {
-            shaderData.view[3][1] -= speed * win.dt;
+            camMove(&camera, camera.up, speed * win.dt);
         }
 
-        shaderData.colorMult[0] = sinf(i++ * 0.1f) * 0.5f + 0.5f;
+        if (dx != 0) {
+            camYaw(&camera, dx * sensitivity);
+        }
+        if (dy != 0) {
+            camPitch(&camera, -dy * sensitivity);
+        }
+
         shaderData.time = (float)winm.getTime(win);
+        shaderData.view = view(camera);
+        shaderData.viewPos = camera.pos;
         gfxm.useShaderProgram(shader);
         gfxm.setUniforms(uniforms, &shaderData);
         gfxm.drawMesh(mesh);
