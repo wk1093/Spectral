@@ -27,6 +27,12 @@ enum class Key {
     Pause, KeyCount
 };
 
+enum class CursorMode {
+    Normal = 0,
+    Hidden,
+    Disabled
+};
+
 namespace window {
     typedef sWindow (*WindowLoader)(const char *name, int width, int height);
     typedef void (*WindowDestructor)(sWindow window);
@@ -39,6 +45,7 @@ namespace window {
     typedef bool (*WindowIsMouseButtonPressed)(sWindow window, int button);
     typedef void (*WindowGetMousePosition)(sWindow window, float* x, float* y);
     typedef void (*WindowSetMousePosition)(sWindow window, float x, float y);
+    typedef void (*WindowSetCursorMode)(sWindow window, CursorMode mode);
 }
 
 struct WindowModule : Module {
@@ -53,6 +60,7 @@ struct WindowModule : Module {
     window::WindowIsMouseButtonPressed isMouseButtonPressed;
     window::WindowGetMousePosition getMousePosition;
     window::WindowSetMousePosition setMousePosition;
+    window::WindowSetCursorMode setCursorMode;
 
     sWindow loadWindow(const char* name, int width, int height) {
         sWindow w = internal_loadWindow(name, width, height);
@@ -85,6 +93,7 @@ struct WindowModule : Module {
         isMouseButtonPressed = (window::WindowIsMouseButtonPressed)lib.getSymbol("isMouseButtonPressed");
         getMousePosition = (window::WindowGetMousePosition)lib.getSymbol("getMousePosition");
         setMousePosition = (window::WindowSetMousePosition)lib.getSymbol("setMousePosition");
+        setCursorMode = (window::WindowSetCursorMode)lib.getSymbol("setCursorMode");
     }
 
 };

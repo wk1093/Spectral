@@ -83,6 +83,17 @@ endif()
 
 Find_Package(OpenGL REQUIRED)
 
+if (SPEC_DX11)
+    # This will just see if we can find the dx11 dlls and copy them to the bin/lib folder
+    # This requires that the developer has the Windows SDK installed, but should make it so the user doesn't need to
+
+    # assuming the dev has them in sys32
+    file(GLOB dx11_dlls "C:/Windows/System32/d3d11.dll" "C:/Windows/System32/d3dcompiler_47.dll" "C:/Windows/System32/dxgi.dll")
+    foreach(dll ${dx11_dlls})
+        file(COPY ${dll} DESTINATION "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
+    endforeach()
+endif()
+
 macro(add_module mod impl source)
     add_library(${mod}_${impl} SHARED ${source})
     set_target_properties(${mod}_${impl} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules/${SPECTRAL_FULLPLAT}/${mod}")

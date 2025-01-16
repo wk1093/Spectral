@@ -124,7 +124,17 @@ CEXPORT void setMousePosition(sWindow window, float x, float y) {
     glfwSetCursorPos((GLFWwindow*)window.internal, x, y);
 }
 
-
-
-
+CEXPORT void setCursorMode(sWindow window, CursorMode mode) {
+    switch (mode) {
+        case CursorMode::Normal:
+            glfwSetInputMode((GLFWwindow*)window.internal, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            break;
+        case CursorMode::Hidden:
+            glfwSetInputMode((GLFWwindow*)window.internal, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+            break;
+        case CursorMode::Disabled:
+            glfwSetInputMode((GLFWwindow*)window.internal, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            break;
+    }
+}
 

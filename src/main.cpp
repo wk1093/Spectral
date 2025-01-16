@@ -119,6 +119,8 @@ int main(int argc, char** argv) {
 
     static const float matscale = 1.0f / tanf(fov * 0.5f * 3.14159f / 180.0f);
 
+    bool mouse_locked = false;
+
 #pragma pack(push,1)
     struct ShaderData {
         float time = 0.0f;
@@ -154,15 +156,21 @@ int main(int argc, char** argv) {
         float dx = mousex - 400;
         float dy = mousey - 300;
         
-        if (winm.getTime(win) < 0.1) {
+        if (winm.getTime(win) < 0.1 || !mouse_locked) {
             dx = 0;
             dy = 0;
         }
-
-        winm.setMousePosition(win, 400, 300);
+        if (mouse_locked)
+            winm.setMousePosition(win, 400, 300);
         
         if (winm.isKeyPressed(win, Key::Escape)) {
-            winm.setShouldClose(win, true);
+            mouse_locked = false;
+            winm.setCursorMode(win, CursorMode::Normal);
+        }
+
+        if (winm.isMouseButtonPressed(win, 0)) {
+            mouse_locked = true;
+            winm.setCursorMode(win, CursorMode::Disabled);
         }
 
         // // WASD

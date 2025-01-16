@@ -116,6 +116,19 @@ CEXPORT void setMousePosition(sWindow window, float x, float y) {
     eogllSetCursorPos((EogllWindow*)window.internal, x, y);
 }
 
+CEXPORT void setCursorMode(sWindow window, CursorMode mode) {
+    switch (mode) {
+        case CursorMode::Normal:
+            eogllSetCursorMode((EogllWindow*)window.internal, EOGLL_CURSOR_NORMAL);
+            break;
+        case CursorMode::Hidden:
+            eogllSetCursorMode((EogllWindow*)window.internal, EOGLL_CURSOR_HIDDEN);
+            break;
+        case CursorMode::Disabled:
+            eogllSetCursorMode((EogllWindow*)window.internal, EOGLL_CURSOR_DISABLED);
+            break;
+    }
+}
 
 
 
