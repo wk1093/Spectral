@@ -15,6 +15,9 @@ struct sD3D11_1Context {
     ID3D11DeviceContext1* deviceContext;
     IDXGISwapChain1* swapChain;
     ID3D11RenderTargetView* frameBufferView;
+    ID3D11DepthStencilView* depthStencilView;
+    ID3D11RasterizerState* rasterizerState;
+    ID3D11DepthStencilState* depthStencilState;
 };
 
 sD3D11_1Context __d3d11_1_context;
@@ -135,6 +138,7 @@ CEXPORT void init(sWindow* win) {
 
     // Create Framebuffer Render Target
     ID3D11RenderTargetView* d3d11FrameBufferView;
+    ID3D11DepthStencilView* d3d11DepthStencilView;
     {
         ID3D11Texture2D* d3d11FrameBuffer;
         HRESULT hResult = d3d11SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&d3d11FrameBuffer);
@@ -149,14 +153,63 @@ CEXPORT void init(sWindow* win) {
             printf("ERROR CODE: %lu\n", GetLastError());
         }
 
+        D3D11_TEXTURE2D_DESC depthStencilDesc = {};
+        d3d11FrameBuffer->GetDesc(&depthStencilDesc);
 
         d3d11FrameBuffer->Release();
+
+        depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+        depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+        depthStencilDesc.CPUAccessFlags = 0;
+
+        ID3D11Texture2D* depthBuffer;
+
+        hResult = d3d11Device->CreateTexture2D(&depthStencilDesc, 0, &depthBuffer);
+        if (FAILED(hResult)) {
+            MessageBoxA(0, "CreateTexture2D() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+
+        hResult = d3d11Device->CreateDepthStencilView(depthBuffer, 0, &d3d11DepthStencilView);
+        if (FAILED(hResult)) {
+            MessageBoxA(0, "CreateDepthStencilView() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+
+        depthBuffer->Release();
+
     }
+
+
+    ID3D11RasterizerState* rasterizerState;
+    {
+        D3D11_RASTERIZER_DESC rasterizerDesc = {};
+        rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+        rasterizerDesc.CullMode = D3D11_CULL_BACK;
+        rasterizerDesc.FrontCounterClockwise = TRUE;
+
+        d3d11Device->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+    }
+
+    ID3D11DepthStencilState* depthStencilState;
+    {
+        D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
+        depthStencilDesc.DepthEnable    = TRUE;
+        depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+        depthStencilDesc.DepthFunc      = D3D11_COMPARISON_LESS;
+
+        d3d11Device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
+    }
+
     __d3d11_1_context.hwnd = hwnd;
     __d3d11_1_context.device = d3d11Device;
     __d3d11_1_context.deviceContext = d3d11DeviceContext;
     __d3d11_1_context.swapChain = d3d11SwapChain;
     __d3d11_1_context.frameBufferView = d3d11FrameBufferView;
+    __d3d11_1_context.depthStencilView = d3d11DepthStencilView;
+    __d3d11_1_context.rasterizerState = rasterizerState;
+    __d3d11_1_context.depthStencilState = depthStencilState;
 }
 
 float __clearColor[4] = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -170,10 +223,14 @@ CEXPORT void setClearColor(float r, float g, float b, float a) {
 
 CEXPORT void clear() {
     __d3d11_1_context.deviceContext->ClearRenderTargetView(__d3d11_1_context.frameBufferView, __clearColor);
+    __d3d11_1_context.deviceContext->ClearDepthStencilView(__d3d11_1_context.depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
     RECT rect;
     GetClientRect(__d3d11_1_context.hwnd, &rect);
     D3D11_VIEWPORT viewport = {0.0f, 0.0f, (float)(rect.right - rect.left), (float)(rect.bottom - rect.top), 0.0f, 1.0f};
     __d3d11_1_context.deviceContext->RSSetViewports(1, &viewport);
+    __d3d11_1_context.deviceContext->RSSetState(__d3d11_1_context.rasterizerState);
+    __d3d11_1_context.deviceContext->OMSetDepthStencilState(__d3d11_1_context.depthStencilState, 0);
+    __d3d11_1_context.deviceContext->OMSetRenderTargets(1, &__d3d11_1_context.frameBufferView, __d3d11_1_context.depthStencilView);
     __d3d11_1_context.deviceContext->OMSetRenderTargets(1, &__d3d11_1_context.frameBufferView, 0);
 }
 
@@ -306,6 +363,7 @@ CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefini
         } break;
     }
 
+    printf("Invalid shader type\n");
     return {nullptr};
 }
 
@@ -331,6 +389,9 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
                 break;
             case sShaderType::GEOMETRY:
                 printf("GEOMETRY SHADER UNIMPLEMENTED\n");
+                return {nullptr};
+            default:
+                printf("Invalid shader type\n");
                 return {nullptr};
         }
     }
@@ -358,7 +419,6 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
             strs.push_back(str);
             inputElementDesc[i].SemanticName = str->c_str();
             inputElementDesc[i].SemanticIndex = 0;
-            // inputElementDesc[i].Format = DXGI_FORMAT_R32G32B32_FLOAT;
             switch (vertexShader.vertDef->elements[i]) {
                 case 1:
                     inputElementDesc[i].Format = DXGI_FORMAT_R32_FLOAT;
@@ -379,7 +439,6 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
             inputElementDesc[i].InstanceDataStepRate = 0;
             offset2 += vertexShader.vertDef->elements[i] * sizeof(float);
         }
-        printf("Offset: %d\n", offset2);
 
         HRESULT hResult = __d3d11_1_context.device->CreateInputLayout(inputElementDesc, vertexShader.vertDef->count,
                                                                      vertexShader.shaderBlob->GetBufferPointer(),

@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-#define DEBUG_SHADER
+// #define DEBUG_SHADER
 
 bool strbegw(const char* a, const char* b) {
     return strncmp(a, b, strlen(b)) == 0;
@@ -405,4 +405,13 @@ void preprocess(std::string& source) {
         source.replace(ifkeep, to_keep.size(), "");
         source.replace(ifkeep_end, to_keep_end.size(), "");
     }
+
+    // remove everything after any '//' until the end of the line
+    while (true) {
+        size_t comment = source.find("//");
+        if (comment == std::string::npos) break;
+        size_t eol = source.find("\n", comment);
+        source.replace(comment, eol - comment, "");
+    }
+
 }

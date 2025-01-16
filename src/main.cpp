@@ -5,8 +5,18 @@
 #include <cmath>
 
 int main(int argc, char** argv) {
-    const char* window_module = "glfw_noapi";
-    const char* graphics_module = "d3d11_1";
+
+
+    const char* window_module;
+    const char* graphics_module;
+    bool use_dx = true;
+    if (use_dx) {
+        window_module = "glfw_noapi";
+        graphics_module = "d3d11_1";
+    } else {
+        window_module = "glfw_gl";
+        graphics_module = "glad";
+    }
     if (argc == 3) {
         window_module = argv[1];
         graphics_module = argv[2];
@@ -40,31 +50,31 @@ int main(int argc, char** argv) {
         {{1.0f, -1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},
         {{1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},
         {{-1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 0.0f}},
-        // // back
-        // {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f, 0.0f}},
-        // {{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}},
-        // {{1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
-        // {{-1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 0.0f}},
-        // // top
-        // {{-1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        // {{1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        // {{1.0f, 1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        // {{-1.0f, 1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
-        // // bottom
-        // {{-1.0f, -1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        // {{1.0f, -1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        // {{1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        // {{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
-        // // right
-        // {{1.0f, -1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        // {{1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        // {{1.0f, 1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        // {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
-        // // left
-        // {{-1.0f, -1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        // {{-1.0f, -1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        // {{-1.0f, 1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        // {{-1.0f, 1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}}
+        // back
+        {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f, 0.0f}},
+        {{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}},
+        {{1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
+        {{-1.0f, 1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f, 0.0f}},
+        // top
+        {{-1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        {{1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+        {{1.0f, 1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        {{-1.0f, 1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
+        // bottom
+        {{-1.0f, -1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        {{1.0f, -1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+        {{1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        {{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
+        // right
+        {{1.0f, -1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        {{1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+        {{1.0f, 1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
+        // left
+        {{-1.0f, -1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        {{-1.0f, -1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+        {{-1.0f, 1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        {{-1.0f, 1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}}
     };
 
     size_t vertSize = 0;
@@ -81,11 +91,11 @@ int main(int argc, char** argv) {
 
     sIndex indices[] = {
         0, 1, 2, 2, 3, 0,
-        // 4, 5, 6, 6, 7, 4,
-        // 8, 9, 10, 10, 11, 8,
-        // 12, 13, 14, 14, 15, 12,
-        // 16, 17, 18, 18, 19, 16,
-        // 20, 21, 22, 22, 23, 20
+        4, 5, 6, 6, 7, 4,
+        8, 9, 10, 10, 11, 8,
+        12, 13, 14, 14, 15, 12,
+        16, 17, 18, 18, 19, 16,
+        20, 21, 22, 22, 23, 20
     };
     sShader vert{};
     sShader frag{};
@@ -114,25 +124,18 @@ int main(int argc, char** argv) {
     struct ShaderData {
         float colorMult[3] = {1.0f, 1.0f, 1.0f};
         float time = 0.0f;
-        // float proj[4][4] = {
-        //     {matscale / aspect_ratio, 0.0f, 0.0f, 0.0f},
-        //     {0.0f, matscale, 0.0f, 0.0f},
-        //     {0.0f, 0.0f, -farp / (farp-nearp), -1.0f},
-        //     {0.0f, 0.0f, -(farp*nearp) / (farp-nearp), 1.0f}
-        // };
-        // flip matrix because of row-major vs column-major
+
         float proj[4][4] = {
             {matscale / aspect_ratio, 0.0f, 0.0f, 0.0f},
             {0.0f, matscale, 0.0f, 0.0f},
-            {0.0f, 0.0f, -farp / (farp-nearp), -(farp*nearp) / (farp-nearp)},
-            {0.0f, 0.0f, -1.0f, 1.0f}
+            {0.0f, 0.0f, -farp / (farp-nearp), -1.0f},
+            {0.0f, 0.0f, -farp*nearp / (farp-nearp), 1.0f}
         };
-        // premade matrix to move the camera back (move everything forward)
         float view[4][4] = {
-            {1.0f, 0.0f, 0.0f, 3.0f},
-            {0.0f, 1.0f, 0.0f, 3.0f},
-            {0.0f, 0.0f, 1.0f, -10.0f},
-            {0.0f, 0.0f, 0.0f, 1.0f}
+            {1.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 1.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 1.0f, 0.0f},
+            {3.0f, 3.0f, -10.0f, 1.0f}
         };
     } shaderData;
 #pragma pack(pop)
@@ -149,7 +152,7 @@ int main(int argc, char** argv) {
         winm.updateWindow(&win);
         gfxm.clear();
 
-        // shaderData.colorMult[0] = sinf(i++ * 0.1f) * 0.5f + 0.5f;
+        shaderData.colorMult[0] = sinf(i++ * 0.1f) * 0.5f + 0.5f;
         shaderData.time = (float)winm.getTime(win);
         gfxm.useShaderProgram(shader);
         gfxm.setUniforms(uniforms, &shaderData);
