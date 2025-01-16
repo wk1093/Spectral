@@ -18,9 +18,9 @@ CEXPORT void init(sWindow* win) {
     // wireframe
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // make sure backface culling is enabled
-    // glEnable(GL_CULL_FACE);
-    // glCullFace(GL_BACK);
-    // glFrontFace(GL_CCW);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
     // enable blending
     // glEnable(GL_BLEND);
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
