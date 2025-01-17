@@ -1,10 +1,10 @@
 #VS_IN vec3 pos;
 #VS_IN vec3 normal;
-#VS_IN vec3 color;
+#VS_IN vec2 texcoord;
 
-#VS_OUT vec3 obj_color;
 #VS_OUT vec3 vertex_pos;
 #VS_OUT vec3 normal_out;
+#VS_OUT vec2 tex_coords;
 
 #UNIFORM mat4 uProj;
 #UNIFORM mat4 uView;
@@ -12,6 +12,6 @@
 void main() {
     spsl_position = mul(uProj, mul(uView, vec4(pos, 1.0)));
     vertex_pos = pos;
-    obj_color = color;
     normal_out = normal;
+    tex_coords = texcoord;
 }

@@ -1,9 +1,12 @@
-#FS_IN vec3 obj_color;
+
 #FS_IN vec3 vertex_pos;
 #FS_IN vec3 normal_out;
+#FS_IN vec2 tex_coords;
 
 #UNIFORM float uTime;
 #UNIFORM vec3 uViewPos;
+
+#TEXTURE tex0;
 
 void main() {
     // phong shader
@@ -18,12 +21,13 @@ void main() {
     float diff = max(dot(normal_out, light_dir), 0.0);
     float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 32.0);
 
+    vec4 obj_color = SAMPLE(tex0, tex_coords);
+
     vec3 diffuse = diff * light_color;
     vec3 specular = spec * light_color;
+    vec3 result = (ambient_color + diffuse + specular) * obj_color.rgb;
 
-    vec3 result = (ambient_color + diffuse + specular) * obj_color;
-
-    spsl_fragcolor = vec4(result, 1.0);
+    spsl_fragcolor = vec4(result, obj_color.a);
 
 
 

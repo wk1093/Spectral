@@ -12,6 +12,7 @@ add_subdirectory(src/modules)
 add_executable(Spectral src/main.cpp)
 # add ./lib to the RPATH
 add_dependencies(Spectral SpectralModules)
+target_link_libraries(Spectral SpectralInterface)
 
 set_target_properties(Spectral PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set_target_properties(Spectral PROPERTIES SUFFIX ".${SPECTRAL_FULLPLAT}${CMAKE_EXECUTABLE_SUFFIX}")

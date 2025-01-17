@@ -131,8 +131,15 @@ CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefini
     return {internal};
 }
 
+struct sInternalShaderProgram {
+    unsigned int program;
+    int texcount;
+};
+
 CEXPORT void useShaderProgram(sShaderProgram shader) {
-    glUseProgram(*(unsigned int*)shader.internal);
+    sInternalShaderProgram* internal = (sInternalShaderProgram*)shader.internal;
+    glUseProgram(internal->program);
+    internal->texcount = 0;
 }
 
 CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
@@ -151,8 +158,9 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
         return {nullptr};
     }
 
-    unsigned int* internal = (unsigned int*)malloc(sizeof(unsigned int));
-    *internal = program;
+    sInternalShaderProgram* internal = (sInternalShaderProgram*)malloc(sizeof(sInternalShaderProgram));
+    internal->program = program;
+    internal->texcount = 0;
     return {internal};
 }
 
@@ -266,4 +274,44 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
                 printf("Invalid uniform type\n");
         }
     }
+}
+
+struct sInternalTexture {
+    unsigned int texture;
+};
+
+CEXPORT sTexture createTexture(sTextureDefinition tex) {
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex.width, tex.height, 0, GL_RGB, GL_UNSIGNED_BYTE, tex.data);
+    GLenum format;
+    switch (tex.channels) {
+        case 1:
+            format = GL_RED;
+            break;
+        case 3:
+            format = GL_RGB;
+            break;
+        case 4:
+            format = GL_RGBA;
+            break;
+        default:
+            printf("Invalid texture format\n");
+            return {nullptr};
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, format, tex.width, tex.height, 0, format, GL_UNSIGNED_BYTE, tex.data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    sInternalTexture* internal = (sInternalTexture*)malloc(sizeof(sInternalTexture));
+    internal->texture = texture;
+    return {internal};
+}
+
+CEXPORT void useTexture(sShaderProgram program, sTexture texture, const char* name) {
+    sInternalTexture* internal = (sInternalTexture*)texture.internal;
+    sInternalShaderProgram* shader = (sInternalShaderProgram*)program.internal;
+    glActiveTexture(GL_TEXTURE0 + shader->texcount);
+    glBindTexture(GL_TEXTURE_2D, internal->texture);
+    glUniform1i(glGetUniformLocation(shader->program, name), shader->texcount);
+    shader->texcount++;
 }

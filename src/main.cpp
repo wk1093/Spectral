@@ -3,7 +3,24 @@
 #include "modules/shdr/module.h"
 #include "modules/math/module.h" // doesn't need to be loaded, because all the functions are inlined and the module is header-only
 
+#include "stb_image.h"
+
 #include <cmath>
+
+sTextureDefinition loadTexture(const char* path) {
+    int width, height, channels;
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* data = stbi_load(path, &width, &height, &channels, 0);
+    if (data == nullptr) {
+        printf("Error loading texture\n");
+        return {0, 0, 0, nullptr};
+    }
+    if (width <= 0 || height <= 0 || channels <= 0) {
+        printf("Error loading texture\n");
+        return {0, 0, 0, nullptr};
+    }
+    return {static_cast<size_t>(width), static_cast<size_t>(height), static_cast<size_t>(channels), data};
+}
 
 int main(int argc, char** argv) {
     const char* window_module;
@@ -25,7 +42,6 @@ int main(int argc, char** argv) {
     if (!winm.lib.valid()) return 1;
     GraphicsModule gfxm(graphics_module);
     if (!gfxm.lib.valid()) return 1;
-
     ShaderModule shdr("spsl", gfxm.getShaderType());
     if (!shdr.lib.valid()) return 1;
 
@@ -36,44 +52,46 @@ int main(int argc, char** argv) {
 
     gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
-    sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 3});
+    sTextureDefinition texDef = loadTexture("textures/test.png");
+    sTexture tex = gfxm.createTexture(texDef);
+
+    sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
 
     // basic cube
     struct Vertex {
         float position[3];
         float normal[3];
-        float color[3];
+        float texcoord[2];
     } vertices[] = {
-        // front
-        {{-1.0f, -1.0f, 1.0f},  {0.0f, 0.0f, 1.0f},  {0.3f, 0.4f, 0.5f}},
-        {{1.0f, -1.0f, 1.0f},   {0.0f, 0.0f, 1.0f},  {0.3f, 0.4f, 0.5f}},
-        {{1.0f, 1.0f, 1.0f},    {0.0f, 0.0f, 1.0f},  {0.3f, 0.4f, 0.5f}},
-        {{-1.0f, 1.0f, 1.0f},   {0.0f, 0.0f, 1.0f},  {0.3f, 0.4f, 0.5f}},
-        // back
-        {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.3f, 0.4f, 0.5f}},
-        {{1.0f, -1.0f, -1.0f},  {0.0f, 0.0f, -1.0f}, {0.3f, 0.4f, 0.5f}},
-        {{1.0f, 1.0f, -1.0f},   {0.0f, 0.0f, -1.0f}, {0.3f, 0.4f, 0.5f}},
-        {{-1.0f, 1.0f, -1.0f},  {0.0f, 0.0f, -1.0f}, {0.3f, 0.4f, 0.5f}},
-        // top
-        {{-1.0f, 1.0f, 1.0f},   {0.0f, 1.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
-        {{1.0f, 1.0f, 1.0f},    {0.0f, 1.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
-        {{1.0f, 1.0f, -1.0f},   {0.0f, 1.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
-        {{-1.0f, 1.0f, -1.0f},  {0.0f, 1.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
-        // bottom
-        {{-1.0f, -1.0f, 1.0f},  {0.0f, -1.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
-        {{1.0f, -1.0f, 1.0f},   {0.0f, -1.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
-        {{1.0f, -1.0f, -1.0f},  {0.0f, -1.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
-        {{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
-        // right
-        {{1.0f, -1.0f, 1.0f},   {1.0f, 0.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
-        {{1.0f, -1.0f, -1.0f},  {1.0f, 0.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
-        {{1.0f, 1.0f, -1.0f},   {1.0f, 0.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
-        {{1.0f, 1.0f, 1.0f},    {1.0f, 0.0f, 0.0f},  {0.3f, 0.4f, 0.5f}},
-        // left
-        {{-1.0f, -1.0f, 1.0f},  {-1.0f, 0.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
-        {{-1.0f, -1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
-        {{-1.0f, 1.0f, -1.0f},  {-1.0f, 0.0f, 0.0f}, {0.3f, 0.4f, 0.5f}},
-        {{-1.0f, 1.0f, 1.0f},   {-1.0f, 0.0f, 0.0f}, {0.3f, 0.4f, 0.5f}}
+        {{-1.0f, -1.0f,  1.0f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}},
+        {{ 1.0f, -1.0f,  1.0f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 0.0f}},
+        {{ 1.0f,  1.0f,  1.0f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 1.0f}},
+        {{-1.0f,  1.0f,  1.0f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 1.0f}},
+
+        {{-1.0f, -1.0f, -1.0f}, { 0.0f,  0.0f, -1.0f}, {0.0f, 0.0f}},
+        {{ 1.0f, -1.0f, -1.0f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 0.0f}},
+        {{ 1.0f,  1.0f, -1.0f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f}},
+        {{-1.0f,  1.0f, -1.0f}, { 0.0f,  0.0f, -1.0f}, {0.0f, 1.0f}},
+
+        {{-1.0f,  1.0f,  1.0f}, { 0.0f,  1.0f,  0.0f}, {0.0f, 0.0f}},
+        {{ 1.0f,  1.0f,  1.0f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 0.0f}},
+        {{ 1.0f,  1.0f, -1.0f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f}},
+        {{-1.0f,  1.0f, -1.0f}, { 0.0f,  1.0f,  0.0f}, {0.0f, 1.0f}},
+
+        {{-1.0f, -1.0f,  1.0f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 0.0f}},
+        {{ 1.0f, -1.0f,  1.0f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 0.0f}},
+        {{ 1.0f, -1.0f, -1.0f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f}},
+        {{-1.0f, -1.0f, -1.0f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 1.0f}},
+
+        {{ 1.0f, -1.0f,  1.0f}, { 1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
+        {{ 1.0f, -1.0f, -1.0f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}},
+        {{ 1.0f,  1.0f, -1.0f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
+        {{ 1.0f,  1.0f,  1.0f}, { 1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}},
+
+        {{-1.0f, -1.0f,  1.0f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
+        {{-1.0f, -1.0f, -1.0f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}},
+        {{-1.0f,  1.0f, -1.0f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
+        {{-1.0f,  1.0f,  1.0f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}}
     };
 
     size_t vertSize = 0;
@@ -89,12 +107,12 @@ int main(int argc, char** argv) {
 
 
     sIndex indices[] = {
-        0, 1, 2, 2, 3, 0,
-        6, 5, 4, 4, 7, 6,
-        8, 9, 10, 10, 11, 8,
-        14, 13, 12, 12, 15, 14,
-        16, 17, 18, 18, 19, 16,
-        22, 21, 20, 20, 23, 22
+         0,  1,  2,   2,  3,  0,
+         6,  5,  4,   4,  7,  6,
+         8,  9, 10,  10, 11,  8,
+        14, 13, 12,  12, 15, 14,
+        16, 17, 18,  18, 19, 16,
+        22, 21, 20,  20, 23, 22
     };
     sShader vert{};
     sShader frag{};
@@ -116,8 +134,6 @@ int main(int argc, char** argv) {
     static const float nearp = 0.001f;
     static const float farp = 1000.0f;
     static const float aspect_ratio = 800.0f / 600.0f;
-
-    static const float matscale = 1.0f / tanf(fov * 0.5f * 3.14159f / 180.0f);
 
     bool mouse_locked = false;
 
@@ -205,6 +221,7 @@ int main(int argc, char** argv) {
         shaderData.viewPos = camera.pos;
         gfxm.useShaderProgram(shader);
         gfxm.setUniforms(uniforms, &shaderData);
+        gfxm.useTexture(shader, tex, "tex0"); // order matters, must be called after useShaderProgram
         gfxm.drawMesh(mesh);
 
         gfxm.present();

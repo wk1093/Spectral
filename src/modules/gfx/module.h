@@ -5,6 +5,9 @@
 
 #include <stdio.h>
 #include <initializer_list>
+#include <cstdint>
+#include <cstdlib>
+#include <string>
 
 typedef unsigned int sIndex;
 
@@ -123,6 +126,17 @@ struct sShaderProgram {
     void* gfx_internal;
 };
 
+struct sTextureDefinition {
+    size_t width;
+    size_t height;
+    size_t channels;
+    unsigned char* data;
+};
+
+struct sTexture {
+    void* internal;
+};
+
 namespace graphics {
     typedef void (*SetClearColor)(float r, float g, float b, float a);
     typedef void (*Clear)();
@@ -136,6 +150,8 @@ namespace graphics {
     typedef const char* (*GetShaderType)();
     typedef sUniforms (*CreateUniforms)(sShaderProgram program, sUniformDefinition def);
     typedef void (*SetUniforms)(sUniforms uniforms, void* data);
+    typedef sTexture (*CreateTexture)(sTextureDefinition def);
+    typedef void (*UseTexture)(sShaderProgram program, sTexture texture, const char* name);
 }
 
 struct GraphicsModule : Module {
@@ -151,6 +167,8 @@ struct GraphicsModule : Module {
     graphics::GetShaderType getShaderType;
     graphics::CreateUniforms createUniforms;
     graphics::SetUniforms setUniforms;
+    graphics::CreateTexture createTexture;
+    graphics::UseTexture useTexture;
 
     sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexCount, sIndex* indices, size_t indexCount) {
         sMesh mesh = internal_createMesh(vertexShader, vertices, vertexCount, indices, indexCount);
@@ -217,5 +235,7 @@ struct GraphicsModule : Module {
         getShaderType = (graphics::GetShaderType)lib.getSymbol("getShaderType");
         createUniforms = (graphics::CreateUniforms)lib.getSymbol("createUniforms");
         setUniforms = (graphics::SetUniforms)lib.getSymbol("setUniforms");
+        createTexture = (graphics::CreateTexture)lib.getSymbol("createTexture");
+        useTexture = (graphics::UseTexture)lib.getSymbol("useTexture");
     }
 };

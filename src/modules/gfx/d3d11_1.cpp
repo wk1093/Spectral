@@ -259,6 +259,7 @@ struct sInternalShaderProgram {
     sInternalShader fragmentShader;
     // sInternalShader geometryShader;
     ID3D11InputLayout* inputLayout;
+    size_t textureCount;
 };
 
 CEXPORT sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexSize, sIndex* indices, size_t indexSize) {
@@ -371,6 +372,7 @@ CEXPORT void useShaderProgram(sShaderProgram shader) {
     __d3d11_1_context.deviceContext->IASetInputLayout(internal->inputLayout);
     __d3d11_1_context.deviceContext->VSSetShader(internal->vertexShader.vertexShader, 0, 0);
     __d3d11_1_context.deviceContext->PSSetShader(internal->fragmentShader.pixelShader, 0, 0);
+    internal->textureCount = 0;
 }
 
 CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
@@ -518,3 +520,95 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
 
     __d3d11_1_context.deviceContext->VSSetConstantBuffers(0, 1, &internal->vertexBuffer);
 }
+
+struct sInternalTexture {
+    ID3D11ShaderResourceView* texture;
+    ID3D11SamplerState* sampler;
+};
+
+CEXPORT sTexture createTexture(sTextureDefinition def) {
+    D3D11_SAMPLER_DESC samplerDesc = {};
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    samplerDesc.BorderColor[0] = 1.0f;
+    samplerDesc.BorderColor[1] = 1.0f;
+    samplerDesc.BorderColor[2] = 1.0f;
+    samplerDesc.BorderColor[3] = 1.0f;
+    samplerDesc.MinLOD = 0;
+    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+    ID3D11SamplerState* sampler;
+    HRESULT hResult = __d3d11_1_context.device->CreateSamplerState(&samplerDesc, &sampler);
+    if (FAILED(hResult)) {
+        MessageBoxA(0, "CreateSamplerState() failed", "Fatal Error", MB_OK);
+        printf("ERROR CODE: %lu\n", GetLastError());
+    }
+
+    D3D11_TEXTURE2D_DESC textureDesc = {};
+    textureDesc.Width = def.width;
+    textureDesc.Height = def.height;
+    textureDesc.MipLevels = 1;
+    textureDesc.ArraySize = 1;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.Usage = D3D11_USAGE_DEFAULT;
+    textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    switch (def.channels) {
+        case 1:
+            textureDesc.Format = DXGI_FORMAT_R8_UNORM;
+            break;
+        case 3:
+            textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            break;
+        case 4:
+            textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            break;
+        default:
+            MessageBoxA(0, "Invalid texture format", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+            return {nullptr};
+    }
+    textureDesc.CPUAccessFlags = 0;
+    textureDesc.MiscFlags = 0;
+
+    D3D11_SUBRESOURCE_DATA subResourceData = {};
+    subResourceData.pSysMem = def.data;
+    subResourceData.SysMemPitch = def.width * def.channels;
+    
+    ID3D11Texture2D* texture;
+    hResult = __d3d11_1_context.device->CreateTexture2D(&textureDesc, &subResourceData, &texture);
+    if (FAILED(hResult)) {
+        MessageBoxA(0, "CreateTexture2D() failed", "Fatal Error", MB_OK);
+        printf("ERROR CODE: %lu\n", GetLastError());
+    }
+
+    ID3D11ShaderResourceView* textureView;
+    hResult = __d3d11_1_context.device->CreateShaderResourceView(texture, 0, &textureView);
+    if (FAILED(hResult)) {
+        MessageBoxA(0, "CreateShaderResourceView() failed", "Fatal Error", MB_OK);
+        printf("ERROR CODE: %lu\n", GetLastError());
+    }
+
+    sInternalTexture* internal = (sInternalTexture*)malloc(sizeof(sInternalTexture));
+    if (!internal) {
+        MessageBoxA(0, "malloc() failed", "Fatal Error", MB_OK);
+        printf("ERROR CODE: %lu\n", GetLastError());
+    }
+    internal->texture = textureView;
+    internal->sampler = sampler;
+    return {internal};
+}
+
+CEXPORT void useTexture(sShaderProgram program, sTexture texture, const char* name) {
+    auto* internal = (sInternalTexture*)texture.internal;
+    auto* internalProgram = (sInternalShaderProgram*)program.internal;
+    __d3d11_1_context.deviceContext->PSSetShaderResources(internalProgram->textureCount, 1, &internal->texture);
+    __d3d11_1_context.deviceContext->PSSetSamplers(internalProgram->textureCount, 1, &internal->sampler);
+    internalProgram->textureCount++;
+}
+
+
+
+

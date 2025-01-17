@@ -45,36 +45,33 @@ endif()
 # add the platform onto it
 set(SPECTRAL_FULLPLAT "${SPECTRAL_PLATFORM}_${CMAKE_SYSTEM_PROCESSOR}" CACHE STRING "The full platform name")
 
-
-
-
 # make it so all included libs will output their dynamic libs to the bin/lib folder
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
+FetchContent_Declare(
+        glfw
+        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_TAG 3.3.8
+)
+FetchContent_Declare(
+        sfml
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        GIT_TAG 2.6.0
+)
+FetchContent_Declare(
+    eogll
+    GIT_REPOSITORY https://github.com/wk1093/EOGLL.git
+)
 if(SPEC_GLFW)
-    FetchContent_Declare(
-            glfw
-            GIT_REPOSITORY https://github.com/glfw/glfw.git
-            GIT_TAG 3.3.8
-    )
     FetchContent_MakeAvailable(glfw)
 endif()
 if(SPEC_SFML)
-    FetchContent_Declare(
-            sfml
-            GIT_REPOSITORY https://github.com/SFML/SFML.git
-            GIT_TAG 2.6.0
-    )
     FetchContent_MakeAvailable(sfml)
     set_target_properties(sfml-graphics PROPERTIES POSITION_INDEPENDENT_CODE ON)
     set_target_properties(sfml-window PROPERTIES POSITION_INDEPENDENT_CODE ON)
     set_target_properties(sfml-system PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 if(SPEC_EOGLL)
-    FetchContent_Declare(
-            eogll
-            GIT_REPOSITORY https://github.com/wk1093/EOGLL.git
-    )
     FetchContent_MakeAvailable(eogll)
 elseif(SPEC_GLAD)
     # Eogll normally provides GLAD, but if it is not being used, we need to provide it ourselves
@@ -142,6 +139,10 @@ if(SPEC_DX11)
     add_module(gfx d3d11_1 gfx/d3d11_1.cpp)
     target_link_libraries(gfx_d3d11_1 d3d11 d3dcompiler dxgi)
 endif()
+
+add_library(stb_static STATIC ${stb_SOURCE_DIR}/src/stb.c)
+target_include_directories(stb_static PUBLIC ${stb_SOURCE_DIR}/include)
+
 add_module(shdr spsl_glsl shdr/spsl.cpp)
 target_compile_definitions(shdr_spsl_glsl PUBLIC "SPECTRAL_OUTPUT_GLSL")
 
@@ -171,6 +172,8 @@ if(SPEC_DX11)
     add_dependencies(SpectralModules gfx_d3d11_1)
 endif()
 
+add_library(SpectralInterface INTERFACE)
+target_link_libraries(SpectralInterface INTERFACE stb_static)
 
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib")

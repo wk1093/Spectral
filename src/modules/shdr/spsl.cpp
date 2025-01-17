@@ -44,6 +44,7 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
     // fourth pass: uniforms NOT IMPLEMENTED YET
 
     source = "#define mul(a,b) ((a)*(b))\n" + source;
+    source = "#define SAMPLE(name, coord) texture((name), (coord))\n" + source;
 
     size_t currentLayout = 0;
     while (true) {
@@ -68,6 +69,12 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
         size_t unif = source.find("#UNIFORM");
         if (unif == std::string::npos) break;
         source.replace(unif, 8, "uniform");
+    }
+
+    while (true) {
+        size_t tex = source.find("#TEXTURE");
+        if (tex == std::string::npos) break;
+        source.replace(tex, 8, "uniform sampler2D");
     }
 
     // spsl_position -> gl_Position
@@ -309,6 +316,21 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
             if (pos == std::string::npos) break;
             source.replace(pos, 13, "input.position");
         }
+
+        // #TEXTURE test ->
+        // Texture2D spsltexture_test : register(t0);
+        // SamplerState spslsampler_test : register(s0);
+        size_t texs = 0;
+        while (true) {
+            size_t tex = source.find("#TEXTURE");
+            if (tex == std::string::npos) break;
+            size_t eol = source.find("\n", tex);
+            std::string name = source.substr(tex + 9, eol - tex - 10);
+            
+            source.replace(tex, eol - tex, "Texture2D spsltexture_" + name + " : register(t" + std::to_string(texs) + ");\nSamplerState spslsampler_" + name + " : register(s" + std::to_string(texs) + ");\n");
+        }
+
+        source = "#define SAMPLE(tex, coord) spsltexture_##tex.Sample(spslsampler_##tex, coord)\n" + source;
 
         // input names
         for (size_t i = 0; i < input_names.size(); i++) {
