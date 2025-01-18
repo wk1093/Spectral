@@ -103,9 +103,7 @@ int main(int argc, char** argv) {
     };
     sShader vert{};
     sShader frag{};
-    printf("Compiling shaders\n");
     vert = shdr.compile(&gfxm, "spsl/basic.spslv", sShaderType::VERTEX, vertDef);
-    printf("Compiled vertex shader\n");
     frag = shdr.compile(&gfxm, "spsl/basic.spslf", sShaderType::FRAGMENT);
     sShaderProgram shader = gfxm.createShaderProgram({vert, frag});
 

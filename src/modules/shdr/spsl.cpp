@@ -6,6 +6,7 @@
 // #define DEBUG_SHADER
 
 const char* hlsl_header = R"(
+#define SAMPLE(tex, coord) spsltexture_##tex.Sample(spslsampler_##tex, coord)
 float4x4 inverse(float4x4 m) {
     float n11 = m[0][0], n12 = m[1][0], n13 = m[2][0], n14 = m[3][0];
     float n21 = m[0][1], n22 = m[1][1], n23 = m[2][1], n24 = m[3][1];
@@ -51,6 +52,8 @@ float3x3 convm4tom3(float4x4 m) {
 )";
 
 const char* glsl_header = R"(
+#define mul(a,b) ((a)*(b))
+#define SAMPLE(name, coord) texture((name), (coord))
 mat3 convm4tom3(mat4 m) {
     return mat3(m);
 }
@@ -94,8 +97,6 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
     // third pass: names
     // fourth pass: uniforms NOT IMPLEMENTED YET
 
-    source = "#define mul(a,b) ((a)*(b))\n" + source;
-    source = "#define SAMPLE(name, coord) texture((name), (coord))\n" + source;
     source = glsl_header + source;
 
     size_t currentLayout = 0;
@@ -190,10 +191,6 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
     source = "cbuffer SPSL_Uniforms {\n" + unifs + "};\n" + source;
     source = hlsl_header + source;
 
-    printf("preproc\n");
-
-    printf("source:\n%s\n", source.c_str());
-
     // vecX -> floatX
     size_t offset = 0;
     while (true) {
@@ -218,13 +215,8 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
     // matX -> floatXxX
     offset = 0;
     while (true) {
-        size_t mat = source.find("mat");
+        size_t mat = source.find("mat", offset);
         if (mat == std::string::npos) break;
-        // if (isdigit(source[mat + 3]) && !isalnum(source[mat + 4]) && source[mat + 4] != '_') {
-        //     source.replace(mat, 3, "float");
-        //     source.insert(mat + 5, "x");
-        //     source.insert(mat + 5, 1, source[mat + 6]);
-        // }
         if (mat > 0 && (isalnum(source[mat - 1]) || source[mat - 1] == '_')) {
             offset = mat + 1;
             continue;
@@ -240,8 +232,6 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
         }
         offset = mat + 1;
     }
-
-    printf("entering specific preproc\n");
 
     if (type == sShaderType::VERTEX) {
         std::string inputs;
@@ -414,9 +404,6 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
             
             source.replace(tex, eol - tex, "Texture2D spsltexture_" + name + " : register(t" + std::to_string(texs) + ");\nSamplerState spslsampler_" + name + " : register(s" + std::to_string(texs) + ");\n");
         }
-
-        source = "#define SAMPLE(tex, coord) spsltexture_##tex.Sample(spslsampler_##tex, coord)\n" + source;
-
         // input names
         for (size_t i = 0; i < input_names.size(); i++) {
             size_t offset = 0;
