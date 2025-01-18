@@ -40,6 +40,7 @@ int main(int argc, char** argv) {
 
     sTextureDefinition texDef = texm.loadTexture("textures/test.png");
     sTexture tex = gfxm.createTexture(texDef);
+    texm.freeTexture(texDef);
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
 
@@ -213,6 +214,14 @@ int main(int argc, char** argv) {
         gfxm.present();
         winm.swapBuffers(win);
     }
+
+    gfxm.freeMesh(mesh);
+    gfxm.freeShaderProgram(shader);
+    gfxm.freeShader(vert);
+    gfxm.freeShader(frag);
+    gfxm.freeTexture(tex);
+    gfxm.freeUniforms(uniforms);
+    gfxm.destroy();
 
     winm.destroyWindow(win);
 

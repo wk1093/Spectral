@@ -609,6 +609,53 @@ CEXPORT void useTexture(sShaderProgram program, sTexture texture, const char* na
     internalProgram->textureCount++;
 }
 
+CEXPORT void freeTexture(sTexture texture) {
+    auto* internal = (sInternalTexture*)texture.internal;
+    internal->texture->Release();
+    internal->sampler->Release();
+    free(internal);
+}
 
+CEXPORT void freeShader(sShader shader) {
+    auto* internal = (sInternalShader*)shader.internal;
+    if (internal->vertexShader) {
+        internal->vertexShader->Release();
+    }
+    if (internal->pixelShader) {
+        internal->pixelShader->Release();
+    }
+    if (internal->geometryShader) {
+        internal->geometryShader->Release();
+    }
+    free(internal);
+}
 
+CEXPORT void freeShaderProgram(sShaderProgram program) {
+    auto* internal = (sInternalShaderProgram*)program.internal;
+    internal->inputLayout->Release();
+    free(internal);
+}
 
+CEXPORT void freeMesh(sMesh mesh) {
+    auto* internal = (sInternalMesh*)mesh.internal;
+    internal->vertexBuffer->Release();
+    internal->indexBuffer->Release();
+    free(internal);
+}
+
+CEXPORT void freeUniforms(sUniforms uniforms) {
+    auto* internal = (sInternalUniforms*)uniforms.internal;
+    internal->fragmentBuffer->Release();
+    internal->vertexBuffer->Release();
+    free(internal);
+}
+
+CEXPORT void destroy() {
+    __d3d11_1_context.frameBufferView->Release();
+    __d3d11_1_context.depthStencilView->Release();
+    __d3d11_1_context.rasterizerState->Release();
+    __d3d11_1_context.depthStencilState->Release();
+    __d3d11_1_context.swapChain->Release();
+    __d3d11_1_context.deviceContext->Release();
+    __d3d11_1_context.device->Release();
+}

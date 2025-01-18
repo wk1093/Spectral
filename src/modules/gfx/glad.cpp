@@ -315,3 +315,39 @@ CEXPORT void useTexture(sShaderProgram program, sTexture texture, const char* na
     glUniform1i(glGetUniformLocation(shader->program, name), shader->texcount);
     shader->texcount++;
 }
+
+CEXPORT void freeTexture(sTexture texture) {
+    sInternalTexture* internal = (sInternalTexture*)texture.internal;
+    glDeleteTextures(1, &internal->texture);
+    free(internal);
+}
+
+CEXPORT void freeShader(sShader shader) {
+    sInternalShader* internal = (sInternalShader*)shader.internal;
+    glDeleteShader(internal->shader);
+    free(internal);
+}
+
+CEXPORT void freeShaderProgram(sShaderProgram program) {
+    sInternalShaderProgram* internal = (sInternalShaderProgram*)program.internal;
+    glDeleteProgram(internal->program);
+    free(internal);
+}
+
+CEXPORT void freeMesh(sMesh mesh) {
+    sInternalMesh* internal = (sInternalMesh*)mesh.internal;
+    glDeleteVertexArrays(1, &internal->vao);
+    glDeleteBuffers(1, &internal->vbo);
+    glDeleteBuffers(1, &internal->ebo);
+    free(internal);
+}
+
+CEXPORT void freeUniforms(sUniforms uniforms) {
+    sInternalUniforms* internal = (sInternalUniforms*)uniforms.internal;
+    free(internal->locations);
+    free(internal);
+}
+
+CEXPORT void destroy() {
+
+}

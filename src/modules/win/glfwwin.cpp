@@ -67,6 +67,7 @@ CEXPORT sWindow loadWindow(const char* title, int width, int height) {
 
 CEXPORT void destroyWindow(sWindow window) {
     glfwDestroyWindow((GLFWwindow*)window.internal);
+    glfwTerminate();
 }
 
 CEXPORT void updateWindow(sWindow window) {
@@ -137,4 +138,3 @@ CEXPORT void setCursorMode(sWindow window, CursorMode mode) {
             break;
     }
 }
-

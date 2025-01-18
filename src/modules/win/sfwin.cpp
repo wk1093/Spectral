@@ -110,4 +110,3 @@ CEXPORT void setCursorMode(sWindow window, CursorMode mode) {
     sf::RenderWindow *win = (sf::RenderWindow*)window.internal;
     win->setMouseCursorVisible(mode == CursorMode::Normal);
 }
-

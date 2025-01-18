@@ -152,6 +152,12 @@ namespace graphics {
     typedef void (*SetUniforms)(sUniforms uniforms, void* data);
     typedef sTexture (*CreateTexture)(sTextureDefinition def);
     typedef void (*UseTexture)(sShaderProgram program, sTexture texture, const char* name);
+    typedef void (*FreeTexture)(sTexture texture);
+    typedef void (*FreeShader)(sShader shader);
+    typedef void (*FreeShaderProgram)(sShaderProgram program);
+    typedef void (*FreeMesh)(sMesh mesh);
+    typedef void (*FreeUniforms)(sUniforms uniforms);
+    typedef void (*Destroy)();
 }
 
 struct GraphicsModule : Module {
@@ -169,6 +175,12 @@ struct GraphicsModule : Module {
     graphics::SetUniforms setUniforms;
     graphics::CreateTexture createTexture;
     graphics::UseTexture useTexture;
+    graphics::FreeTexture freeTexture;
+    graphics::FreeShader freeShader;
+    graphics::FreeShaderProgram freeShaderProgram;
+    graphics::FreeMesh freeMesh;
+    graphics::FreeUniforms freeUniforms;
+    graphics::Destroy destroy;
 
     sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexCount, sIndex* indices, size_t indexCount) {
         sMesh mesh = internal_createMesh(vertexShader, vertices, vertexCount, indices, indexCount);
@@ -237,5 +249,11 @@ struct GraphicsModule : Module {
         setUniforms = (graphics::SetUniforms)lib.getSymbol("setUniforms");
         createTexture = (graphics::CreateTexture)lib.getSymbol("createTexture");
         useTexture = (graphics::UseTexture)lib.getSymbol("useTexture");
+        freeTexture = (graphics::FreeTexture)lib.getSymbol("freeTexture");
+        freeShader = (graphics::FreeShader)lib.getSymbol("freeShader");
+        freeShaderProgram = (graphics::FreeShaderProgram)lib.getSymbol("freeShaderProgram");
+        freeMesh = (graphics::FreeMesh)lib.getSymbol("freeMesh");
+        freeUniforms = (graphics::FreeUniforms)lib.getSymbol("freeUniforms");
+        destroy = (graphics::Destroy)lib.getSymbol("destroy");
     }
 };
