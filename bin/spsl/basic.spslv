@@ -8,10 +8,11 @@
 
 #UNIFORM mat4 uProj;
 #UNIFORM mat4 uView;
+#UNIFORM mat4 uModel;
 
 void main() {
-    spsl_position = mul(uProj, mul(uView, vec4(pos, 1.0)));
-    vertex_pos = pos;
-    normal_out = normal;
+    spsl_position = mul(uProj, mul(uView, mul(uModel, vec4(pos, 1.0))));
+    normal_out = normalize(mul(convm4tom3(transpose(inverse(uModel))), normal));
     tex_coords = texcoord;
+    vertex_pos = mul(uModel, vec4(pos, 1.0)).xyz;
 }

@@ -103,7 +103,9 @@ int main(int argc, char** argv) {
     };
     sShader vert{};
     sShader frag{};
+    printf("Compiling shaders\n");
     vert = shdr.compile(&gfxm, "spsl/basic.spslv", sShaderType::VERTEX, vertDef);
+    printf("Compiled vertex shader\n");
     frag = shdr.compile(&gfxm, "spsl/basic.spslf", sShaderType::FRAGMENT);
     sShaderProgram shader = gfxm.createShaderProgram({vert, frag});
 
@@ -114,6 +116,7 @@ int main(int argc, char** argv) {
         {sShaderType::FRAGMENT, "uViewPos", sUniformType::FLOAT, 3},
         {sShaderType::VERTEX, "uProj", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
+        {sShaderType::VERTEX, "uModel", sUniformType::FLOAT, 4, 4}
     };
 
     sUniforms uniforms = gfxm.createUniforms(shader, uniformDef);
@@ -131,6 +134,7 @@ int main(int argc, char** argv) {
 
         mat4 proj = perspective(fov, aspect_ratio, nearp, farp);
         mat4 view = identity();
+        mat4 model = identity();
     } shaderData;
 #pragma pack(pop)
     if (uniformDef.size() != sizeof(ShaderData)) {
@@ -145,6 +149,9 @@ int main(int argc, char** argv) {
     sCamera camera = {};
     camera.pos = {3.0f, 3.0f, 10.0f};
 
+    sModelTransform model = {};
+
+
     float speed = 5.0f;
     float sensitivity = 0.001f;
 
@@ -153,6 +160,9 @@ int main(int argc, char** argv) {
     while (!winm.shouldClose(win)) {
         winm.updateWindow(&win);
         gfxm.clear();
+
+        model.rot.y = i * 0.01f;
+        i++;
 
         float mousex, mousey;
         winm.getMousePosition(win, &mousex, &mousey);
@@ -206,6 +216,7 @@ int main(int argc, char** argv) {
         shaderData.time = (float)winm.getTime(win);
         shaderData.view = view(camera);
         shaderData.viewPos = camera.pos;
+        shaderData.model = model.matrix();
         gfxm.useShaderProgram(shader);
         gfxm.setUniforms(uniforms, &shaderData);
         gfxm.useTexture(shader, tex, "tex0"); // order matters, must be called after useShaderProgram

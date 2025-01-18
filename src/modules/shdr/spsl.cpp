@@ -5,6 +5,57 @@
 
 // #define DEBUG_SHADER
 
+const char* hlsl_header = R"(
+float4x4 inverse(float4x4 m) {
+    float n11 = m[0][0], n12 = m[1][0], n13 = m[2][0], n14 = m[3][0];
+    float n21 = m[0][1], n22 = m[1][1], n23 = m[2][1], n24 = m[3][1];
+    float n31 = m[0][2], n32 = m[1][2], n33 = m[2][2], n34 = m[3][2];
+    float n41 = m[0][3], n42 = m[1][3], n43 = m[2][3], n44 = m[3][3];
+
+    float t11 = n23 * n34 * n42 - n24 * n33 * n42 + n24 * n32 * n43 - n22 * n34 * n43 - n23 * n32 * n44 + n22 * n33 * n44;
+    float t12 = n14 * n33 * n42 - n13 * n34 * n42 - n14 * n32 * n43 + n12 * n34 * n43 + n13 * n32 * n44 - n12 * n33 * n44;
+    float t13 = n13 * n24 * n42 - n14 * n23 * n42 + n14 * n22 * n43 - n12 * n24 * n43 - n13 * n22 * n44 + n12 * n23 * n44;
+    float t14 = n14 * n23 * n32 - n13 * n24 * n32 - n14 * n22 * n33 + n12 * n24 * n33 + n13 * n22 * n34 - n12 * n23 * n34;
+
+    float det = n11 * t11 + n21 * t12 + n31 * t13 + n41 * t14;
+    float idet = 1.0f / det;
+
+    float4x4 ret;
+
+    ret[0][0] = t11 * idet;
+    ret[0][1] = (n24 * n33 * n41 - n23 * n34 * n41 - n24 * n31 * n43 + n21 * n34 * n43 + n23 * n31 * n44 - n21 * n33 * n44) * idet;
+    ret[0][2] = (n22 * n34 * n41 - n24 * n32 * n41 + n24 * n31 * n42 - n21 * n34 * n42 - n22 * n31 * n44 + n21 * n32 * n44) * idet;
+    ret[0][3] = (n23 * n32 * n41 - n22 * n33 * n41 - n23 * n31 * n42 + n21 * n33 * n42 + n22 * n31 * n43 - n21 * n32 * n43) * idet;
+
+    ret[1][0] = t12 * idet;
+    ret[1][1] = (n13 * n34 * n41 - n14 * n33 * n41 + n14 * n31 * n43 - n11 * n34 * n43 - n13 * n31 * n44 + n11 * n33 * n44) * idet;
+    ret[1][2] = (n14 * n32 * n41 - n12 * n34 * n41 - n14 * n31 * n42 + n11 * n34 * n42 + n12 * n31 * n44 - n11 * n32 * n44) * idet;
+    ret[1][3] = (n12 * n33 * n41 - n13 * n32 * n41 + n13 * n31 * n42 - n11 * n33 * n42 - n12 * n31 * n43 + n11 * n32 * n43) * idet;
+
+    ret[2][0] = t13 * idet;
+    ret[2][1] = (n14 * n23 * n41 - n13 * n24 * n41 - n14 * n21 * n43 + n11 * n24 * n43 + n13 * n21 * n44 - n11 * n23 * n44) * idet;
+    ret[2][2] = (n12 * n24 * n41 - n14 * n22 * n41 + n14 * n21 * n42 - n11 * n24 * n42 - n12 * n21 * n44 + n11 * n22 * n44) * idet;
+    ret[2][3] = (n13 * n22 * n41 - n12 * n23 * n41 - n13 * n21 * n42 + n11 * n23 * n42 + n12 * n21 * n43 - n11 * n22 * n43) * idet;
+
+    ret[3][0] = t14 * idet;
+    ret[3][1] = (n13 * n24 * n31 - n14 * n23 * n31 + n14 * n21 * n33 - n11 * n24 * n33 - n13 * n21 * n34 + n11 * n23 * n34) * idet;
+    ret[3][2] = (n14 * n22 * n31 - n12 * n24 * n31 - n14 * n21 * n32 + n11 * n24 * n32 + n12 * n21 * n34 - n11 * n22 * n34) * idet;
+    ret[3][3] = (n12 * n23 * n31 - n13 * n22 * n31 + n13 * n21 * n32 - n11 * n23 * n32 - n12 * n21 * n33 + n11 * n22 * n33) * idet;
+
+    return ret;
+}
+
+float3x3 convm4tom3(float4x4 m) {
+    return (float3x3)(m);
+}
+)";
+
+const char* glsl_header = R"(
+mat3 convm4tom3(mat4 m) {
+    return mat3(m);
+}
+)";
+
 bool strbegw(const char* a, const char* b) {
     return strncmp(a, b, strlen(b)) == 0;
 }
@@ -45,6 +96,7 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
 
     source = "#define mul(a,b) ((a)*(b))\n" + source;
     source = "#define SAMPLE(name, coord) texture((name), (coord))\n" + source;
+    source = glsl_header + source;
 
     size_t currentLayout = 0;
     while (true) {
@@ -136,27 +188,60 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
     }
 
     source = "cbuffer SPSL_Uniforms {\n" + unifs + "};\n" + source;
+    source = hlsl_header + source;
+
+    printf("preproc\n");
+
+    printf("source:\n%s\n", source.c_str());
 
     // vecX -> floatX
+    size_t offset = 0;
     while (true) {
-        size_t vec = source.find("vec");
+        size_t vec = source.find("vec", offset);
         if (vec == std::string::npos) break;
         // make sure the next character is a digit and then after that cannot be a letter/digit/underscore/identifier
-        if (isdigit(source[vec + 3]) && !isalnum(source[vec + 4]) && source[vec + 4] != '_') {
+        // if there is any identifier-like character before or after the name, skip it
+        if (vec > 0 && (isalnum(source[vec - 1]) || source[vec - 1] == '_')) {
+            offset = vec + 1;
+            continue;
+        }
+        if (vec + 4 < source.size() && (isalnum(source[vec + 4]) || source[vec + 4] == '_')) {
+            offset = vec + 1;
+            continue;
+        }
+        if (isdigit(source[vec + 3])) {
             source.replace(vec, 3, "float");
         }
+        offset = vec + 1;
     }
 
     // matX -> floatXxX
+    offset = 0;
     while (true) {
         size_t mat = source.find("mat");
         if (mat == std::string::npos) break;
-        if (isdigit(source[mat + 3]) && !isalnum(source[mat + 4]) && source[mat + 4] != '_') {
+        // if (isdigit(source[mat + 3]) && !isalnum(source[mat + 4]) && source[mat + 4] != '_') {
+        //     source.replace(mat, 3, "float");
+        //     source.insert(mat + 5, "x");
+        //     source.insert(mat + 5, 1, source[mat + 6]);
+        // }
+        if (mat > 0 && (isalnum(source[mat - 1]) || source[mat - 1] == '_')) {
+            offset = mat + 1;
+            continue;
+        }
+        if (mat + 4 < source.size() && (isalnum(source[mat + 4]) || source[mat + 4] == '_')) {
+            offset = mat + 1;
+            continue;
+        }
+        if (isdigit(source[mat + 3])) {
             source.replace(mat, 3, "float");
             source.insert(mat + 5, "x");
             source.insert(mat + 5, 1, source[mat + 6]);
         }
+        offset = mat + 1;
     }
+
+    printf("entering specific preproc\n");
 
     if (type == sShaderType::VERTEX) {
         std::string inputs;

@@ -16,8 +16,10 @@
 
 #ifdef _WIN32
 #define CEXPORT extern "C" __declspec(dllexport)
+#define EXPORT __declspec(dllexport)
 #else
 #define CEXPORT extern "C"
+#define EXPORT
 #endif
 
 #include <filesystem>

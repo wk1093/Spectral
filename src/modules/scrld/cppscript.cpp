@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include "module.h"
 
-CEXPORT const char* inputExtension = ".cpp";
-CEXPORT const char* outputExtension = ".splscr";
+EXPORT const char* inputExtension = ".cpp";
+EXPORT const char* outputExtension = ".splscr";
 
 typedef void (*ScriptInit)();
 typedef void (*ScriptUpdate)(float dt);

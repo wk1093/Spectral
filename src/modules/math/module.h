@@ -43,6 +43,15 @@ inline vec3 normalize(vec3 a) {
 inline vec3 operator-(vec3 a) {
     return {-a.x, -a.y, -a.z};
 }
+inline vec3 lerp(vec3 a, vec3 b, float t) {
+    return a + (b - a) * t;
+}
+inline bool operator==(vec3 a, vec3 b) {
+    return a.x == b.x && a.y == b.y && a.z == b.z;
+}
+inline bool operator!=(vec3 a, vec3 b) {
+    return a.x != b.x || a.y != b.y || a.z != b.z;
+}
 
 union vec4 {
     struct {
@@ -144,6 +153,11 @@ inline mat4 rotate(float angle, vec3 axis) {
     return result;
 }
 
+inline mat4 rotate(vec3 angles) {
+    mat4 result = rotate(angles.z, {0, 0, 1}) * rotate(angles.y, {0, 1, 0}) * rotate(angles.x, {1, 0, 0});
+    return result;
+}
+
 inline mat4 perspective(float fov, float aspect, float nearp, float farp) {
     float f = 1.0f / tanf(fov * 0.5f * 3.14159f / 180.0f);
     mat4 result = {};
@@ -220,3 +234,25 @@ inline void camPitch(sCamera *camera, float angle) {
 inline void camMove(sCamera *camera, vec3 dir, float speed) {
     camera->pos = camera->pos + dir * speed;
 }
+
+struct sModelTransform {
+    vec3 pos = {0, 0, 0};
+    vec3 sca = {1, 1, 1};
+    vec3 rot = {0, 0, 0};
+
+    vec3 lastPos = {0, 0, 0};
+    vec3 lastSca = {1, 1, 1};
+    vec3 lastRot = {0, 0, 0};
+
+    mat4 internal_matrix = identity();
+    mat4 matrix() {
+        if (pos != lastPos || sca != lastSca || rot != lastRot) {
+            internal_matrix = translate(pos) * rotate(rot) * scale(sca);
+            lastPos = pos;
+            lastSca = sca;
+            lastRot = rot;
+        }
+        return internal_matrix;
+    }    
+};
+
