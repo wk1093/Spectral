@@ -130,7 +130,10 @@ if(SPEC_EOGLL)
 
     add_module(gfx eogll gfx/eogll.cpp)
     target_link_libraries(gfx_eogll eogll opengl32)
+else()
+    add_subdirectory(${eogll_SOURCE_DIR}/thirdparty/stb ${CMAKE_BINARY_DIR}/stb)
 endif()
+
 if(SPEC_GLAD)
     add_module(gfx glad gfx/glad.cpp)
     target_link_libraries(gfx_glad glad opengl32)
@@ -140,14 +143,14 @@ if(SPEC_DX11)
     target_link_libraries(gfx_d3d11_1 d3d11 d3dcompiler dxgi)
 endif()
 
-add_library(stb_static STATIC ${stb_SOURCE_DIR}/src/stb.c)
-target_include_directories(stb_static PUBLIC ${stb_SOURCE_DIR}/include)
-
 add_module(shdr spsl_glsl shdr/spsl.cpp)
 target_compile_definitions(shdr_spsl_glsl PUBLIC "SPECTRAL_OUTPUT_GLSL")
 
 add_module(shdr spsl_hlsl shdr/spsl.cpp)
 target_compile_definitions(shdr_spsl_hlsl PUBLIC "SPECTRAL_OUTPUT_HLSL")
+
+add_module(tex stb tex/stb.cpp)
+target_link_libraries(tex_stb stb)
 
 
 add_custom_target(
@@ -173,7 +176,6 @@ if(SPEC_DX11)
 endif()
 
 add_library(SpectralInterface INTERFACE)
-target_link_libraries(SpectralInterface INTERFACE stb_static)
 
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules")
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib")

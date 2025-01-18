@@ -2,25 +2,9 @@
 #include "modules/gfx/module.h"
 #include "modules/shdr/module.h"
 #include "modules/math/module.h" // doesn't need to be loaded, because all the functions are inlined and the module is header-only
-
-#include "stb_image.h"
+#include "modules/tex/module.h"
 
 #include <cmath>
-
-sTextureDefinition loadTexture(const char* path) {
-    int width, height, channels;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* data = stbi_load(path, &width, &height, &channels, 0);
-    if (data == nullptr) {
-        printf("Error loading texture\n");
-        return {0, 0, 0, nullptr};
-    }
-    if (width <= 0 || height <= 0 || channels <= 0) {
-        printf("Error loading texture\n");
-        return {0, 0, 0, nullptr};
-    }
-    return {static_cast<size_t>(width), static_cast<size_t>(height), static_cast<size_t>(channels), data};
-}
 
 int main(int argc, char** argv) {
     const char* window_module;
@@ -44,6 +28,8 @@ int main(int argc, char** argv) {
     if (!gfxm.lib.valid()) return 1;
     ShaderModule shdr("spsl", gfxm.getShaderType());
     if (!shdr.lib.valid()) return 1;
+    TextureModule texm("stb");
+    if (!texm.lib.valid()) return 1;
 
     std::string window_title = "Test (win_" + std::string(window_module) + ", gfx_" + std::string(graphics_module) + ")";
 
@@ -52,7 +38,7 @@ int main(int argc, char** argv) {
 
     gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
-    sTextureDefinition texDef = loadTexture("textures/test.png");
+    sTextureDefinition texDef = texm.loadTexture("textures/test.png");
     sTexture tex = gfxm.createTexture(texDef);
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
