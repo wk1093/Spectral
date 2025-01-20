@@ -20,6 +20,16 @@
 // this engine will not be structured like Unity, most things will be in code, unlike Unity where most things are in the editor
 // the editor will be used to create levels and worlds, and to set up models, textures, and materials
 
+// TODO: Support for more advanced forms of rendering like instancing, compute shaders, and ray tracing
+// TODO: Support for more advanced forms of input like gamepads, touchscreens, and VR
+// TODO: Audio
+// TODO: Networking
+// TODO: Physics
+// TODO: AI
+// TODO: Scripting
+// TODO: ECS
+// TODO: Multi-threading
+
 struct Cube {
     sMesh mesh;
     sModelTransform transform;
@@ -189,14 +199,6 @@ int main(int argc, char** argv) {
             camPitch(&camera, -dy * sensitivity);
         }
 
-        // shaderData.time = (float)winm.getTime(win);
-        // shaderData.view = view(camera);
-        // shaderData.viewPos = camera.pos;
-        // shaderData.model = model.matrix();
-        // gfxm.useShaderProgram(shader);
-        // gfxm.setUniforms(uniforms, &shaderData);
-        // gfxm.useTexture(shader, tex, "tex0"); // order matters, must be called after useShaderProgram
-        // gfxm.drawMesh(mesh);
         gfxm.useShaderProgram(shader);
         shaderData.time = (float)winm.getTime(win);
         shaderData.view = view(camera);
