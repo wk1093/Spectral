@@ -118,7 +118,7 @@ CEXPORT void init(sWindow* win) {
         d3d11SwapChainDesc.Width = 0; // use window width
         d3d11SwapChainDesc.Height = 0; // use window height
         d3d11SwapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-        d3d11SwapChainDesc.SampleDesc.Count = 1;
+        d3d11SwapChainDesc.SampleDesc.Count = 4;
         d3d11SwapChainDesc.SampleDesc.Quality = 0;
         d3d11SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         d3d11SwapChainDesc.BufferCount = 2;
@@ -147,6 +147,10 @@ CEXPORT void init(sWindow* win) {
             printf("ERROR CODE: %lu\n", GetLastError());
         }
 
+        D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
+        renderTargetViewDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMS;
+
         hResult = d3d11Device->CreateRenderTargetView(d3d11FrameBuffer, 0, &d3d11FrameBufferView);
         if (FAILED(hResult)) {
             MessageBoxA(0, "CreateRenderTargetView() failed", "Fatal Error", MB_OK);
@@ -162,6 +166,7 @@ CEXPORT void init(sWindow* win) {
         depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
         depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
         depthStencilDesc.CPUAccessFlags = 0;
+        depthStencilDesc.SampleDesc.Count = 4;
 
         ID3D11Texture2D* depthBuffer;
 
@@ -171,7 +176,11 @@ CEXPORT void init(sWindow* win) {
             printf("ERROR CODE: %lu\n", GetLastError());
         }
 
-        hResult = d3d11Device->CreateDepthStencilView(depthBuffer, 0, &d3d11DepthStencilView);
+        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+        depthStencilViewDesc.Format = depthStencilDesc.Format;
+        depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+
+        hResult = d3d11Device->CreateDepthStencilView(depthBuffer, &depthStencilViewDesc, &d3d11DepthStencilView);
         if (FAILED(hResult)) {
             MessageBoxA(0, "CreateDepthStencilView() failed", "Fatal Error", MB_OK);
             printf("ERROR CODE: %lu\n", GetLastError());
@@ -188,6 +197,7 @@ CEXPORT void init(sWindow* win) {
         rasterizerDesc.FillMode = D3D11_FILL_SOLID;
         rasterizerDesc.CullMode = D3D11_CULL_BACK;
         rasterizerDesc.FrontCounterClockwise = TRUE;
+        rasterizerDesc.MultisampleEnable = TRUE;
 
         d3d11Device->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
     }

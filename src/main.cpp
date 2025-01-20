@@ -4,7 +4,10 @@
 #include "modules/math/module.h" // doesn't need to be loaded, because all the functions are inlined and the module is header-only
 #include "modules/tex/module.h"
 
+#include "cube.h"
+
 #include <cmath>
+#include <vector>
 
 // TODO: Make a sample game to test the engine
 // Make a basic 3D player controller with gravity and collision
@@ -16,6 +19,25 @@
 // also make a basic file format (or use an existing one) to store world/level data and make an editor for it (like Unity but simpler)
 // this engine will not be structured like Unity, most things will be in code, unlike Unity where most things are in the editor
 // the editor will be used to create levels and worlds, and to set up models, textures, and materials
+
+struct Cube {
+    sMesh mesh;
+    sModelTransform transform;
+
+    Cube(GraphicsModule* gfxm, sShader shader) {
+        mesh = gfxm->createMesh(shader, vertices, sizeof(vertices), indices, sizeof(indices));
+    }
+
+    Cube(GraphicsModule* gfxm, sShader shader, vec3 pos) {
+        mesh = gfxm->createMesh(shader, vertices, sizeof(vertices), indices, sizeof(indices));
+        transform.pos = pos;
+    }
+
+    void draw(GraphicsModule* gfxm) {
+        gfxm->drawMesh(mesh);
+    }
+
+};
 
 int main(int argc, char** argv) {
     const char* window_module;
@@ -55,69 +77,20 @@ int main(int argc, char** argv) {
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
 
-    // basic cube
-    struct Vertex {
-        float position[3];
-        float normal[3];
-        float texcoord[2];
-    } vertices[] = {
-        {{-1.0f, -1.0f,  1.0f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}},
-        {{ 1.0f, -1.0f,  1.0f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 0.0f}},
-        {{ 1.0f,  1.0f,  1.0f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 1.0f}},
-        {{-1.0f,  1.0f,  1.0f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 1.0f}},
-
-        {{-1.0f, -1.0f, -1.0f}, { 0.0f,  0.0f, -1.0f}, {0.0f, 0.0f}},
-        {{ 1.0f, -1.0f, -1.0f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 0.0f}},
-        {{ 1.0f,  1.0f, -1.0f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f}},
-        {{-1.0f,  1.0f, -1.0f}, { 0.0f,  0.0f, -1.0f}, {0.0f, 1.0f}},
-
-        {{-1.0f,  1.0f,  1.0f}, { 0.0f,  1.0f,  0.0f}, {0.0f, 0.0f}},
-        {{ 1.0f,  1.0f,  1.0f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 0.0f}},
-        {{ 1.0f,  1.0f, -1.0f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f}},
-        {{-1.0f,  1.0f, -1.0f}, { 0.0f,  1.0f,  0.0f}, {0.0f, 1.0f}},
-
-        {{-1.0f, -1.0f,  1.0f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 0.0f}},
-        {{ 1.0f, -1.0f,  1.0f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 0.0f}},
-        {{ 1.0f, -1.0f, -1.0f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f}},
-        {{-1.0f, -1.0f, -1.0f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 1.0f}},
-
-        {{ 1.0f, -1.0f,  1.0f}, { 1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
-        {{ 1.0f, -1.0f, -1.0f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}},
-        {{ 1.0f,  1.0f, -1.0f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
-        {{ 1.0f,  1.0f,  1.0f}, { 1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}},
-
-        {{-1.0f, -1.0f,  1.0f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
-        {{-1.0f, -1.0f, -1.0f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}},
-        {{-1.0f,  1.0f, -1.0f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
-        {{-1.0f,  1.0f,  1.0f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}}
-    };
 
     size_t vertSize = 0;
-    for (int i = 0; i < vertDef->count; i++) {
+    for (int i = 0; i < vertDef->count; i++)
         vertSize += vertDef->elements[i] * sizeof(float);
-    }
     if (vertSize != sizeof(Vertex)) {
         printf("ERROR: Vertex definition size does not match vertex size\n");
-        printf("Vertex definition size: %d\n", vertSize);
-        printf("Vertex size: %d\n", sizeof(Vertex));
         return 1;
     }
 
-    sIndex indices[] = {
-         0,  1,  2,   2,  3,  0,
-         6,  5,  4,   4,  7,  6,
-         8,  9, 10,  10, 11,  8,
-        14, 13, 12,  12, 15, 14,
-        16, 17, 18,  18, 19, 16,
-        22, 21, 20,  20, 23, 22
-    };
     sShader vert{};
     sShader frag{};
     vert = shdr.compile(&gfxm, "spsl/basic.spslv", sShaderType::VERTEX, vertDef);
     frag = shdr.compile(&gfxm, "spsl/basic.spslf", sShaderType::FRAGMENT);
     sShaderProgram shader = gfxm.createShaderProgram({vert, frag});
-
-    sMesh mesh = gfxm.createMesh(vert, vertices, sizeof(vertices), indices, sizeof(indices));
 
     sUniformDefinition uniformDef = {
         {sShaderType::FRAGMENT, "uTime", sUniformType::FLOAT, 1},
@@ -147,30 +120,25 @@ int main(int argc, char** argv) {
 #pragma pack(pop)
     if (uniformDef.size() != sizeof(ShaderData)) {
         printf("ERROR: Uniform definition size does not match shader data size\n");
-        printf("Uniform definition size: %d\n", uniformDef.size());
-        printf("Shader data size: %d\n", sizeof(ShaderData));
         return 1;
     }
 
-    unsigned int i = 0;
-
     sCamera camera = {};
     camera.pos = {3.0f, 3.0f, 10.0f};
-
-    sModelTransform model = {};
-
 
     float speed = 5.0f;
     float sensitivity = 0.001f;
 
     winm.setMousePosition(win, 400, 300);
 
+    std::vector<Cube> cubes;
+    for (int i = 0; i < 10; i++) {
+        cubes.push_back(Cube(&gfxm, vert, (vec3){i * 2, 0, 0}));
+    }
+
     while (!winm.shouldClose(win)) {
         winm.updateWindow(&win);
         gfxm.clear();
-
-        model.rot.y = i * 0.01f;
-        i++;
 
         float mousex, mousey;
         winm.getMousePosition(win, &mousex, &mousey);
@@ -221,20 +189,31 @@ int main(int argc, char** argv) {
             camPitch(&camera, -dy * sensitivity);
         }
 
+        // shaderData.time = (float)winm.getTime(win);
+        // shaderData.view = view(camera);
+        // shaderData.viewPos = camera.pos;
+        // shaderData.model = model.matrix();
+        // gfxm.useShaderProgram(shader);
+        // gfxm.setUniforms(uniforms, &shaderData);
+        // gfxm.useTexture(shader, tex, "tex0"); // order matters, must be called after useShaderProgram
+        // gfxm.drawMesh(mesh);
+        gfxm.useShaderProgram(shader);
         shaderData.time = (float)winm.getTime(win);
         shaderData.view = view(camera);
         shaderData.viewPos = camera.pos;
-        shaderData.model = model.matrix();
-        gfxm.useShaderProgram(shader);
-        gfxm.setUniforms(uniforms, &shaderData);
-        gfxm.useTexture(shader, tex, "tex0"); // order matters, must be called after useShaderProgram
-        gfxm.drawMesh(mesh);
+
+        for (Cube& cube : cubes) {
+            shaderData.model = cube.transform.matrix();
+            gfxm.setUniforms(uniforms, &shaderData);
+            gfxm.useTexture(shader, tex, "tex0");
+            cube.draw(&gfxm);
+        }
+
 
         gfxm.present();
         winm.swapBuffers(win);
     }
 
-    gfxm.freeMesh(mesh);
     gfxm.freeShaderProgram(shader);
     gfxm.freeShader(vert);
     gfxm.freeShader(frag);
