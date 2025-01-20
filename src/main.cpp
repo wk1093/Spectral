@@ -6,6 +6,17 @@
 
 #include <cmath>
 
+// TODO: Make a sample game to test the engine
+// Make a basic 3D player controller with gravity and collision
+// and make a basic platformer/obby/parkour game
+// maybe also make a 3D shooter game
+// make all these using a new higher-level API that abstracts the modules and handles everything for you
+// make a player controller library with a lot of settings and options (so this will be easier to use than Unity)
+// also make a UI library
+// also make a basic file format (or use an existing one) to store world/level data and make an editor for it (like Unity but simpler)
+// this engine will not be structured like Unity, most things will be in code, unlike Unity where most things are in the editor
+// the editor will be used to create levels and worlds, and to set up models, textures, and materials
+
 int main(int argc, char** argv) {
     const char* window_module;
     const char* graphics_module;
@@ -91,7 +102,6 @@ int main(int argc, char** argv) {
         printf("Vertex size: %d\n", sizeof(Vertex));
         return 1;
     }
-
 
     sIndex indices[] = {
          0,  1,  2,   2,  3,  0,
