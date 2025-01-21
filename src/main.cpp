@@ -143,7 +143,9 @@ int main(int argc, char** argv) {
 
     std::vector<Cube> cubes;
     for (int i = 0; i < 10; i++) {
-        cubes.push_back(Cube(&gfxm, vert, (vec3){i * 2, 0, 0}));
+        for (int j = 0; j < 10; j++) {
+            cubes.push_back(Cube(&gfxm, vert, (vec3){i * 2, 0, j * 2}));
+        }
     }
 
     while (!winm.shouldClose(win)) {
@@ -205,6 +207,7 @@ int main(int argc, char** argv) {
         shaderData.viewPos = camera.pos;
 
         for (Cube& cube : cubes) {
+            gfxm.useShaderProgram(shader);
             shaderData.model = cube.transform.matrix();
             gfxm.setUniforms(uniforms, &shaderData);
             gfxm.useTexture(shader, tex, "tex0");

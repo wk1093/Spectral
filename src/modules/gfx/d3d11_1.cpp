@@ -608,6 +608,7 @@ CEXPORT sTexture createTexture(sTextureDefinition def) {
     }
     internal->texture = textureView;
     internal->sampler = sampler;
+    
     return {internal};
 }
 
