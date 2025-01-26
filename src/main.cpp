@@ -9,6 +9,8 @@
 #include <cmath>
 #include <vector>
 
+// TODO: Figure out why win_eogll has timing issues
+
 // TODO: Make a sample game to test the engine
 // Make a basic 3D player controller with gravity and collision
 // and make a basic platformer/obby/parkour game
@@ -52,7 +54,7 @@ struct Cube {
 int main(int argc, char** argv) {
     const char* window_module;
     const char* graphics_module;
-    bool use_dx = true;
+    bool use_dx = false;
     if (use_dx) {
         window_module = "glfw_noapi";
         graphics_module = "d3d11_1";

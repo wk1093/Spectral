@@ -42,6 +42,7 @@ int toGLKey(Key k) {
 }
 
 CEXPORT sWindow loadWindow(const char* title, int width, int height) {
+    printf("EOGLL WINDOW IS NOT RECCOMENDED FOR USE\n");
     if (eogllInit() != EOGLL_SUCCESS) {
         printf("Error initializing EOGLL\n");
         return {nullptr};
