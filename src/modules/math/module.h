@@ -188,6 +188,19 @@ struct sCamera {
     vec3 down() {
         return normalize(-up);
     }
+
+    vec3 right(vec3 forward) {
+        return normalize(cross(forward, up));
+    }
+    vec3 left(vec3 forward) {
+        return normalize(cross(up, forward));
+    }
+    vec3 back(vec3 forward) {
+        return normalize(-forward);
+    }
+    vec3 down(vec3 up) {
+        return normalize(-up);
+    }
 };
 
 inline mat4 view(sCamera camera) {

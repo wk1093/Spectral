@@ -148,6 +148,8 @@ int main(int argc, char** argv) {
         }
     }
 
+    float yvel = 0.0f;
+
     while (!winm.shouldClose(win)) {
         winm.updateWindow(&win);
         gfxm.clear();
@@ -174,32 +176,49 @@ int main(int argc, char** argv) {
             winm.setCursorMode(win, CursorMode::Disabled);
         }
 
-        // // WASD
-        if (winm.isKeyPressed(win, Key::W)) {
-            camMove(&camera, camera.forward, speed * win.dt);
-        }
-        if (winm.isKeyPressed(win, Key::S)) {
-            camMove(&camera, camera.back(), speed * win.dt);
-        }
-        if (winm.isKeyPressed(win, Key::A)) {
-            camMove(&camera, camera.left(), speed * win.dt);
-        }
-        if (winm.isKeyPressed(win, Key::D)) {
-            camMove(&camera, camera.right(), speed * win.dt);
-        }
-        if (winm.isKeyPressed(win, Key::Q)) {
-            camMove(&camera, camera.down(), speed * win.dt);
-        }
-        if (winm.isKeyPressed(win, Key::E)) {
-            camMove(&camera, camera.up, speed * win.dt);
-        }
-
         if (dx != 0) {
             camYaw(&camera, dx * sensitivity);
         }
         if (dy != 0) {
             camPitch(&camera, -dy * sensitivity);
         }
+
+        vec3 fixed_forward = camera.forward; // we need to align the forward so it doesn't go up and down
+        fixed_forward.y = 0;
+        fixed_forward = normalize(fixed_forward);
+        // basic movement and gravity (no jumping yet)
+        if (winm.isKeyPressed(win, Key::W)) {
+            camMove(&camera, fixed_forward, speed * win.dt);
+        }
+        if (winm.isKeyPressed(win, Key::S)) {
+            camMove(&camera, -fixed_forward, speed * win.dt);
+        }
+        if (winm.isKeyPressed(win, Key::A)) {
+            camMove(&camera, camera.left(fixed_forward), speed * win.dt);
+        }
+        if (winm.isKeyPressed(win, Key::D)) {
+            camMove(&camera, camera.right(fixed_forward), speed * win.dt);
+        }
+
+        // gravity
+        if (camera.pos.y > 3) {
+            yvel -= 9.8f * win.dt;
+        } else {
+            camera.pos.y = 3;
+            yvel = 0;
+        }
+
+        // jumping
+        if (winm.isKeyPressed(win, Key::Space) && camera.pos.y == 3) {
+            yvel = 6.0f;
+        }
+
+        camera.pos.y += yvel * win.dt;
+        yvel *= 0.99f;
+
+
+        
+
 
         gfxm.useShaderProgram(shader);
         shaderData.time = (float)winm.getTime(win);
