@@ -18,6 +18,14 @@ struct sVertexDefinition {
     size_t count;
 };
 
+size_t vertexDefinitionSize(sVertexDefinition* def) {
+    size_t size = 0;
+    for (size_t i = 0; i < def->count; i++) {
+        size += def->elements[i] * sizeof(float);
+    }
+    return size;
+}
+
 enum class sUniformType {
     FLOAT,
     INT,

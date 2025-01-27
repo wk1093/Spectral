@@ -86,21 +86,22 @@ int main(int argc, char** argv) {
     texm.freeTexture(texDef);
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
-
-
-    size_t vertSize = 0;
-    for (int i = 0; i < vertDef->count; i++)
-        vertSize += vertDef->elements[i] * sizeof(float);
-    if (vertSize != sizeof(Vertex)) {
+    if (vertexDefinitionSize(vertDef) != sizeof(Vertex)) {
         printf("ERROR: Vertex definition size does not match vertex size\n");
         return 1;
     }
-
+    
     sShader vert{};
     sShader frag{};
     vert = shdr.compile(&gfxm, "spsl/basic.spslv", sShaderType::VERTEX, vertDef);
     frag = shdr.compile(&gfxm, "spsl/basic.spslf", sShaderType::FRAGMENT);
     sShaderProgram shader = gfxm.createShaderProgram({vert, frag});
+    static const float fov = 80.0f;
+    static const float nearp = 0.001f;
+    static const float farp = 1000.0f;
+    static const float aspect_ratio = 800.0f / 600.0f;
+
+    bool mouse_locked = false;
 
     sUniformDefinition uniformDef = {
         {sShaderType::FRAGMENT, "uTime", sUniformType::FLOAT, 1},
@@ -109,29 +110,18 @@ int main(int argc, char** argv) {
         {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uModel", sUniformType::FLOAT, 4, 4}
     };
-
-    sUniforms uniforms = gfxm.createUniforms(shader, uniformDef);
-    static const float fov = 80.0f;
-    static const float nearp = 0.001f;
-    static const float farp = 1000.0f;
-    static const float aspect_ratio = 800.0f / 600.0f;
-
-    bool mouse_locked = false;
-
-#pragma pack(push,1)
     struct ShaderData {
         float time = 0.0f;
         vec3 viewPos = {0.0f, 0.0f, 0.0f};
-
         mat4 proj = perspective(fov, aspect_ratio, nearp, farp);
         mat4 view = identity();
         mat4 model = identity();
     } shaderData;
-#pragma pack(pop)
     if (uniformDef.size() != sizeof(ShaderData)) {
         printf("ERROR: Uniform definition size does not match shader data size\n");
         return 1;
     }
+    sUniforms uniforms = gfxm.createUniforms(shader, uniformDef);
 
     sCamera camera = {};
     camera.pos = {3.0f, 3.0f, 10.0f};
@@ -144,7 +134,7 @@ int main(int argc, char** argv) {
     std::vector<Cube> cubes;
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            cubes.push_back(Cube(&gfxm, vert, (vec3){i * 2, 0, j * 2}));
+            cubes.push_back(Cube(&gfxm, vert, (vec3){(float)(i * 2), 0.0f, (float)(j * 2)}));
         }
     }
 

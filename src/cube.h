@@ -1,5 +1,5 @@
 #include "modules/gfx/module.h"
-
+#pragma pack(1)
 struct Vertex {
     float position[3];
     float normal[3];
