@@ -1,2 +1,2 @@
 @echo off
-"Spectral.win_AMD64.exe" glfw_gl eogll
+"Spectral.win_AMD64.exe" eogll eogll

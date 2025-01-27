@@ -9,8 +9,6 @@
 #include <cmath>
 #include <vector>
 
-// TODO: Figure out why win_eogll has timing issues
-
 // TODO: Make a sample game to test the engine
 // Make a basic 3D player controller with gravity and collision
 // and make a basic platformer/obby/parkour game
@@ -216,10 +214,7 @@ int main(int argc, char** argv) {
         }
 
         camera.pos.y += yvel * win.dt;
-        yvel *= 0.99f;
-
-
-        
+        yvel *= 0.99f * (win.dt * 60);
 
 
         gfxm.useShaderProgram(shader);

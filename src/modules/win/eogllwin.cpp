@@ -42,7 +42,6 @@ int toGLKey(Key k) {
 }
 
 CEXPORT sWindow loadWindow(const char* title, int width, int height) {
-    printf("EOGLL WINDOW IS NOT RECCOMENDED FOR USE\n");
     if (eogllInit() != EOGLL_SUCCESS) {
         printf("Error initializing EOGLL\n");
         return {nullptr};
@@ -53,6 +52,7 @@ CEXPORT sWindow loadWindow(const char* title, int width, int height) {
         printf("Error creating window\n");
         return {nullptr};
     }
+    glfwSwapInterval(1);
     return {internal};
 
 }
@@ -64,6 +64,7 @@ CEXPORT void destroyWindow(sWindow window) {
 
 CEXPORT void updateWindow(sWindow window) {
     eogllPollEvents((EogllWindow*)window.internal);
+    // glfwPollEvents();
 }
 
 CEXPORT void swapBuffers(sWindow window) {
