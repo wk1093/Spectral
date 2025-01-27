@@ -40,7 +40,7 @@ int toGLKey(Key k) {
     return keys[static_cast<unsigned long>(k)];
 }
 
-CEXPORT sWindow loadWindow(const char* title, int width, int height) {
+CEXPORT sWindow loadWindow(const char* title, int width, int height, bool vsync) {
     if (!glfwInit()) {
         printf("Error initializing GLFW\n");
         return {nullptr};
@@ -55,7 +55,8 @@ CEXPORT sWindow loadWindow(const char* title, int width, int height) {
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     GLFWwindow* internal = glfwCreateWindow(width, height, title, NULL, NULL);
     glfwMakeContextCurrent(internal);
-    glfwSwapInterval(1);
+    if (vsync)
+        glfwSwapInterval(1);
     if (!internal) {
         glfwTerminate();
         printf("Error creating window\n");
@@ -137,4 +138,8 @@ CEXPORT void setCursorMode(sWindow window, CursorMode mode) {
             glfwSetInputMode((GLFWwindow*)window.internal, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             break;
     }
+}
+
+CEXPORT void setWindowTitle(sWindow window, const char* title) {
+    glfwSetWindowTitle((GLFWwindow*)window.internal, title);
 }

@@ -39,12 +39,15 @@ sf::Keyboard::Key toSFKey(Key k) {
     return keys[static_cast<unsigned long>(k)];
 }
 
-CEXPORT sWindow loadWindow(const char* title, int width, int height) {
+CEXPORT sWindow loadWindow(const char* title, int width, int height, bool vsync) {
     auto* win = new sf::RenderWindow(sf::VideoMode(width, height), title);
     if (!win->isOpen()) {
         printf("Error creating window\n");
         return {nullptr};
     }
+
+    // Set vsync
+    win->setVerticalSyncEnabled(vsync);
 
     return {win};
 }
@@ -109,4 +112,8 @@ CEXPORT void getMousePosition(sWindow window, int* x, int* y) {
 CEXPORT void setCursorMode(sWindow window, CursorMode mode) {
     sf::RenderWindow *win = (sf::RenderWindow*)window.internal;
     win->setMouseCursorVisible(mode == CursorMode::Normal);
+}
+
+CEXPORT void setWindowTitle(sWindow window, const char* title) {
+    ((sf::RenderWindow*)window.internal)->setTitle(title);
 }

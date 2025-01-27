@@ -41,7 +41,7 @@ int toGLKey(Key k) {
     return keys[static_cast<unsigned long>(k)];
 }
 
-CEXPORT sWindow loadWindow(const char* title, int width, int height) {
+CEXPORT sWindow loadWindow(const char* title, int width, int height, bool vsync) {
     if (eogllInit() != EOGLL_SUCCESS) {
         printf("Error initializing EOGLL\n");
         return {nullptr};
@@ -52,7 +52,8 @@ CEXPORT sWindow loadWindow(const char* title, int width, int height) {
         printf("Error creating window\n");
         return {nullptr};
     }
-    glfwSwapInterval(1);
+    if (vsync)
+        glfwSwapInterval(1);
     return {internal};
 
 }
@@ -133,4 +134,6 @@ CEXPORT void setCursorMode(sWindow window, CursorMode mode) {
     }
 }
 
-
+CEXPORT void setWindowTitle(sWindow window, const char* title) {
+    glfwSetWindowTitle(((EogllWindow*)window.internal)->window, title);
+}

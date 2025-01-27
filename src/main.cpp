@@ -52,7 +52,7 @@ struct Cube {
 int main(int argc, char** argv) {
     const char* window_module;
     const char* graphics_module;
-    bool use_dx = false;
+    bool use_dx = true;
     if (use_dx) {
         window_module = "glfw_noapi";
         graphics_module = "d3d11_1";
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 
     std::string window_title = "Test (win_" + std::string(window_module) + ", gfx_" + std::string(graphics_module) + ")";
 
-    sWindow win = winm.loadWindow(window_title.c_str(), 800, 600);
+    sWindow win = winm.loadWindow(window_title.c_str(), 800, 600, true);
     gfxm.init(&win);
 
     gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
@@ -150,9 +150,16 @@ int main(int argc, char** argv) {
 
     float yvel = 0.0f;
 
+    double lastFPS = 0.0;
+
     while (!winm.shouldClose(win)) {
         winm.updateWindow(&win);
         gfxm.clear();
+
+        double fps = 1.0 / win.dt;
+        if (lastFPS < 30.0) lastFPS = fps;
+        else lastFPS = lastFPS * 0.99 + fps * 0.01;
+        winm.setWindowTitle(win, (window_title + " - " + std::to_string((int)lastFPS) + " FPS").c_str());
 
         float mousex, mousey;
         winm.getMousePosition(win, &mousex, &mousey);
@@ -210,7 +217,7 @@ int main(int argc, char** argv) {
 
         // jumping
         if (winm.isKeyPressed(win, Key::Space) && camera.pos.y == 3) {
-            yvel = 6.0f;
+            yvel = 250.0f * win.dt;
         }
 
         camera.pos.y += yvel * win.dt;

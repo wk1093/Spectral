@@ -18,6 +18,7 @@ struct sD3D11_1Context {
     ID3D11DepthStencilView* depthStencilView;
     ID3D11RasterizerState* rasterizerState;
     ID3D11DepthStencilState* depthStencilState;
+    sWindow* win;
 };
 
 sD3D11_1Context __d3d11_1_context;
@@ -220,6 +221,7 @@ CEXPORT void init(sWindow* win) {
     __d3d11_1_context.depthStencilView = d3d11DepthStencilView;
     __d3d11_1_context.rasterizerState = rasterizerState;
     __d3d11_1_context.depthStencilState = depthStencilState;
+    __d3d11_1_context.win = win;
 }
 
 float __clearColor[4] = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -244,7 +246,8 @@ CEXPORT void clear() {
 }
 
 CEXPORT void present() {
-    __d3d11_1_context.swapChain->Present(1, 0);
+    bool vsync = __d3d11_1_context.win->vsync;
+    __d3d11_1_context.swapChain->Present(vsync, 0);
 }
 
 struct sInternalMesh {

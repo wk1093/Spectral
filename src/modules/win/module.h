@@ -12,6 +12,7 @@ struct sWindow {
     double dt;
     double lastTime;
     std::chrono::high_resolution_clock::time_point startTime;
+    bool vsync;
 };
 
 // Required for compatibility with different windowing libraries
@@ -34,7 +35,7 @@ enum class CursorMode {
 };
 
 namespace window {
-    typedef sWindow (*WindowLoader)(const char *name, int width, int height);
+    typedef sWindow (*WindowLoader)(const char *name, int width, int height, bool vsync);
     typedef void (*WindowDestructor)(sWindow window);
     typedef void (*WindowUpdate)(sWindow window);
     typedef void (*WindowSwapBuffers)(sWindow window);
@@ -46,6 +47,7 @@ namespace window {
     typedef void (*WindowGetMousePosition)(sWindow window, float* x, float* y);
     typedef void (*WindowSetMousePosition)(sWindow window, float x, float y);
     typedef void (*WindowSetCursorMode)(sWindow window, CursorMode mode);
+    typedef void (*WindowSetWindowTitle)(sWindow window, const char* title);
 }
 
 struct WindowModule : Module {
@@ -61,11 +63,13 @@ struct WindowModule : Module {
     window::WindowGetMousePosition getMousePosition;
     window::WindowSetMousePosition setMousePosition;
     window::WindowSetCursorMode setCursorMode;
+    window::WindowSetWindowTitle setWindowTitle;
 
-    sWindow loadWindow(const char* name, int width, int height) {
-        sWindow w = internal_loadWindow(name, width, height);
+    sWindow loadWindow(const char* name, int width, int height, bool vsync) {
+        sWindow w = internal_loadWindow(name, width, height, vsync);
         w.creator = this;
         w.startTime = std::chrono::high_resolution_clock::now();
+        w.vsync = vsync;
         return w;
     }
 
@@ -94,6 +98,7 @@ struct WindowModule : Module {
         getMousePosition = (window::WindowGetMousePosition)lib.getSymbol("getMousePosition");
         setMousePosition = (window::WindowSetMousePosition)lib.getSymbol("setMousePosition");
         setCursorMode = (window::WindowSetCursorMode)lib.getSymbol("setCursorMode");
+        setWindowTitle = (window::WindowSetWindowTitle)lib.getSymbol("setWindowTitle");
     }
 
 };
