@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
 
         double fps = 1.0 / win.dt;
         if (lastFPS < 30.0) lastFPS = fps;
-        else lastFPS = lastFPS * 0.99 + fps * 0.01;
+        else lastFPS = lastFPS * 0.95 + fps * 0.05;
         winm.setWindowTitle(win, (window_title + " - " + std::to_string((int)lastFPS) + " FPS").c_str());
 
         float mousex, mousey;
