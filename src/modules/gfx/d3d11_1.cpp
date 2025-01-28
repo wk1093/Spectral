@@ -18,6 +18,7 @@ struct sD3D11_1Context {
     ID3D11DepthStencilView* depthStencilView;
     ID3D11RasterizerState* rasterizerState;
     ID3D11DepthStencilState* depthStencilState;
+    ID3D11BlendState* blendState;
     sWindow* win;
 };
 
@@ -137,6 +138,7 @@ CEXPORT void init(sWindow* win) {
         dxgiFactory->Release();
     }
 
+
     // Create Framebuffer Render Target
     ID3D11RenderTargetView* d3d11FrameBufferView;
     ID3D11DepthStencilView* d3d11DepthStencilView;
@@ -213,6 +215,25 @@ CEXPORT void init(sWindow* win) {
         d3d11Device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
     }
 
+    ID3D11BlendState* blendState;
+    {
+        D3D11_BLEND_DESC blendDesc = {};
+        blendDesc.RenderTarget[0].BlendEnable = TRUE;
+        blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+        blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+        blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+        blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+        HRESULT hResult = d3d11Device->CreateBlendState(&blendDesc, &blendState);
+        if (FAILED(hResult)) {
+            MessageBoxA(0, "CreateBlendState() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+    }
+
     __d3d11_1_context.hwnd = hwnd;
     __d3d11_1_context.device = d3d11Device;
     __d3d11_1_context.deviceContext = d3d11DeviceContext;
@@ -221,6 +242,7 @@ CEXPORT void init(sWindow* win) {
     __d3d11_1_context.depthStencilView = d3d11DepthStencilView;
     __d3d11_1_context.rasterizerState = rasterizerState;
     __d3d11_1_context.depthStencilState = depthStencilState;
+    __d3d11_1_context.blendState = blendState;
     __d3d11_1_context.win = win;
 }
 
@@ -242,6 +264,7 @@ CEXPORT void clear() {
     __d3d11_1_context.deviceContext->RSSetViewports(1, &viewport);
     __d3d11_1_context.deviceContext->RSSetState(__d3d11_1_context.rasterizerState);
     __d3d11_1_context.deviceContext->OMSetDepthStencilState(__d3d11_1_context.depthStencilState, 0);
+    __d3d11_1_context.deviceContext->OMSetBlendState(__d3d11_1_context.blendState, 0, 0xFFFFFFFF);
     __d3d11_1_context.deviceContext->OMSetRenderTargets(1, &__d3d11_1_context.frameBufferView, __d3d11_1_context.depthStencilView);
 }
 
@@ -486,42 +509,12 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
     internal->program = program;
     internal->fragmentPart = getPartialf(def, sShaderType::FRAGMENT);
     internal->vertexPart = getPartialf(def, sShaderType::VERTEX);
-    if (internal->fragmentPart.size() % 16 != 0) {
-        // add padding
-        int padnum = 16 - (internal->fragmentPart.size() % 16);
-        int padfloats = padnum / 4;
-        sUniformElement* elements = (sUniformElement*)malloc((internal->fragmentPart.count + 1) * sizeof(sUniformElement));
-        if (elements == nullptr) {
-            MessageBoxA(0, "malloc() failed", "Fatal Error", MB_OK);
-            printf("ERROR CODE: %lu\n", GetLastError());
-        }
-        for (size_t i = 0; i < internal->fragmentPart.count; i++) {
-            elements[i] = internal->fragmentPart.elements[i];
-        }
-        elements[internal->fragmentPart.count] = {sShaderType::FRAGMENT, "padding", sUniformType::FLOAT, padfloats};
-        internal->fragmentPart.elements = elements;
-        internal->fragmentPart.count++;
-    }
-    if (internal->vertexPart.size() % 16 != 0) {
-        // add padding
-        int padnum = 16 - (internal->vertexPart.size() % 16);
-        int padfloats = padnum / 4;
-        sUniformElement* elements = (sUniformElement*)malloc((internal->vertexPart.count + 1) * sizeof(sUniformElement));
-        if (elements == nullptr) {
-            MessageBoxA(0, "malloc() failed", "Fatal Error", MB_OK);
-            printf("ERROR CODE: %lu\n", GetLastError());
-        }
-        for (size_t i = 0; i < internal->vertexPart.count; i++) {
-            elements[i] = internal->vertexPart.elements[i];
-        }
-        elements[internal->vertexPart.count] = {sShaderType::VERTEX, "padding", sUniformType::FLOAT, padfloats};
-        internal->vertexPart.elements = elements;
-        internal->vertexPart.count++;
-    }
     
+    const int fakeFragSize = internal->fragmentPart.size() + (16 - internal->fragmentPart.size() % 16);
+    const int fakeVertSize = internal->vertexPart.size() + (16 - internal->vertexPart.size() % 16);
 
     D3D11_BUFFER_DESC bufferDesc{};
-    bufferDesc.ByteWidth = internal->fragmentPart.size();
+    bufferDesc.ByteWidth = fakeFragSize;
     bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
     bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -529,7 +522,7 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
     bufferDesc.StructureByteStride = 0;
 
     D3D11_SUBRESOURCE_DATA subResourceData{};
-    uint8_t* fakeBuffer = new uint8_t[internal->fragmentPart.size()];
+    uint8_t* fakeBuffer = new uint8_t[fakeFragSize];
     subResourceData.pSysMem = fakeBuffer;
     subResourceData.SysMemPitch = 0;
     subResourceData.SysMemSlicePitch = 0;
@@ -539,8 +532,8 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
         printf("ERROR CODE: %lu\n", GetLastError());
     }
 
-    bufferDesc.ByteWidth = internal->vertexPart.size();
-    uint8_t* fakeBuffer2 = new uint8_t[internal->vertexPart.size()];
+    bufferDesc.ByteWidth = fakeVertSize;
+    uint8_t* fakeBuffer2 = new uint8_t[fakeVertSize];
     subResourceData.pSysMem = fakeBuffer2;
     hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, &subResourceData, &internal->vertexBuffer);
     if (FAILED(hResult)) {
@@ -556,12 +549,20 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
     D3D11_MAPPED_SUBRESOURCE mappedResource;
     __d3d11_1_context.deviceContext->Map(internal->fragmentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
     memcpy(mappedResource.pData, data, internal->fragmentPart.size());
+    int padding = 16 - internal->fragmentPart.size() % 16;
+    for (int i = 0; i < padding; i++) {
+        ((char*)mappedResource.pData)[internal->fragmentPart.size() + i] = 0;
+    }
     __d3d11_1_context.deviceContext->Unmap(internal->fragmentBuffer, 0);
 
     __d3d11_1_context.deviceContext->PSSetConstantBuffers(0, 1, &internal->fragmentBuffer);
 
     __d3d11_1_context.deviceContext->Map(internal->vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
     memcpy(mappedResource.pData, (char*)data + internal->fragmentPart.size(), internal->vertexPart.size());
+    padding = 16 - internal->vertexPart.size() % 16;
+    for (int i = 0; i < padding; i++) {
+        ((char*)mappedResource.pData)[internal->vertexPart.size() + i] = 0;
+    }
     __d3d11_1_context.deviceContext->Unmap(internal->vertexBuffer, 0);
 
     __d3d11_1_context.deviceContext->VSSetConstantBuffers(0, 1, &internal->vertexBuffer);

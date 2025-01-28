@@ -51,10 +51,10 @@ struct TextVertex {
 };
 
 struct TextUniforms {
+    vec3 color;
     mat4 model;
     mat4 view;
     mat4 proj;
-    vec3 color;
 };
 
 CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const char* fragpath) {
@@ -133,10 +133,10 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
     internal->vertexShader = vert;
 
     sUniformDefinition uniformDef = {
+        {sShaderType::FRAGMENT, "uColor", sUniformType::FLOAT, 3},
         {sShaderType::VERTEX, "uModel", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uProj", sUniformType::FLOAT, 4, 4},
-        {sShaderType::FRAGMENT, "uColor", sUniformType::FLOAT, 3}
     };
     if (uniformDef.size() != sizeof(TextUniforms)) {
         printf("ERROR: Uniform definition size does not match shader data size\n");

@@ -224,18 +224,18 @@ int main(int argc, char** argv) {
         yvel *= 0.99f * (win.dt * 60);
 
 
-        gfxm.useShaderProgram(shader);
-        shaderData.time = (float)winm.getTime(win);
-        shaderData.view = view(camera);
-        shaderData.viewPos = camera.pos;
+        // gfxm.useShaderProgram(shader);
+        // shaderData.time = (float)winm.getTime(win);
+        // shaderData.view = view(camera);
+        // shaderData.viewPos = camera.pos;
 
-        for (Cube& cube : cubes) {
-            gfxm.useShaderProgram(shader);
-            shaderData.model = cube.transform.matrix();
-            gfxm.setUniforms(uniforms, &shaderData);
-            gfxm.useTexture(shader, tex, "tex0");
-            cube.draw(&gfxm);
-        }
+        // for (Cube& cube : cubes) {
+        //     gfxm.useShaderProgram(shader);
+        //     shaderData.model = cube.transform.matrix();
+        //     gfxm.setUniforms(uniforms, &shaderData);
+        //     gfxm.useTexture(shader, tex, "tex0");
+        //     cube.draw(&gfxm);
+        // }
 
         textm.drawText(textobj);
 
