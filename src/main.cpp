@@ -4,6 +4,7 @@
 #include "modules/math/module.h" // doesn't need to be loaded, because all the functions are inlined and the module is header-only
 #include "modules/tex/module.h"
 #include "modules/wrld/module.h"
+#include "modules/text/module.h"
 
 #include "cube.h"
 
@@ -74,22 +75,25 @@ int main(int argc, char** argv) {
     if (!shdr.lib.valid()) return 1;
     TextureModule texm("stb");
     if (!texm.lib.valid()) return 1;
-    WorldModule wrldm;
-
-    wrldm.saveGame(nullptr, "test.zip");
-    wrldm.loadGame("test.zip");
-
+    TextModule textm("ft");
+    if (!textm.lib.valid()) return 1;
 
     std::string window_title = "Test (win_" + std::string(window_module) + ", gfx_" + std::string(graphics_module) + ")";
 
     sWindow win = winm.loadWindow(window_title.c_str(), 800, 600, true);
     gfxm.init(&win);
+    textm.init(&gfxm);
 
     gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
     sTextureDefinition texDef = texm.loadTexture("textures/test.png");
     sTexture tex = gfxm.createTexture(texDef);
     texm.freeTexture(texDef);
+
+    sFont font = textm.loadFont("fonts/arial.ttf", 15);
+
+    sText textobj = textm.createText(font, "Hello, world!", {0.0f, 0.0f}, 1); // creates a vertex defintion, a shader, and uniforms, and a mesh
+
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
     if (vertexDefinitionSize(vertDef) != sizeof(Vertex)) {
@@ -233,6 +237,7 @@ int main(int argc, char** argv) {
             cube.draw(&gfxm);
         }
 
+        textm.drawText(textobj);
 
         gfxm.present();
         winm.swapBuffers(win);

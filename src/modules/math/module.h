@@ -91,6 +91,44 @@ inline vec4 normalize(vec4 a) {
     return a / length(a);
 }
 
+union vec2 {
+    struct {
+        float x, y;
+    };
+    struct {
+        float u, v;
+    };
+    float v[2];
+};
+inline vec2 operator+(vec2 a, vec2 b) {
+    return {a.x + b.x, a.y + b.y};
+}
+inline vec2 operator-(vec2 a, vec2 b) {
+    return {a.x - b.x, a.y - b.y};
+}
+inline vec2 operator*(vec2 a, float b) {
+    return {a.x * b, a.y * b};
+}
+inline vec2 operator/(vec2 a, float b) {
+    return {a.x / b, a.y / b};
+}
+inline vec2 operator*(float a, vec2 b) {
+    return {a * b.x, a * b.y};
+}
+inline vec2 operator/(float a, vec2 b) {
+    return {a / b.x, a / b.y};
+}
+inline float dot(vec2 a, vec2 b) {
+    return a.x * b.x + a.y * b.y;
+}
+inline float length(vec2 a) {
+    return sqrtf(dot(a, a));
+}
+inline vec2 normalize(vec2 a) {
+    return a / length(a);
+}
+
+
 union mat4 {
     float m[4][4];
     struct {

@@ -17,7 +17,13 @@ set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_HOGLL OFF CACHE BOOL "" FORCE)
 set(BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(LIBZIP_DO_INSTALL OFF CACHE BOOL "" FORCE)
-set(ZLIB_VERBOSE ON CACHE BOOL "" FORCE)
+set(ZLIB_VERBOSE OFF CACHE BOOL "" FORCE)
+set(BUILD_TOOLS OFF CACHE BOOL "" FORCE)
+set(BUILD_REGRESS OFF CACHE BOOL "" FORCE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(BUILD_DOC OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+set(BUILD_OSSFUZZ OFF CACHE BOOL "" FORCE)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -51,7 +57,6 @@ set(SPECTRAL_FULLPLAT "${SPECTRAL_PLATFORM}_${CMAKE_SYSTEM_PROCESSOR}" CACHE STR
 # make it so all included libs will output their dynamic libs to the bin/lib folder
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/" CACHE PATH "" FORCE)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/" CACHE PATH "" FORCE)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/" CACHE PATH "" FORCE)
 set(zlib_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} CACHE PATH "" FORCE)
 FetchContent_Declare(
         glfw
@@ -73,13 +78,6 @@ FetchContent_Declare(
     GIT_TAG v3.11.3
 )
 FetchContent_MakeAvailable(nlohmann_json)
-# FetchContent_Declare(
-#     zlib-cmake
-#     URL https://github.com/jimmy-park/zlib-cmake/archive/main.tar.gz
-# )
-# FetchContent_MakeAvailable(zlib-cmake)
-
-
 FetchContent_Declare(
     zlib-source
     GIT_REPOSITORY https://github.com/madler/zlib.git
