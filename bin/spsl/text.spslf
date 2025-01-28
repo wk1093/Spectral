@@ -1,0 +1,11 @@
+
+#FS_IN vec2 tex_coords;
+
+#UNIFORM vec3 uColor;
+
+#TEXTURE tex0;
+
+void main() {
+    vec4 obj_color = SAMPLE(tex0, tex_coords);
+    spsl_fragcolor = vec4(uColor, obj_color.r);
+}

@@ -3,6 +3,7 @@
 
 #include "../math/module.h"
 #include "../gfx/module.h"
+#include "../shdr/module.h"
 
 struct sFont {
     void* internal;
@@ -13,9 +14,9 @@ struct sText {
 };
 
 namespace text {
-    typedef void (*Init)(GraphicsModule* gfxm);
-    typedef sFont (*LoadFont)(const char* path, int size);
-    typedef sText (*CreateText)(sFont font, const char* text, vec2 pos, float scale);
+    typedef void (*Init)(GraphicsModule* gfxm, ShaderModule* shdr);
+    typedef sFont (*LoadFont)(const char* path, int size, const char* vertpath, const char* fragpath);
+    typedef sText (*CreateText)(sFont font, const char* text);
     typedef void (*DrawText)(sText text);
 }
 

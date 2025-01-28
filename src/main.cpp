@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
 
     sWindow win = winm.loadWindow(window_title.c_str(), 800, 600, true);
     gfxm.init(&win);
-    textm.init(&gfxm);
+    textm.init(&gfxm, &shdr);
 
     gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
@@ -90,9 +90,9 @@ int main(int argc, char** argv) {
     sTexture tex = gfxm.createTexture(texDef);
     texm.freeTexture(texDef);
 
-    sFont font = textm.loadFont("fonts/arial.ttf", 15);
+    sFont font = textm.loadFont("fonts/arial.ttf", 15, "spsl/text.spslv", "spsl/text.spslf");
 
-    sText textobj = textm.createText(font, "Hello, world!", {0.0f, 0.0f}, 1); // creates a vertex defintion, a shader, and uniforms, and a mesh
+    sText textobj = textm.createText(font, "Hello, World!"); // creates a vertex defintion, a shader, and uniforms, and a mesh
 
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});

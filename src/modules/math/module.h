@@ -99,6 +99,11 @@ union vec2 {
         float u, v;
     };
     float f[2];
+
+    vec2(float x, float y) : x(x), y(y) {}
+    vec2() : x(0), y(0) {}
+    vec2(int x, int y) : x((float)x), y((float)y) {}
+    vec2(unsigned int x, unsigned int y) : x((float)x), y((float)y) {}
 };
 inline vec2 operator+(vec2 a, vec2 b) {
     return {a.x + b.x, a.y + b.y};
