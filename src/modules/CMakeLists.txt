@@ -16,6 +16,7 @@ set(EOGLL_DYNAMIC ON CACHE BOOL "" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_HOGLL OFF CACHE BOOL "" FORCE)
 set(BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(LIBZIP_DO_INSTALL OFF CACHE BOOL "" FORCE)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -49,6 +50,8 @@ set(SPECTRAL_FULLPLAT "${SPECTRAL_PLATFORM}_${CMAKE_SYSTEM_PROCESSOR}" CACHE STR
 # make it so all included libs will output their dynamic libs to the bin/lib folder
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
+# make sure that installed libs are also put in the bin/lib folder
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
 FetchContent_Declare(
         glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
@@ -63,6 +66,23 @@ FetchContent_Declare(
     eogll
     GIT_REPOSITORY https://github.com/wk1093/EOGLL.git
 )
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.11.3
+)
+FetchContent_MakeAvailable(nlohmann_json)
+FetchContent_Declare(
+    zlib-cmake
+    URL https://github.com/jimmy-park/zlib-cmake/archive/main.tar.gz
+)
+FetchContent_MakeAvailable(zlib-cmake)
+FetchContent_Declare(
+    zip
+    GIT_REPOSITORY https://github.com/nih-at/libzip.git
+    GIT_TAG v1.11.3
+)
+FetchContent_MakeAvailable(zip)
 if(SPEC_GLFW)
     FetchContent_MakeAvailable(glfw)
 endif()
@@ -152,6 +172,9 @@ target_compile_definitions(shdr_spsl_hlsl PUBLIC "SPECTRAL_OUTPUT_HLSL")
 
 add_module(tex stb tex/stb.cpp)
 target_link_libraries(tex_stb stb)
+
+add_module(wrld main wrld/wrldmain.cpp)
+target_link_libraries(wrld_main nlohmann_json zip)
 
 
 add_custom_target(

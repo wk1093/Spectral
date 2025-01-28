@@ -14,8 +14,7 @@ Format:
     - models/
         - MODEL.spmdl (model data) [similar to obj]
     - textures/
-        - TEXTURE.sptex (texture meta) [json]
-        - TEXTURE.(png/jpg/etc) (texture data) [png/jpg/etc, but png is the most common, and is recommended]
+        - TEXTURE.(png/jpg/etc) (texture data) [png/jpg/etc, but png is is recommended]
     - materials/
         - MATERIAL.spmat (material data) [json]
     - levels/
@@ -24,8 +23,7 @@ Format:
         - SCRIPT.spscr (script meta) [json]
         - SCRIPT.(cpp/py/etc) (script code) [whatever language the script is in, many languages are supported (although cpp is the most common, and most performant)]
     - audio/
-        - AUDIO.spaud (audio meta) [json]
-        - AUDIO.wav (audio data) [wav]
+        - AUDIO.(wav/mp3/etc) (audio data) [wav/mp3/etc but wav is recommended]
     - etc/
         - ETC.spetc (etc meta) [json]
         - ETC.(etc) (etc data) [etc, any custom data can be stored here. WARNING: This is STATIC data, and cannot be changed during runtime, this is for things like configuration files that don't need to be changed once the game is compiled]
@@ -49,4 +47,99 @@ File structure of compiled game:
     - This folder will also contain configs that allow the user to modify which modules are loaded (for example, choosing OpenGL instead of DirectX)
 - cache/
     - Contains cached data (maybe, in the future)
+
+most structs in the engine are prefixed with "s" (for Spectral), but this module is prefixed with "sw" (for Spectral World)
 */
+
+#pragma once
+
+#include "../moduleLib.h"
+
+#include <string>
+#include <vector>
+#include <cstdint>
+
+#include "../math/module.h"
+
+struct swWorld { // spwld [json]
+    std::string name;
+    std::string author;
+    std::string description;
+};
+
+struct swModel { // spmdl [similar to obj]
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
+};
+
+struct swMaterial { // spmat [json]
+    std::string shader;
+    std::vector<std::string> samplers;
+    std::vector<std::string> vertexUniforms;
+    std::vector<std::string> fragmentUniforms;
+};
+
+struct swLevelObject {
+    sModelTransform transform;
+    void* ecsObject; // TODO: Implement ECS
+};
+
+struct swLevel { // splvl [json]
+    std::vector<swLevelObject> objects;
+};
+
+struct swScript { // spscr [json]
+    std::string ext; // the extension of the script file
+    std::string mod; // the name of the scriptloader module to load this language
+};
+
+struct swEtc { // spetc [json]
+    enum swEtcType {
+        PRE_LOAD, // this data is required before the game's initial load/init (like settings and other data that is required to start the game)
+        PRE_LOOP, // this data is required before the game's main loop starts (like level data and other data that is required to run the game)
+        POST_LOOP, // this data can be lazy-loaded after the game's main loop starts (like extra data or dlc content that can be loaded after the game starts)
+        POST_GAME // this data is loaded right before the game's cleanup (not used very often, but could be used for save templates, but remember, this can't be modified)
+    } type;
+};
+
+struct swTexture {
+    std::string path;
+    std::vector<uint8_t> data;
+};
+
+struct swAudio {
+    std::string path;
+    std::vector<uint8_t> data;
+};
+
+struct swGame { // spgam [zip]
+    swWorld world;
+    std::vector<swModel> models;
+    std::vector<swMaterial> materials;
+    std::vector<swLevel> levels;
+    std::vector<swScript> scripts;
+    std::vector<swEtc> etc;
+    std::vector<swTexture> textures;
+    std::vector<swAudio> audio;
+};
+
+namespace world {
+    // we use pointers to swGame instead of swGame itself because the swGame struct is pretty big
+    // and we don't want to copy it around a lot
+
+    typedef swGame* (*LoadGame)(const char*);
+    typedef void (*FreeGame)(swGame*);
+    typedef void (*SaveGame)(swGame*, const char*);
+}
+
+struct WorldModule : public Module {
+    world::LoadGame loadGame;
+    world::FreeGame freeGame;
+    world::SaveGame saveGame;
+
+    WorldModule() : Module("main", "wrld") {
+        loadGame = (world::LoadGame)lib.getSymbol("loadGame");
+        freeGame = (world::FreeGame)lib.getSymbol("freeGame");
+        saveGame = (world::SaveGame)lib.getSymbol("saveGame");
+    }
+};

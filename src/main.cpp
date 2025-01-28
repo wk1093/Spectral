@@ -3,6 +3,7 @@
 #include "modules/shdr/module.h"
 #include "modules/math/module.h" // doesn't need to be loaded, because all the functions are inlined and the module is header-only
 #include "modules/tex/module.h"
+#include "modules/wrld/module.h"
 
 #include "cube.h"
 
@@ -73,6 +74,11 @@ int main(int argc, char** argv) {
     if (!shdr.lib.valid()) return 1;
     TextureModule texm("stb");
     if (!texm.lib.valid()) return 1;
+    WorldModule wrldm;
+
+    wrldm.saveGame(nullptr, "test.zip");
+    wrldm.loadGame("test.zip");
+
 
     std::string window_title = "Test (win_" + std::string(window_module) + ", gfx_" + std::string(graphics_module) + ")";
 

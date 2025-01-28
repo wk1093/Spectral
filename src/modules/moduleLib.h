@@ -72,7 +72,6 @@ public:
 
 private:
     void load(const char* path_in) {
-        // add a single . to the end
 #ifdef _WIN32
         char* path = (char*)malloc(strlen(path_in) + 2);
         strcpy(path, path_in);
