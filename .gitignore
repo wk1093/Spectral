@@ -10,3 +10,4 @@ build/
 *.a
 *.lib
 *.pdb
+*.zip

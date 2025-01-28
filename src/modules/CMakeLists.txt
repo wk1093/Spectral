@@ -17,6 +17,7 @@ set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_HOGLL OFF CACHE BOOL "" FORCE)
 set(BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(LIBZIP_DO_INSTALL OFF CACHE BOOL "" FORCE)
+set(ZLIB_VERBOSE ON CACHE BOOL "" FORCE)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -48,10 +49,10 @@ endif()
 set(SPECTRAL_FULLPLAT "${SPECTRAL_PLATFORM}_${CMAKE_SYSTEM_PROCESSOR}" CACHE STRING "The full platform name")
 
 # make it so all included libs will output their dynamic libs to the bin/lib folder
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
-# make sure that installed libs are also put in the bin/lib folder
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/" CACHE PATH "" FORCE)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/" CACHE PATH "" FORCE)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/" CACHE PATH "" FORCE)
+set(zlib_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} CACHE PATH "" FORCE)
 FetchContent_Declare(
         glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
@@ -72,17 +73,111 @@ FetchContent_Declare(
     GIT_TAG v3.11.3
 )
 FetchContent_MakeAvailable(nlohmann_json)
+# FetchContent_Declare(
+#     zlib-cmake
+#     URL https://github.com/jimmy-park/zlib-cmake/archive/main.tar.gz
+# )
+# FetchContent_MakeAvailable(zlib-cmake)
+
+
 FetchContent_Declare(
-    zlib-cmake
-    URL https://github.com/jimmy-park/zlib-cmake/archive/main.tar.gz
+    zlib-source
+    GIT_REPOSITORY https://github.com/madler/zlib.git
 )
-FetchContent_MakeAvailable(zlib-cmake)
+# FetchContent_MakeAvailable(zlib-source)
+FetchContent_GetProperties(zlib-source)
+if(NOT zlib-source_POPULATED)
+    FetchContent_Populate(zlib-source)
+endif()
+
+file(REMOVE ${zlib-source_SOURCE_DIR}/CMakeLists.txt)
+file(READ ${zlib-source_SOURCE_DIR}/zutil.c ZUTIL)
+string(REPLACE "malloc(items * size)" "malloc((size_t) items * size)" ZUTIL "${ZUTIL}")
+file(WRITE ${zlib-source_SOURCE_DIR}/zutil.c "${ZUTIL}")
+
+FetchContent_Declare(
+    ZLIB
+    SOURCE_DIR ${zlib-source_SOURCE_DIR}
+    BINARY_DIR ${zlib-source_BINARY_DIR}
+    OVERRIDE_FIND_PACKAGE
+)
+
+set(ZLIB_HEADERS
+    ${zlib_SOURCE_DIR}/zlib.h
+    ${zlib_SOURCE_DIR}/zconf.h
+)
+# zconf.h needs to be generated from zconf.h.in
+configure_file(${zlib_SOURCE_DIR}/zconf.h.in ${zlib_SOURCE_DIR}/zconf.h @ONLY)
+set(ZLIB_SOURCES
+    ${zlib_SOURCE_DIR}/adler32.c
+    ${zlib_SOURCE_DIR}/compress.c
+    ${zlib_SOURCE_DIR}/crc32.c
+    ${zlib_SOURCE_DIR}/crc32.h
+    ${zlib_SOURCE_DIR}/deflate.c
+    ${zlib_SOURCE_DIR}/deflate.h
+    ${zlib_SOURCE_DIR}/gzclose.c
+    ${zlib_SOURCE_DIR}/gzguts.h
+    ${zlib_SOURCE_DIR}/gzlib.c
+    ${zlib_SOURCE_DIR}/gzread.c
+    ${zlib_SOURCE_DIR}/gzwrite.c
+    ${zlib_SOURCE_DIR}/infback.c
+    ${zlib_SOURCE_DIR}/inffast.c
+    ${zlib_SOURCE_DIR}/inffast.h
+    ${zlib_SOURCE_DIR}/inffixed.h
+    ${zlib_SOURCE_DIR}/inflate.c
+    ${zlib_SOURCE_DIR}/inflate.h
+    ${zlib_SOURCE_DIR}/inftrees.c
+    ${zlib_SOURCE_DIR}/inftrees.h
+    ${zlib_SOURCE_DIR}/trees.c
+    ${zlib_SOURCE_DIR}/trees.h
+    ${zlib_SOURCE_DIR}/uncompr.c
+    ${zlib_SOURCE_DIR}/zutil.c
+    ${zlib_SOURCE_DIR}/zutil.h
+)
+
+add_library(ZLIB ${ZLIB_SOURCES})
+add_library(ZLIB::ZLIB ALIAS ZLIB)
+target_sources(ZLIB PUBLIC
+    FILE_SET HEADERS
+    BASE_DIRS ${ZLIB_INCLUDE_DIRS}
+    FILES ${ZLIB_HEADERS}
+)
+set_target_properties(ZLIB PROPERTIES
+    OUTPUT_NAME $<IF:$<BOOL:${UNIX}>,z,zlib>
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
+    ARCHIVE_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
+    COMPILE_PDB_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
+    PDB_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
+    RUNTIME_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
+    DEBUG_POSTFIX d
+    DEFINE_SYMBOL ZLIB_INTERNAL
+    VERSION ${ZLIB_VERSION}
+    SOVERSION ${ZLIB_VERSION_MAJOR}
+)
+
+target_compile_definitions(ZLIB PUBLIC
+    $<$<CONFIG:DEBUG>:ZLIB_DEBUG>
+    $<$<BOOL:${ZLIB_HAVE_OFF64_T}>:_LARGEFILE64_SOURCE=1>
+    $<$<NOT:$<BOOL:${ZLIB_HAVE_FSEEKO}>>:NO_FSEEKO>
+    $<$<NOT:$<BOOL:${ZLIB_HAVE_STRERROR}>>:NO_STRERROR>
+    $<$<BOOL:${ZLIB_HAVE_UNISTD_H}>:HAVE_UNISTD_H>
+    $<$<BOOL:${ZLIB_HAVE_STDARG_H}>:HAVE_STDARG_H>
+    $<$<BOOL:${ZLIB_HAVE_HIDDEN}>:HAVE_HIDDEN>
+)
+
+if(WIN32 AND BUILD_SHARED_LIBS)
+    target_compile_definitions(ZLIB PUBLIC ZLIB_DLL)
+endif()
+
+
 FetchContent_Declare(
     zip
     GIT_REPOSITORY https://github.com/nih-at/libzip.git
     GIT_TAG v1.11.3
 )
 FetchContent_MakeAvailable(zip)
+# we need a command to run after zlib is built (only on windows) to copy the dlls to the bin/lib folder
 if(SPEC_GLFW)
     FetchContent_MakeAvailable(glfw)
 endif()

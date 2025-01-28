@@ -17,9 +17,8 @@ CEXPORT void saveGame(swGame* game, const char* path) {
     }
 
     zip_error_t* error = zip_get_error(zip);
-    if (error) {
+    if (zip_error_code_zip(error) != 0) {
         std::cerr << "Error: " << zip_error_strerror(error) << std::endl;
-        return;
     }
 
     // add a mock file for now
