@@ -98,7 +98,7 @@ union vec2 {
     struct {
         float u, v;
     };
-    float v[2];
+    float f[2];
 };
 inline vec2 operator+(vec2 a, vec2 b) {
     return {a.x + b.x, a.y + b.y};

@@ -175,6 +175,12 @@ FetchContent_Declare(
     GIT_TAG v1.11.3
 )
 FetchContent_MakeAvailable(zip)
+FetchContent_Declare(
+    freetype
+    GIT_REPOSITORY https://github.com/freetype/freetype.git
+    GIT_TAG VER-2-13-3
+)
+FetchContent_MakeAvailable(freetype)
 # we need a command to run after zlib is built (only on windows) to copy the dlls to the bin/lib folder
 if(SPEC_GLFW)
     FetchContent_MakeAvailable(glfw)
@@ -268,6 +274,9 @@ target_link_libraries(tex_stb stb)
 
 add_module(wrld main wrld/wrldmain.cpp)
 target_link_libraries(wrld_main nlohmann_json zip)
+
+add_module(text ft text/freetype.cpp)
+target_link_libraries(text_ft freetype)
 
 
 add_custom_target(
