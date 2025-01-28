@@ -1,4 +1,4 @@
-#VS_IN vec3 pos;
+#VS_IN vec2 pos;
 #VS_IN vec2 uv;
 
 #VS_OUT vec2 tex_coords;
@@ -8,6 +8,6 @@
 #UNIFORM mat4 uModel;
 
 void main() {
-    spsl_position = mul(uProj, mul(uView, mul(uModel, vec4(pos, 1.0))));
+    spsl_position = mul(uProj, mul(uView, mul(uModel, vec4(pos, 0.0, 1.0))));
     tex_coords = uv;
 }

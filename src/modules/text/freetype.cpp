@@ -46,7 +46,7 @@ struct sInternalFont {
 };
 
 struct TextVertex {
-    vec3 pos;
+    vec2 pos;
     vec2 uv;
 };
 
@@ -122,7 +122,7 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
 
     free(pixels);
 
-    internal->vertDef = __freetype_context.gfxm->createVertexDefinition({3, 2});
+    internal->vertDef = __freetype_context.gfxm->createVertexDefinition({2, 2});
     if (vertexDefinitionSize(internal->vertDef) != sizeof(TextVertex)) {
         printf("ERROR: Vertex definition size does not match vertex size\n");
         return {nullptr};
@@ -208,10 +208,10 @@ CEXPORT sText createText(sFont font, const char* text) {
         // i forgot to put the uv coords above
         // the uvs are calculated into the atlas
         TextVertex vertices[4] = {
-            {{xpos*scale+offset, (ypos + h)*scale+offset, 0.0f}, {def.offset.x / internalFont->atlasWidth, def.offset.y / internalFont->atlasHeight}},
-            {{xpos*scale+offset, ypos*scale+offset, 0.0f}, {def.offset.x / internalFont->atlasWidth, (def.offset.y + h) / internalFont->atlasHeight}},
-            {{(xpos + w)*scale+offset, ypos*scale+offset, 0.0f}, {(def.offset.x + w) / internalFont->atlasWidth, (def.offset.y + h) / internalFont->atlasHeight}},
-            {{(xpos + w)*scale+offset, (ypos + h)*scale+offset, 0.0f}, {(def.offset.x + w) / internalFont->atlasWidth, def.offset.y / internalFont->atlasHeight}}
+            {{xpos*scale+offset, (ypos + h)*scale+offset}, {def.offset.x / internalFont->atlasWidth, def.offset.y / internalFont->atlasHeight}},
+            {{xpos*scale+offset, ypos*scale+offset}, {def.offset.x / internalFont->atlasWidth, (def.offset.y + h) / internalFont->atlasHeight}},
+            {{(xpos + w)*scale+offset, ypos*scale+offset}, {(def.offset.x + w) / internalFont->atlasWidth, (def.offset.y + h) / internalFont->atlasHeight}},
+            {{(xpos + w)*scale+offset, (ypos + h)*scale+offset}, {(def.offset.x + w) / internalFont->atlasWidth, def.offset.y / internalFont->atlasHeight}}
         };
 
         indices.push_back(i * 4);

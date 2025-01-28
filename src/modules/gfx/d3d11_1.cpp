@@ -486,6 +486,39 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
     internal->program = program;
     internal->fragmentPart = getPartialf(def, sShaderType::FRAGMENT);
     internal->vertexPart = getPartialf(def, sShaderType::VERTEX);
+    if (internal->fragmentPart.size() % 16 != 0) {
+        // add padding
+        int padnum = 16 - (internal->fragmentPart.size() % 16);
+        int padfloats = padnum / 4;
+        sUniformElement* elements = (sUniformElement*)malloc((internal->fragmentPart.count + 1) * sizeof(sUniformElement));
+        if (elements == nullptr) {
+            MessageBoxA(0, "malloc() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+        for (size_t i = 0; i < internal->fragmentPart.count; i++) {
+            elements[i] = internal->fragmentPart.elements[i];
+        }
+        elements[internal->fragmentPart.count] = {sShaderType::FRAGMENT, "padding", sUniformType::FLOAT, padfloats};
+        internal->fragmentPart.elements = elements;
+        internal->fragmentPart.count++;
+    }
+    if (internal->vertexPart.size() % 16 != 0) {
+        // add padding
+        int padnum = 16 - (internal->vertexPart.size() % 16);
+        int padfloats = padnum / 4;
+        sUniformElement* elements = (sUniformElement*)malloc((internal->vertexPart.count + 1) * sizeof(sUniformElement));
+        if (elements == nullptr) {
+            MessageBoxA(0, "malloc() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+        for (size_t i = 0; i < internal->vertexPart.count; i++) {
+            elements[i] = internal->vertexPart.elements[i];
+        }
+        elements[internal->vertexPart.count] = {sShaderType::VERTEX, "padding", sUniformType::FLOAT, padfloats};
+        internal->vertexPart.elements = elements;
+        internal->vertexPart.count++;
+    }
+    
 
     D3D11_BUFFER_DESC bufferDesc{};
     bufferDesc.ByteWidth = internal->fragmentPart.size();
