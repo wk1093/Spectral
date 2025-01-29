@@ -22,6 +22,8 @@ struct sIUIGlobalState {
     sShaderProgram text_shader;
     sVertexDefinition* text_vert_def;
     sMesh text_mesh;
+
+    sFont* fonts=nullptr;
 };
 
 sIUIGlobalState __globalIUIState;
@@ -48,8 +50,30 @@ struct sInternalRectUniforms {
     mat4 model;
 };
 
+void clayerr(Clay_ErrorData errorData) {
+    printf("UI Error: %s\n", errorData.errorText.chars);
+}
 
-void Clay_Spectral_Init(GraphicsModule* gfxm, TextModule* textm, ShaderModule* shdr) {
+Clay_Dimensions Clay_Spectral_MeasureText(Clay_StringSlice text, Clay_TextElementConfig *config, uintptr_t userData) {
+    if (!__globalIUIState.fonts) {
+        return {};
+    }
+    Clay_Dimensions result = {};
+    vec2 size = __globalIUIState.textm->measureText(__globalIUIState.fonts[0], text.chars);
+    result.width = size.x;
+    result.height = size.y;
+    return result;
+}
+
+void Clay_Spectral_Init(GraphicsModule* gfxm, TextModule* textm, ShaderModule* shdr, sWindow* win, sFont* fonts) {
+    __globalIUIState.fonts = fonts;
+    uint64_t totalMemorySize = Clay_MinMemorySize();
+    Clay_Arena clayMemory = (Clay_Arena) {
+        .capacity = totalMemorySize,
+        .memory = (char*)malloc(totalMemorySize)
+    };
+    Clay_Initialize(clayMemory, (Clay_Dimensions){win->width, win->height}, (Clay_ErrorHandler)clayerr);
+    Clay_SetMeasureTextFunction(Clay_Spectral_MeasureText, 0);
     __globalIUIState.gfxm = gfxm;
     __globalIUIState.textm = textm;
     __globalIUIState.shdr = shdr;
@@ -79,12 +103,8 @@ void Clay_Spectral_Init(GraphicsModule* gfxm, TextModule* textm, ShaderModule* s
     __globalIUIState.rect_uniforms = gfxm->createUniforms(rect_shader, rect_uniform_def);
 }
 
-void Clay_Spectral_MeasureText(sFont* font, const char* text, float* width, float* height) {
-    // TODO HERE
-}
-
 // custom clay implementation using our graphics library
-void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, sFont* fonts, mat4 proj, mat4 view) {
+void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, mat4 proj, mat4 view) {
     for (uint32_t i = 0; i < renderCommands.length; i++) {
         Clay_RenderCommand* renderCommand = Clay_RenderCommandArray_Get(&renderCommands, i);
         Clay_BoundingBox boundingBox = renderCommand->boundingBox;
@@ -109,7 +129,7 @@ void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, 
                 char *cloned = (char*)malloc(text.length + 1);
                 memcpy(cloned, text.chars, text.length);
                 cloned[text.length] = '\0';
-                sText textel = __globalIUIState.textm->createText(fonts[0], cloned);
+                sText textel = __globalIUIState.textm->createText(__globalIUIState.fonts[0], cloned);
                 __globalIUIState.textm->setTextProj(textel, proj);
                 __globalIUIState.textm->setTextView(textel, view);
                 __globalIUIState.textm->setTextModel(textel, translate({boundingBox.x, boundingBox.y, 0.0f}) * scale({boundingBox.width, boundingBox.height, 1.0f}));

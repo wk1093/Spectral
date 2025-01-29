@@ -78,10 +78,6 @@ Clay_RenderCommandArray createLayout() {
     return Clay_EndLayout();
 }
 
-void clayerr(Clay_ErrorData errorData) {
-    printf("%s", errorData.errorText.chars);
-}
-
 int main(int argc, char** argv) {
     const char* window_module;
     const char* graphics_module;
@@ -115,25 +111,20 @@ int main(int argc, char** argv) {
     gfxm.init(&win);
     textm.init(&gfxm, &shdr);
 
-    uint64_t totalMemorySize = Clay_MinMemorySize();
-    Clay_Arena clayMemory = (Clay_Arena) {
-        .capacity = totalMemorySize,
-        .memory = (char*)malloc(totalMemorySize)
-    };
-
-    Clay_Initialize(clayMemory, (Clay_Dimensions){win.width, win.height}, (Clay_ErrorHandler)clayerr);
-    Clay_Spectral_Init(&gfxm, &textm, &shdr);
-
     gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
     sTextureDefinition texDef = texm.loadTexture("textures/test.png");
     sTexture tex = gfxm.createTexture(texDef);
     texm.freeTexture(texDef);
 
+    std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
     sFont font = textm.loadFont("fonts/arial.ttf", 15, "spsl/text.spslv", "spsl/text.spslf");
+    std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    printf("Time to load font: %f\n", elapsed.count());
 
     // sText textobj = textm.createText(font, "Hello, World!"); // creates a vertex defintion, a shader, and uniforms, and a mesh
-
+    Clay_Spectral_Init(&gfxm, &textm, &shdr, &win, &font);
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
     if (vertexDefinitionSize(vertDef) != sizeof(Vertex)) {
@@ -282,7 +273,7 @@ int main(int argc, char** argv) {
 
         // super simple ui
         Clay_RenderCommandArray layout = createLayout();
-        Clay_Spectral_Render(&win, layout, &font, proj, identity());
+        Clay_Spectral_Render(&win, layout, proj, identity());
         
 
         gfxm.present();

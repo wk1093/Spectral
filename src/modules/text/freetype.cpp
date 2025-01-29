@@ -281,3 +281,23 @@ CEXPORT void setTextProj(sText text, mat4 proj) {
     sInternalText* internal = (sInternalText*)text.internal;
     internal->uniforms.proj = proj;
 }
+
+CEXPORT vec2 measureText(sFont font, const char* text) {
+    sInternalFont* internal = (sInternalFont*)font.internal;
+
+    float x = 0.0f;
+    float y = 0.0f;
+
+    for (size_t i = 0; i < strlen(text); ++i) {
+        char c = text[i];
+        sInternalFont::CharacterDef def = internal->characters[c];
+        if (def.size.y + abs(def.bearing.y) > y) {
+            y = def.size.y + abs(def.bearing.y);
+        }
+
+        x += def.advance;
+    }
+
+    return {x, y};
+
+}

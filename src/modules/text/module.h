@@ -24,6 +24,7 @@ namespace text {
     typedef void (*SetTextModel)(sText text, mat4 model);
     typedef void (*SetTextView)(sText text, mat4 view);
     typedef void (*SetTextProj)(sText text, mat4 proj);
+    typedef vec2 (*MeasureText)(sFont font, const char* text);
 }
 
 struct TextModule : public Module {
@@ -37,6 +38,7 @@ struct TextModule : public Module {
     text::SetTextModel setTextModel;
     text::SetTextView setTextView;
     text::SetTextProj setTextProj;
+    text::MeasureText measureText;
 
     TextModule(const char* path) : Module(path, "text") {
         init = (text::Init)lib.getSymbol("init");
@@ -49,5 +51,6 @@ struct TextModule : public Module {
         setTextModel = (text::SetTextModel)lib.getSymbol("setTextModel");
         setTextView = (text::SetTextView)lib.getSymbol("setTextView");
         setTextProj = (text::SetTextProj)lib.getSymbol("setTextProj");
+        measureText = (text::MeasureText)lib.getSymbol("measureText");
     }
 };
