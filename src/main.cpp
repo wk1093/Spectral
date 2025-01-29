@@ -32,8 +32,6 @@
 // TODO: ECS
 // TODO: Multi-threading
 
-// TODO: IMPORTANT: OpenGL transformations are different from DirectX transformations, everything seems fine except that the model coords aren't being projected when in DirectX mode
-
 struct Cube {
     sMesh mesh;
     sModelTransform transform;
