@@ -63,7 +63,7 @@ Clay_RenderCommandArray createLayout() {
             }
         }),
         CLAY_RECTANGLE({
-            .color = {0.8f, 0.7f, 0.6f, 0.5f},
+            .color = {100, 80, 80, 255},
         }),
         CLAY_TEXT(CLAY_STRING("test"), CLAY_TEXT_CONFIG({
            .textColor = { 255, 255, 255, 255 },
@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
     texm.freeTexture(texDef);
 
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-    sFont font = textm.loadFont("fonts/arial.ttf", 15, "spsl/text.spslv", "spsl/text.spslf");
+    sFont font = textm.loadFont("fonts/arial.ttf", 16, "spsl/text.spslv", "spsl/text.spslf");
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
     printf("Time to load font: %f\n", elapsed.count());
@@ -181,7 +181,7 @@ int main(int argc, char** argv) {
     double lastFPS = 0.0;
     mat4 proj = orthographic(0, win.width, 0, win.height, -1, 1);
     // textm.setTextProj(textobj, proj);
-    // textm.setTextModel(textobj, translate({20, 50, 0}));
+    // textm.setTextModel(textobj, translate({400, 300, 0}));
 
     while (!winm.shouldClose(win)) {
         winm.updateWindow(&win);

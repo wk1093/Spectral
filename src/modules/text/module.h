@@ -7,6 +7,7 @@
 
 struct sFont {
     void* internal;
+    int size;
 };
 
 struct sText {
@@ -30,7 +31,7 @@ namespace text {
 
 struct TextModule : public Module {
     text::Init init;
-    text::LoadFont loadFont;
+    text::LoadFont internal_loadFont;
     text::CreateText createText;
     text::DrawText drawText;
     text::FreeText freeText;
@@ -42,9 +43,15 @@ struct TextModule : public Module {
     text::MeasureText measureText;
     text::SetTextZ setTextZ;
 
+    sFont loadFont(const char* path, int size, const char* vertpath, const char* fragpath) {
+        sFont f = internal_loadFont(path, size, vertpath, fragpath);
+        f.size = size;
+        return f;
+    }
+
     TextModule(const char* path) : Module(path, "text") {
         init = (text::Init)lib.getSymbol("init");
-        loadFont = (text::LoadFont)lib.getSymbol("loadFont");
+        internal_loadFont = (text::LoadFont)lib.getSymbol("loadFont");
         createText = (text::CreateText)lib.getSymbol("createText");
         drawText = (text::DrawText)lib.getSymbol("drawText");
         freeText = (text::FreeText)lib.getSymbol("freeText");

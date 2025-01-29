@@ -213,6 +213,7 @@ inline mat4 perspective(float fov, float aspect, float nearp, float farp) {
     return result;
 }
 
+// this matrix only works when bl is the origin (for some reason)
 inline mat4 orthographic(float left, float right, float bottom, float top, float nearp, float farp) {
     mat4 result = {};
     result.x.x = 2.0f / (right - left);

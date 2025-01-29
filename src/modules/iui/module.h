@@ -61,8 +61,8 @@ Clay_Dimensions Clay_Spectral_MeasureText(Clay_StringSlice text, Clay_TextElemen
     Clay_Dimensions result = {};
     vec2 size = __globalIUIState.textm->measureText(__globalIUIState.fonts[0], text.chars);
     int fs = config->fontSize;
-    result.width = size.x / (__globalIUIState.win->width * 0.01);
-    result.height = size.y / (__globalIUIState.win->height * 0.01);
+    result.width = size.x / 2;
+    result.height = size.y / 2;
     return result;
 }
 
@@ -112,17 +112,18 @@ void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, 
     for (uint32_t i = 0; i < renderCommands.length; i++) {
         Clay_RenderCommand* renderCommand = Clay_RenderCommandArray_Get(&renderCommands, i);
         Clay_BoundingBox boundingBox = renderCommand->boundingBox;
+        boundingBox.y = win->height - boundingBox.y - boundingBox.height;
+        // printf("y: %f\n", boundingBox.y);
         switch (renderCommand->commandType) {
             case CLAY_RENDER_COMMAND_TYPE_RECTANGLE: {
-                // printf("Rendering rectangle\n");
                 Clay_RectangleElementConfig *config = renderCommand->config.rectangleElementConfig;
                 Clay_Color color = config->color;
 
                 sInternalRectUniforms uniforms = {};
-                uniforms.color = {color.r, color.g, color.b, color.a};
+                uniforms.color = {color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f};
                 uniforms.proj = proj;
                 uniforms.view = view;
-                uniforms.model = translate({boundingBox.x, boundingBox.y, 0.0f}) * scale({boundingBox.width, boundingBox.height, 1.0f});
+                uniforms.model = scale({boundingBox.width, boundingBox.height, 1.0f}) * translate({boundingBox.x, boundingBox.y, 0.0f});
                 uniforms.z = z;
                 z += 0.01f;
 
@@ -134,15 +135,16 @@ void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, 
                 Clay_TextElementConfig *config = renderCommand->config.textElementConfig;
                 Clay_StringSlice text = renderCommand->text;
                 int fs = config->fontSize;
-                printf("Rendering text %s, font size %d at %f, %f\n", text.chars, fs, boundingBox.x, boundingBox.y);
                 char *cloned = (char*)malloc(text.length + 1);
                 memcpy(cloned, text.chars, text.length);
                 cloned[text.length] = '\0';
+                sFont font = __globalIUIState.fonts[0];
+                float scaleFactor = (float)fs / (float)(2*font.size);
                 sText textel = __globalIUIState.textm->createText(__globalIUIState.fonts[0], cloned);
                 __globalIUIState.textm->setTextProj(textel, proj);
                 __globalIUIState.textm->setTextView(textel, view);
-                __globalIUIState.textm->setTextModel(textel, translate({boundingBox.x, boundingBox.y, 0.0f}));
-                __globalIUIState.textm->setTextColor(textel, vec3{config->textColor.r, config->textColor.g, config->textColor.b});
+                __globalIUIState.textm->setTextModel(textel, scale({scaleFactor, scaleFactor, 1.0f}) * translate({boundingBox.x, boundingBox.y, 0.0f}));
+                __globalIUIState.textm->setTextColor(textel, vec3{config->textColor.r / 255.0f, config->textColor.g / 255.0f, config->textColor.b / 255.0f});
                 __globalIUIState.textm->setTextZ(textel, z);
                 z += 0.01f;
                 __globalIUIState.textm->drawText(textel);
