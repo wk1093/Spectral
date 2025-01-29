@@ -5,6 +5,8 @@
 #include "modules/tex/module.h"
 #include "modules/wrld/module.h"
 #include "modules/text/module.h"
+#define IUI_IMPLEMENTATION
+#include "modules/iui/module.h"
 
 #include "cube.h"
 
@@ -51,6 +53,35 @@ struct Cube {
 
 };
 
+Clay_RenderCommandArray createLayout() {
+    Clay_BeginLayout();
+
+    CLAY(
+        CLAY_LAYOUT({
+            .sizing = {
+                .width = CLAY_SIZING_FIXED(100),
+                .height = CLAY_SIZING_FIXED(100)
+            }
+        }),
+        CLAY_RECTANGLE({
+            .color = {0.8f, 0.7f, 0.6f, 1.0f},
+        }),
+        CLAY_TEXT(CLAY_STRING("test"), CLAY_TEXT_CONFIG({
+           .textColor = { 255, 255, 255, 255 },
+           .fontId = 0,
+           .fontSize = 24,
+        }))
+    ) {
+        
+    }
+
+    return Clay_EndLayout();
+}
+
+void clayerr(Clay_ErrorData errorData) {
+    printf("%s", errorData.errorText.chars);
+}
+
 int main(int argc, char** argv) {
     const char* window_module;
     const char* graphics_module;
@@ -84,6 +115,15 @@ int main(int argc, char** argv) {
     gfxm.init(&win);
     textm.init(&gfxm, &shdr);
 
+    uint64_t totalMemorySize = Clay_MinMemorySize();
+    Clay_Arena clayMemory = (Clay_Arena) {
+        .capacity = totalMemorySize,
+        .memory = (char*)malloc(totalMemorySize)
+    };
+
+    Clay_Initialize(clayMemory, (Clay_Dimensions){win.width, win.height}, (Clay_ErrorHandler)clayerr);
+    Clay_Spectral_Init(&gfxm, &textm, &shdr);
+
     gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
     sTextureDefinition texDef = texm.loadTexture("textures/test.png");
@@ -92,7 +132,7 @@ int main(int argc, char** argv) {
 
     sFont font = textm.loadFont("fonts/arial.ttf", 15, "spsl/text.spslv", "spsl/text.spslf");
 
-    sText textobj = textm.createText(font, "Hello, World!"); // creates a vertex defintion, a shader, and uniforms, and a mesh
+    // sText textobj = textm.createText(font, "Hello, World!"); // creates a vertex defintion, a shader, and uniforms, and a mesh
 
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
@@ -149,11 +189,9 @@ int main(int argc, char** argv) {
     float yvel = 0.0f;
 
     double lastFPS = 0.0;
-    textm.setTextProj(textobj, orthographic(0, win.width, 0, win.height, -1, 1));
-    textm.setTextModel(textobj, translate({20, 50, 0}));
-
-    gfxm.setScissor(30, 30, 400, 400);
-    gfxm.enableScissor();
+    mat4 proj = orthographic(0, win.width, 0, win.height, -1, 1);
+    // textm.setTextProj(textobj, proj);
+    // textm.setTextModel(textobj, translate({20, 50, 0}));
 
     while (!winm.shouldClose(win)) {
         winm.updateWindow(&win);
@@ -240,13 +278,18 @@ int main(int argc, char** argv) {
             cube.draw(&gfxm);
         }
 
-        textm.drawText(textobj);
+        // textm.drawText(textobj);
+
+        // super simple ui
+        Clay_RenderCommandArray layout = createLayout();
+        Clay_Spectral_Render(&win, layout, &font, proj, identity());
+        
 
         gfxm.present();
         winm.swapBuffers(win);
     }
 
-    textm.freeText(textobj);
+    // textm.freeText(textobj);
     textm.freeFont(font);
 
     gfxm.freeShaderProgram(shader);
