@@ -13,6 +13,8 @@ struct sWindow {
     double lastTime;
     std::chrono::high_resolution_clock::time_point startTime;
     bool vsync;
+    int width;
+    int height;
 };
 
 // Required for compatibility with different windowing libraries
@@ -70,6 +72,8 @@ struct WindowModule : Module {
         w.creator = this;
         w.startTime = std::chrono::high_resolution_clock::now();
         w.vsync = vsync;
+        w.width = width;
+        w.height = height;
         return w;
     }
 

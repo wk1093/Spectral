@@ -351,3 +351,15 @@ CEXPORT void freeUniforms(sUniforms uniforms) {
 CEXPORT void destroy() {
 
 }
+
+CEXPORT void setScissor(int x, int y, int width, int height) {
+    glScissor(x, y, width, height);
+}
+
+CEXPORT void enableScissor() {
+    glEnable(GL_SCISSOR_TEST);
+}
+
+CEXPORT void disableScissor() {
+    glDisable(GL_SCISSOR_TEST);
+}

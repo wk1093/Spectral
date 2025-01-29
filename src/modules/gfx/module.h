@@ -166,6 +166,9 @@ namespace graphics {
     typedef void (*FreeMesh)(sMesh mesh);
     typedef void (*FreeUniforms)(sUniforms uniforms);
     typedef void (*Destroy)();
+    typedef void (*SetScissor)(int x, int y, int width, int height);
+    typedef void (*EnableScissor)();
+    typedef void (*DisableScissor)();
 }
 
 struct GraphicsModule : Module {
@@ -189,6 +192,9 @@ struct GraphicsModule : Module {
     graphics::FreeMesh freeMesh;
     graphics::FreeUniforms freeUniforms;
     graphics::Destroy destroy;
+    graphics::SetScissor setScissor;
+    graphics::EnableScissor enableScissor;
+    graphics::DisableScissor disableScissor;
 
     sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexCount, sIndex* indices, size_t indexCount) {
         sMesh mesh = internal_createMesh(vertexShader, vertices, vertexCount, indices, indexCount);
@@ -275,5 +281,8 @@ struct GraphicsModule : Module {
         freeMesh = (graphics::FreeMesh)lib.getSymbol("freeMesh");
         freeUniforms = (graphics::FreeUniforms)lib.getSymbol("freeUniforms");
         destroy = (graphics::Destroy)lib.getSymbol("destroy");
+        setScissor = (graphics::SetScissor)lib.getSymbol("setScissor");
+        enableScissor = (graphics::EnableScissor)lib.getSymbol("enableScissor");
+        disableScissor = (graphics::DisableScissor)lib.getSymbol("disableScissor");
     }
 };

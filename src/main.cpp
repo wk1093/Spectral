@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
     static const float fov = 80.0f;
     static const float nearp = 0.001f;
     static const float farp = 1000.0f;
-    static const float aspect_ratio = 800.0f / 600.0f;
+    static const float aspect_ratio = (float)win.width / (float)win.height;
 
     bool mouse_locked = false;
 
@@ -139,8 +139,6 @@ int main(int argc, char** argv) {
     float speed = 5.0f;
     float sensitivity = 0.001f;
 
-    winm.setMousePosition(win, 400, 300);
-
     std::vector<Cube> cubes;
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
@@ -151,8 +149,11 @@ int main(int argc, char** argv) {
     float yvel = 0.0f;
 
     double lastFPS = 0.0;
-    textm.setTextProj(textobj, orthographic(0, 800, 0, 600, -1, 1));
+    textm.setTextProj(textobj, orthographic(0, win.width, 0, win.height, -1, 1));
     textm.setTextModel(textobj, translate({20, 50, 0}));
+
+    gfxm.setScissor(30, 30, 400, 400);
+    gfxm.enableScissor();
 
     while (!winm.shouldClose(win)) {
         winm.updateWindow(&win);
@@ -165,15 +166,15 @@ int main(int argc, char** argv) {
 
         float mousex, mousey;
         winm.getMousePosition(win, &mousex, &mousey);
-        float dx = mousex - 400;
-        float dy = mousey - 300;
+        float dx = mousex - win.width / 2;
+        float dy = mousey - win.height / 2;
         
         if (winm.getTime(win) < 0.1 || !mouse_locked) {
             dx = 0;
             dy = 0;
         }
         if (mouse_locked)
-            winm.setMousePosition(win, 400, 300);
+            winm.setMousePosition(win, win.width / 2, win.height / 2);
         
         if (winm.isKeyPressed(win, Key::Escape)) {
             mouse_locked = false;

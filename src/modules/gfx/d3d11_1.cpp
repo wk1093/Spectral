@@ -19,6 +19,10 @@ struct sD3D11_1Context {
     ID3D11RasterizerState* rasterizerState;
     ID3D11DepthStencilState* depthStencilState;
     ID3D11BlendState* blendState;
+    struct {
+        int x, y;
+        int width, height;
+    } scissor;
     sWindow* win;
 };
 
@@ -201,6 +205,8 @@ CEXPORT void init(sWindow* win) {
         rasterizerDesc.CullMode = D3D11_CULL_BACK;
         rasterizerDesc.FrontCounterClockwise = TRUE;
         rasterizerDesc.MultisampleEnable = TRUE;
+        rasterizerDesc.ScissorEnable = TRUE;
+        rasterizerDesc.DepthClipEnable = TRUE;
 
         d3d11Device->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
     }
@@ -706,4 +712,20 @@ CEXPORT void destroy() {
     __d3d11_1_context.swapChain->Release();
     __d3d11_1_context.deviceContext->Release();
     __d3d11_1_context.device->Release();
+}
+
+CEXPORT void setScissor(int x, int y, int width, int height) {
+    __d3d11_1_context.scissor.x = x;
+    __d3d11_1_context.scissor.y = (__d3d11_1_context.win->height - y) - height;
+    __d3d11_1_context.scissor.width = width;
+    __d3d11_1_context.scissor.height = height;
+}
+
+CEXPORT void enableScissor() {
+    D3D11_RECT rect = {__d3d11_1_context.scissor.x, __d3d11_1_context.scissor.y, __d3d11_1_context.scissor.x + __d3d11_1_context.scissor.width, __d3d11_1_context.scissor.y + __d3d11_1_context.scissor.height};
+    __d3d11_1_context.deviceContext->RSSetScissorRects(1, &rect);
+}
+CEXPORT void disableScissor() {
+    D3D11_RECT rect = {0, 0, 0, 0};
+    __d3d11_1_context.deviceContext->RSSetScissorRects(1, &rect);
 }
