@@ -50,7 +50,6 @@ struct Cube {
     void draw(GraphicsModule* gfxm) {
         gfxm->drawMesh(mesh);
     }
-
 };
 
 Clay_RenderCommandArray createLayout() {
@@ -59,8 +58,8 @@ Clay_RenderCommandArray createLayout() {
     CLAY(
         CLAY_LAYOUT({
             .sizing = {
-                .width = CLAY_SIZING_FIXED(100),
-                .height = CLAY_SIZING_FIXED(100)
+                .width = CLAY_SIZING_FIXED(200),
+                .height = CLAY_SIZING_FIXED(200)
             }
         }),
         CLAY_RECTANGLE({

@@ -23,6 +23,8 @@ struct sIUIGlobalState {
     sVertexDefinition* text_vert_def;
     sMesh text_mesh;
 
+    sWindow* win;
+
     sFont* fonts=nullptr;
 };
 
@@ -60,13 +62,18 @@ Clay_Dimensions Clay_Spectral_MeasureText(Clay_StringSlice text, Clay_TextElemen
     }
     Clay_Dimensions result = {};
     vec2 size = __globalIUIState.textm->measureText(__globalIUIState.fonts[0], text.chars);
-    result.width = size.x;
-    result.height = size.y;
+    int fs = config->fontSize;
+    result.width = size.x / (__globalIUIState.win->width * 0.01);
+    result.height = size.y / (__globalIUIState.win->height * 0.01);
     return result;
 }
 
 void Clay_Spectral_Init(GraphicsModule* gfxm, TextModule* textm, ShaderModule* shdr, sWindow* win, sFont* fonts) {
     __globalIUIState.fonts = fonts;
+    __globalIUIState.gfxm = gfxm;
+    __globalIUIState.textm = textm;
+    __globalIUIState.shdr = shdr;
+    __globalIUIState.win = win;
     uint64_t totalMemorySize = Clay_MinMemorySize();
     Clay_Arena clayMemory = (Clay_Arena) {
         .capacity = totalMemorySize,
@@ -74,9 +81,7 @@ void Clay_Spectral_Init(GraphicsModule* gfxm, TextModule* textm, ShaderModule* s
     };
     Clay_Initialize(clayMemory, (Clay_Dimensions){win->width, win->height}, (Clay_ErrorHandler)clayerr);
     Clay_SetMeasureTextFunction(Clay_Spectral_MeasureText, 0);
-    __globalIUIState.gfxm = gfxm;
-    __globalIUIState.textm = textm;
-    __globalIUIState.shdr = shdr;
+
     // pos, color
     sVertexDefinition* rect_vert_def = gfxm->createVertexDefinition({2});
     if (vertexDefinitionSize(rect_vert_def) != sizeof(sInternalRectVertex)) {
@@ -126,13 +131,14 @@ void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, 
             case CLAY_RENDER_COMMAND_TYPE_TEXT: {
                 Clay_TextElementConfig *config = renderCommand->config.textElementConfig;
                 Clay_StringSlice text = renderCommand->text;
+                int fs = config->fontSize;
                 char *cloned = (char*)malloc(text.length + 1);
                 memcpy(cloned, text.chars, text.length);
                 cloned[text.length] = '\0';
                 sText textel = __globalIUIState.textm->createText(__globalIUIState.fonts[0], cloned);
                 __globalIUIState.textm->setTextProj(textel, proj);
                 __globalIUIState.textm->setTextView(textel, view);
-                __globalIUIState.textm->setTextModel(textel, translate({boundingBox.x, boundingBox.y, 0.0f}) * scale({boundingBox.width, boundingBox.height, 1.0f}));
+                __globalIUIState.textm->setTextModel(textel, translate({boundingBox.x, boundingBox.y, 0.0f}));
                 __globalIUIState.textm->drawText(textel);
                 __globalIUIState.textm->freeText(textel);
             }
