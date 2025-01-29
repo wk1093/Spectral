@@ -32,6 +32,8 @@
 // TODO: ECS
 // TODO: Multi-threading
 
+// TODO: IMPORTANT: OpenGL transformations are different from DirectX transformations, everything seems fine except that the model coords aren't being projected when in DirectX mode
+
 struct Cube {
     sMesh mesh;
     sModelTransform transform;
@@ -151,6 +153,8 @@ int main(int argc, char** argv) {
     float yvel = 0.0f;
 
     double lastFPS = 0.0;
+    textm.setTextProj(textobj, orthographic(0, 800, 0, 600, -1, 1));
+    textm.setTextModel(textobj, translate({20, 50, 0}));
 
     while (!winm.shouldClose(win)) {
         winm.updateWindow(&win);
@@ -224,18 +228,18 @@ int main(int argc, char** argv) {
         yvel *= 0.99f * (win.dt * 60);
 
 
-        // gfxm.useShaderProgram(shader);
-        // shaderData.time = (float)winm.getTime(win);
-        // shaderData.view = view(camera);
-        // shaderData.viewPos = camera.pos;
+        gfxm.useShaderProgram(shader);
+        shaderData.time = (float)winm.getTime(win);
+        shaderData.view = view(camera);
+        shaderData.viewPos = camera.pos;
 
-        // for (Cube& cube : cubes) {
-        //     gfxm.useShaderProgram(shader);
-        //     shaderData.model = cube.transform.matrix();
-        //     gfxm.setUniforms(uniforms, &shaderData);
-        //     gfxm.useTexture(shader, tex, "tex0");
-        //     cube.draw(&gfxm);
-        // }
+        for (Cube& cube : cubes) {
+            gfxm.useShaderProgram(shader);
+            shaderData.model = cube.transform.matrix();
+            gfxm.setUniforms(uniforms, &shaderData);
+            gfxm.useTexture(shader, tex, "tex0");
+            cube.draw(&gfxm);
+        }
 
         textm.drawText(textobj);
 
@@ -243,11 +247,15 @@ int main(int argc, char** argv) {
         winm.swapBuffers(win);
     }
 
+    textm.freeText(textobj);
+    textm.freeFont(font);
+
     gfxm.freeShaderProgram(shader);
     gfxm.freeShader(vert);
     gfxm.freeShader(frag);
     gfxm.freeTexture(tex);
     gfxm.freeUniforms(uniforms);
+    gfxm.freeVertexDefinition(vertDef);
     gfxm.destroy();
 
     winm.destroyWindow(win);

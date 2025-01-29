@@ -208,13 +208,25 @@ struct GraphicsModule : Module {
 
     sVertexDefinition* createVertexDefinition(int* elements, size_t count) {
         sVertexDefinition* def = (sVertexDefinition*)malloc(sizeof(sVertexDefinition));
-        def->elements = elements;
+        // def->elements = elements;
+        def->elements = (int*)malloc(sizeof(int) * count);
+        if (def->elements == nullptr) {
+            printf("ERROR: Malloc failed\n");
+        }
+        for (size_t i = 0; i < count; i++) {
+            def->elements[i] = elements[i];
+        }
         def->count = count;
         return def;
     }
 
     sVertexDefinition* createVertexDefinition(std::initializer_list<int> elements) {
         return createVertexDefinition((int*)elements.begin(), elements.size());
+    }
+
+    void freeVertexDefinition(sVertexDefinition* def) {
+        free(def->elements);
+        free(def);
     }
 
     sShader createShader(const char* source, sShaderType type, sVertexDefinition* vertDef) {

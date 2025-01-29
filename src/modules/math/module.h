@@ -213,6 +213,18 @@ inline mat4 perspective(float fov, float aspect, float nearp, float farp) {
     return result;
 }
 
+inline mat4 orthographic(float left, float right, float bottom, float top, float nearp, float farp) {
+    mat4 result = {};
+    result.x.x = 2.0f / (right - left);
+    result.y.y = 2.0f / (top - bottom);
+    result.z.z = -2.0f / (farp - nearp);
+    result.w.x = -(right + left) / (right - left);
+    result.w.y = -(top + bottom) / (top - bottom);
+    result.w.z = -(farp + nearp) / (farp - nearp);
+    result.w.w = 1.0f;
+    return result;
+}
+
 struct sCamera {
     vec3 pos = {0, 0, 0};
     vec3 up = {0, 1, 0};

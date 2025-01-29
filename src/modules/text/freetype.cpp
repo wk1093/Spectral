@@ -52,9 +52,9 @@ struct TextVertex {
 
 struct TextUniforms {
     vec3 color;
-    mat4 model;
-    mat4 view;
     mat4 proj;
+    mat4 view;
+    mat4 model;
 };
 
 CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const char* fragpath) {
@@ -134,9 +134,9 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
 
     sUniformDefinition uniformDef = {
         {sShaderType::FRAGMENT, "uColor", sUniformType::FLOAT, 3},
-        {sShaderType::VERTEX, "uModel", sUniformType::FLOAT, 4, 4},
-        {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uProj", sUniformType::FLOAT, 4, 4},
+        {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
+        {sShaderType::VERTEX, "uModel", sUniformType::FLOAT, 4, 4},
     };
     if (uniformDef.size() != sizeof(TextUniforms)) {
         printf("ERROR: Uniform definition size does not match shader data size\n");
@@ -184,7 +184,7 @@ CEXPORT sText createText(sFont font, const char* text) {
     float x = 0.0f;
     float y = 0.0f;
 
-    float scale = 0.005f;
+    float scale = 1.0f;
     float offset = 0.0f;
 
     std::vector<uint32_t> indices;
@@ -240,4 +240,44 @@ CEXPORT void drawText(sText text) {
     __freetype_context.gfxm->setUniforms(internal->font->uniforms, &internal->uniforms);
     __freetype_context.gfxm->useTexture(internal->font->shader, internal->font->atlas, "tex0");
     __freetype_context.gfxm->drawMesh(internal->mesh);
+}
+
+CEXPORT void freeText(sText text) {
+    sInternalText* internal = (sInternalText*)text.internal;
+
+    __freetype_context.gfxm->freeMesh(internal->mesh);
+    free(internal->vertices);
+    free(internal->text);
+    free(internal);
+}
+
+CEXPORT void freeFont(sFont font) {
+    sInternalFont* internal = (sInternalFont*)font.internal;
+
+    __freetype_context.gfxm->freeTexture(internal->atlas);
+    __freetype_context.gfxm->freeUniforms(internal->uniforms);
+    __freetype_context.gfxm->freeShader(internal->vertexShader);
+    __freetype_context.gfxm->freeShaderProgram(internal->shader);
+    __freetype_context.gfxm->freeVertexDefinition(internal->vertDef);
+    free(internal);
+}
+
+CEXPORT void setTextColor(sText text, vec3 color) {
+    sInternalText* internal = (sInternalText*)text.internal;
+    internal->uniforms.color = color;
+}
+
+CEXPORT void setTextModel(sText text, mat4 model) {
+    sInternalText* internal = (sInternalText*)text.internal;
+    internal->uniforms.model = model;
+}
+
+CEXPORT void setTextView(sText text, mat4 view) {
+    sInternalText* internal = (sInternalText*)text.internal;
+    internal->uniforms.view = view;
+}
+
+CEXPORT void setTextProj(sText text, mat4 proj) {
+    sInternalText* internal = (sInternalText*)text.internal;
+    internal->uniforms.proj = proj;
 }
