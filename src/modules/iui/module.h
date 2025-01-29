@@ -19,9 +19,6 @@ struct sIUIGlobalState {
     sMesh rect_mesh;
     sUniforms rect_uniforms;
 
-    sShaderProgram text_shader;
-    sVertexDefinition* text_vert_def;
-    sMesh text_mesh;
 
     sWindow* win;
 
@@ -50,6 +47,7 @@ struct sInternalRectUniforms {
     mat4 proj;
     mat4 view;
     mat4 model;
+    float z;
 };
 
 void clayerr(Clay_ErrorData errorData) {
@@ -82,7 +80,6 @@ void Clay_Spectral_Init(GraphicsModule* gfxm, TextModule* textm, ShaderModule* s
     Clay_Initialize(clayMemory, (Clay_Dimensions){win->width, win->height}, (Clay_ErrorHandler)clayerr);
     Clay_SetMeasureTextFunction(Clay_Spectral_MeasureText, 0);
 
-    // pos, color
     sVertexDefinition* rect_vert_def = gfxm->createVertexDefinition({2});
     if (vertexDefinitionSize(rect_vert_def) != sizeof(sInternalRectVertex)) {
         printf("ERROR: Vertex definition size mismatch\n");
@@ -99,7 +96,8 @@ void Clay_Spectral_Init(GraphicsModule* gfxm, TextModule* textm, ShaderModule* s
         {sShaderType::FRAGMENT, "uColor", sUniformType::FLOAT, 4},
         {sShaderType::VERTEX, "uProj", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
-        {sShaderType::VERTEX, "uModel", sUniformType::FLOAT, 4, 4}
+        {sShaderType::VERTEX, "uModel", sUniformType::FLOAT, 4, 4},
+        {sShaderType::VERTEX, "uZ", sUniformType::FLOAT, 1}
     };
     if (rect_uniform_def.size() != sizeof(sInternalRectUniforms)) {
         printf("ERROR: Uniform definition size mismatch\n");
@@ -110,11 +108,13 @@ void Clay_Spectral_Init(GraphicsModule* gfxm, TextModule* textm, ShaderModule* s
 
 // custom clay implementation using our graphics library
 void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, mat4 proj, mat4 view) {
+    float z = -1.0f+0.01f;
     for (uint32_t i = 0; i < renderCommands.length; i++) {
         Clay_RenderCommand* renderCommand = Clay_RenderCommandArray_Get(&renderCommands, i);
         Clay_BoundingBox boundingBox = renderCommand->boundingBox;
         switch (renderCommand->commandType) {
             case CLAY_RENDER_COMMAND_TYPE_RECTANGLE: {
+                // printf("Rendering rectangle\n");
                 Clay_RectangleElementConfig *config = renderCommand->config.rectangleElementConfig;
                 Clay_Color color = config->color;
 
@@ -123,6 +123,8 @@ void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, 
                 uniforms.proj = proj;
                 uniforms.view = view;
                 uniforms.model = translate({boundingBox.x, boundingBox.y, 0.0f}) * scale({boundingBox.width, boundingBox.height, 1.0f});
+                uniforms.z = z;
+                z += 0.01f;
 
                 __globalIUIState.gfxm->useShaderProgram(__globalIUIState.rect_shader);
                 __globalIUIState.gfxm->setUniforms(__globalIUIState.rect_uniforms, &uniforms);
@@ -132,6 +134,7 @@ void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, 
                 Clay_TextElementConfig *config = renderCommand->config.textElementConfig;
                 Clay_StringSlice text = renderCommand->text;
                 int fs = config->fontSize;
+                printf("Rendering text %s, font size %d at %f, %f\n", text.chars, fs, boundingBox.x, boundingBox.y);
                 char *cloned = (char*)malloc(text.length + 1);
                 memcpy(cloned, text.chars, text.length);
                 cloned[text.length] = '\0';
@@ -139,9 +142,12 @@ void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, 
                 __globalIUIState.textm->setTextProj(textel, proj);
                 __globalIUIState.textm->setTextView(textel, view);
                 __globalIUIState.textm->setTextModel(textel, translate({boundingBox.x, boundingBox.y, 0.0f}));
+                __globalIUIState.textm->setTextColor(textel, vec3{config->textColor.r, config->textColor.g, config->textColor.b});
+                __globalIUIState.textm->setTextZ(textel, z);
+                z += 0.01f;
                 __globalIUIState.textm->drawText(textel);
                 __globalIUIState.textm->freeText(textel);
-            }
+            } break;
         }
     }
 }

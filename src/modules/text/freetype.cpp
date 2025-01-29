@@ -55,6 +55,7 @@ struct TextUniforms {
     mat4 proj;
     mat4 view;
     mat4 model;
+    float z;
 };
 
 CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const char* fragpath) {
@@ -137,6 +138,7 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
         {sShaderType::VERTEX, "uProj", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uModel", sUniformType::FLOAT, 4, 4},
+        {sShaderType::VERTEX, "uZ", sUniformType::FLOAT, 1}
     };
     if (uniformDef.size() != sizeof(TextUniforms)) {
         printf("ERROR: Uniform definition size does not match shader data size\n");
@@ -172,6 +174,7 @@ CEXPORT sText createText(sFont font, const char* text) {
     internal->uniforms.view = identity();
     internal->uniforms.proj = identity();
     internal->uniforms.color = vec3{1.0f, 1.0f, 1.0f};
+    internal->uniforms.z = 0.0f;
 
 
     internal->vertexCount = 4 * strlen(text);
@@ -300,4 +303,9 @@ CEXPORT vec2 measureText(sFont font, const char* text) {
 
     return {x, y};
 
+}
+
+CEXPORT void setTextZ(sText text, float z) {
+    sInternalText* internal = (sInternalText*)text.internal;
+    internal->uniforms.z = z;
 }

@@ -6,8 +6,9 @@
 #UNIFORM mat4 uProj;
 #UNIFORM mat4 uView;
 #UNIFORM mat4 uModel;
+#UNIFORM float uZ;
 
 void main() {
-    spsl_position = mul(uProj, mul(uView, mul(uModel, vec4(pos, 0.0, 1.0))));
+    spsl_position = mul(uProj, mul(uView, mul(uModel, vec4(pos, uZ, 1.0))));
     tex_coords = uv;
 }

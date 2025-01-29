@@ -410,6 +410,11 @@ CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefini
 }
 
 CEXPORT void useShaderProgram(sShaderProgram shader) {
+    __d3d11_1_context.deviceContext->RSSetState(__d3d11_1_context.rasterizerState);
+    __d3d11_1_context.deviceContext->OMSetDepthStencilState(__d3d11_1_context.depthStencilState, 0);
+    __d3d11_1_context.deviceContext->OMSetBlendState(__d3d11_1_context.blendState, 0, 0xFFFFFFFF);
+    __d3d11_1_context.deviceContext->OMSetRenderTargets(1, &__d3d11_1_context.frameBufferView, __d3d11_1_context.depthStencilView);
+    
     auto* internal = (sInternalShaderProgram*)shader.internal;
     __d3d11_1_context.deviceContext->IASetInputLayout(internal->inputLayout);
     __d3d11_1_context.deviceContext->VSSetShader(internal->vertexShader.vertexShader, 0, 0);

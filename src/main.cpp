@@ -63,7 +63,7 @@ Clay_RenderCommandArray createLayout() {
             }
         }),
         CLAY_RECTANGLE({
-            .color = {0.8f, 0.7f, 0.6f, 1.0f},
+            .color = {0.8f, 0.7f, 0.6f, 0.5f},
         }),
         CLAY_TEXT(CLAY_STRING("test"), CLAY_TEXT_CONFIG({
            .textColor = { 255, 255, 255, 255 },
@@ -255,6 +255,10 @@ int main(int argc, char** argv) {
         yvel *= 0.99f * (win.dt * 60);
 
 
+        Clay_RenderCommandArray layout = createLayout();
+        Clay_Spectral_Render(&win, layout, proj, identity());
+
+
         gfxm.useShaderProgram(shader);
         shaderData.time = (float)winm.getTime(win);
         shaderData.view = view(camera);
@@ -270,9 +274,6 @@ int main(int argc, char** argv) {
 
         // textm.drawText(textobj);
 
-        // super simple ui
-        Clay_RenderCommandArray layout = createLayout();
-        Clay_Spectral_Render(&win, layout, proj, identity());
         
 
         gfxm.present();
