@@ -289,19 +289,30 @@ CEXPORT vec2 measureText(sFont font, const char* text) {
     sInternalFont* internal = (sInternalFont*)font.internal;
 
     float x = 0.0f;
-    float y = 0.0f;
+    float y = font.size;
+
+    float maxTextWidth = 0.0f;
+    float lineTextWidth = 0.0f;
 
     for (size_t i = 0; i < strlen(text); ++i) {
         char c = text[i];
         sInternalFont::CharacterDef def = internal->characters[c];
-        if (def.size.y + abs(def.bearing.y) > y) {
-            y = def.size.y + abs(def.bearing.y);
+
+        if (c == '\n') {
+            maxTextWidth = fmaxf(maxTextWidth, lineTextWidth);
+            lineTextWidth = 0.0f;
+            y += font.size;
+            continue;
         }
-
-        x += def.advance;
+        if (def.advance != 0) lineTextWidth += def.advance;
+        else lineTextWidth += (def.size.x + def.bearing.x);
     }
+    maxTextWidth = fmaxf(maxTextWidth, lineTextWidth);
 
-    return {x, y};
+
+
+    return {maxTextWidth, y};
+
 
 }
 

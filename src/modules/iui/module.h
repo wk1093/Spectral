@@ -10,6 +10,7 @@
 #include "../shdr/module.h"
 
 struct sIUIGlobalState {
+    WindowModule* winm;
     GraphicsModule* gfxm;
     TextModule* textm;
     ShaderModule* shdr;
@@ -61,13 +62,15 @@ Clay_Dimensions Clay_Spectral_MeasureText(Clay_StringSlice text, Clay_TextElemen
     Clay_Dimensions result = {};
     vec2 size = __globalIUIState.textm->measureText(__globalIUIState.fonts[0], text.chars);
     int fs = config->fontSize;
-    result.width = size.x / 2;
-    result.height = size.y / 2;
+    float scaleFactor = (float)fs / (float)(2*__globalIUIState.fonts[0].size);
+    result.width = size.x * scaleFactor;
+    result.height = fs;
     return result;
 }
 
-void Clay_Spectral_Init(GraphicsModule* gfxm, TextModule* textm, ShaderModule* shdr, sWindow* win, sFont* fonts) {
+void Clay_Spectral_Init(WindowModule* winm, GraphicsModule* gfxm, TextModule* textm, ShaderModule* shdr, sWindow* win, sFont* fonts) {
     __globalIUIState.fonts = fonts;
+    __globalIUIState.winm = winm;
     __globalIUIState.gfxm = gfxm;
     __globalIUIState.textm = textm;
     __globalIUIState.shdr = shdr;
@@ -108,6 +111,13 @@ void Clay_Spectral_Init(GraphicsModule* gfxm, TextModule* textm, ShaderModule* s
 
 // custom clay implementation using our graphics library
 void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, mat4 proj, mat4 view) {
+    float mousex, mousey;
+    __globalIUIState.winm->getMousePosition(*win, &mousex, &mousey);
+    Clay_Vector2 mousePos = {mousex, mousey};
+    bool mouse = __globalIUIState.winm->isMouseButtonPressed(*win, 0);
+    Clay_SetPointerState(mousePos, mouse);
+
+    
     float z = -1.0f+0.01f;
     for (uint32_t i = 0; i < renderCommands.length; i++) {
         Clay_RenderCommand* renderCommand = Clay_RenderCommandArray_Get(&renderCommands, i);

@@ -52,28 +52,58 @@ struct Cube {
     }
 };
 
-Clay_RenderCommandArray createLayout() {
-    Clay_BeginLayout();
 
-    CLAY(
-        CLAY_LAYOUT({
-            .sizing = {
-                .width = CLAY_SIZING_FIXED(200),
-                .height = CLAY_SIZING_FIXED(200)
-            }
-        }),
+static const Clay_Color COLOR_ORANGE    = (Clay_Color) {225, 138, 50, 255};
+static const Clay_Color COLOR_BLUE      = (Clay_Color) {111, 173, 162, 255};
+static const Clay_Color COLOR_LIGHT     = (Clay_Color) {224, 215, 210, 255};
+
+
+static void Label(const Clay_String text, const int cornerRadius)
+{
+    CLAY(CLAY_LAYOUT({ .padding = {8, 8} }),
         CLAY_RECTANGLE({
-            .color = {100, 80, 80, 255},
-        }),
-        CLAY_TEXT(CLAY_STRING("test"), CLAY_TEXT_CONFIG({
+            .color = Clay_Hovered() ? COLOR_BLUE : COLOR_ORANGE,
+            .cornerRadius = cornerRadius,
+        })) {
+        CLAY_TEXT(text, CLAY_TEXT_CONFIG({
            .textColor = { 255, 255, 255, 255 },
            .fontId = 0,
            .fontSize = 24,
-        }))
-    ) {
-        
-    }
+        }));
+   }
+}
 
+static Clay_RenderCommandArray createLayout()
+{
+    Clay_BeginLayout();
+    CLAY(CLAY_ID("MainContent"),
+        CLAY_LAYOUT({
+            .sizing = {
+                .width = CLAY_SIZING_GROW(),
+                .height = CLAY_SIZING_GROW(),
+            },
+            .padding = { 10, 10 },
+            .childGap = 10,
+            .childAlignment = {
+                .x = CLAY_ALIGN_X_CENTER,
+                .y = CLAY_ALIGN_Y_CENTER,
+            },
+            .layoutDirection = CLAY_TOP_TO_BOTTOM,
+        }),
+        CLAY_BORDER({
+            .left = { 20, COLOR_BLUE },
+            .right = { 20, COLOR_BLUE },
+            .bottom = { 20, COLOR_BLUE }
+        }),
+        CLAY_RECTANGLE({
+            .color = COLOR_LIGHT,
+        })
+    ) {
+        Label(CLAY_STRING("Rounded - Button 1"), 10);
+        Label(CLAY_STRING("Straight - Button 2") , 0);
+        Label(CLAY_STRING("Straight - 3") , 0);
+        Label(CLAY_STRING("Rounded+ - Button 4") , 20);
+    }
     return Clay_EndLayout();
 }
 
@@ -123,7 +153,7 @@ int main(int argc, char** argv) {
     printf("Time to load font: %f\n", elapsed.count());
 
     // sText textobj = textm.createText(font, "Hello, World!"); // creates a vertex defintion, a shader, and uniforms, and a mesh
-    Clay_Spectral_Init(&gfxm, &textm, &shdr, &win, &font);
+    Clay_Spectral_Init(&winm, &gfxm, &textm, &shdr, &win, &font);
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
     if (vertexDefinitionSize(vertDef) != sizeof(Vertex)) {
@@ -192,67 +222,67 @@ int main(int argc, char** argv) {
         else lastFPS = lastFPS * 0.95 + fps * 0.05;
         winm.setWindowTitle(win, (window_title + " - " + std::to_string((int)lastFPS) + " FPS").c_str());
 
-        float mousex, mousey;
-        winm.getMousePosition(win, &mousex, &mousey);
-        float dx = mousex - win.width / 2;
-        float dy = mousey - win.height / 2;
+        // float mousex, mousey;
+        // winm.getMousePosition(win, &mousex, &mousey);
+        // float dx = mousex - win.width / 2;
+        // float dy = mousey - win.height / 2;
         
-        if (winm.getTime(win) < 0.1 || !mouse_locked) {
-            dx = 0;
-            dy = 0;
-        }
-        if (mouse_locked)
-            winm.setMousePosition(win, win.width / 2, win.height / 2);
+        // if (winm.getTime(win) < 0.1 || !mouse_locked) {
+        //     dx = 0;
+        //     dy = 0;
+        // }
+        // if (mouse_locked)
+        //     winm.setMousePosition(win, win.width / 2, win.height / 2);
         
-        if (winm.isKeyPressed(win, Key::Escape)) {
-            mouse_locked = false;
-            winm.setCursorMode(win, CursorMode::Normal);
-        }
+        // if (winm.isKeyPressed(win, Key::Escape)) {
+        //     mouse_locked = false;
+        //     winm.setCursorMode(win, CursorMode::Normal);
+        // }
 
-        if (winm.isMouseButtonPressed(win, 0)) {
-            mouse_locked = true;
-            winm.setCursorMode(win, CursorMode::Disabled);
-        }
+        // if (winm.isMouseButtonPressed(win, 0)) {
+        //     mouse_locked = true;
+        //     winm.setCursorMode(win, CursorMode::Disabled);
+        // }
 
-        if (dx != 0) {
-            camYaw(&camera, dx * sensitivity);
-        }
-        if (dy != 0) {
-            camPitch(&camera, -dy * sensitivity);
-        }
+        // if (dx != 0) {
+        //     camYaw(&camera, dx * sensitivity);
+        // }
+        // if (dy != 0) {
+        //     camPitch(&camera, -dy * sensitivity);
+        // }
 
-        vec3 fixed_forward = camera.forward; // we need to align the forward so it doesn't go up and down
-        fixed_forward.y = 0;
-        fixed_forward = normalize(fixed_forward);
-        // basic movement and gravity (no jumping yet)
-        if (winm.isKeyPressed(win, Key::W)) {
-            camMove(&camera, fixed_forward, speed * win.dt);
-        }
-        if (winm.isKeyPressed(win, Key::S)) {
-            camMove(&camera, -fixed_forward, speed * win.dt);
-        }
-        if (winm.isKeyPressed(win, Key::A)) {
-            camMove(&camera, camera.left(fixed_forward), speed * win.dt);
-        }
-        if (winm.isKeyPressed(win, Key::D)) {
-            camMove(&camera, camera.right(fixed_forward), speed * win.dt);
-        }
+        // vec3 fixed_forward = camera.forward; // we need to align the forward so it doesn't go up and down
+        // fixed_forward.y = 0;
+        // fixed_forward = normalize(fixed_forward);
+        // // basic movement and gravity (no jumping yet)
+        // if (winm.isKeyPressed(win, Key::W)) {
+        //     camMove(&camera, fixed_forward, speed * win.dt);
+        // }
+        // if (winm.isKeyPressed(win, Key::S)) {
+        //     camMove(&camera, -fixed_forward, speed * win.dt);
+        // }
+        // if (winm.isKeyPressed(win, Key::A)) {
+        //     camMove(&camera, camera.left(fixed_forward), speed * win.dt);
+        // }
+        // if (winm.isKeyPressed(win, Key::D)) {
+        //     camMove(&camera, camera.right(fixed_forward), speed * win.dt);
+        // }
 
-        // gravity
-        if (camera.pos.y > 3) {
-            yvel -= 9.8f * win.dt;
-        } else {
-            camera.pos.y = 3;
-            yvel = 0;
-        }
+        // // gravity
+        // if (camera.pos.y > 3) {
+        //     yvel -= 9.8f * win.dt;
+        // } else {
+        //     camera.pos.y = 3;
+        //     yvel = 0;
+        // }
 
-        // jumping
-        if (winm.isKeyPressed(win, Key::Space) && camera.pos.y == 3) {
-            yvel = 250.0f * win.dt;
-        }
+        // // jumping
+        // if (winm.isKeyPressed(win, Key::Space) && camera.pos.y == 3) {
+        //     yvel = 250.0f * win.dt;
+        // }
 
-        camera.pos.y += yvel * win.dt;
-        yvel *= 0.99f * (win.dt * 60);
+        // camera.pos.y += yvel * win.dt;
+        // yvel *= 0.99f * (win.dt * 60);
 
 
         Clay_RenderCommandArray layout = createLayout();
