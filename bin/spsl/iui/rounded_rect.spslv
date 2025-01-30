@@ -1,0 +1,10 @@
+#VS_IN vec2 pos;
+
+#UNIFORM mat4 uProj;
+#UNIFORM mat4 uView;
+#UNIFORM mat4 uModel;
+#UNIFORM float uZ;
+
+void main() {
+    spsl_position = mul(uProj, mul(uView, mul(uModel, vec4(pos, uZ, 1.0))));
+}

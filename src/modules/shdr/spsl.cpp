@@ -389,7 +389,7 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
         while (true) {
             size_t pos = source.find("spsl_fragpos");
             if (pos == std::string::npos) break;
-            source.replace(pos, 13, "input.position");
+            source.replace(pos, 12, "input.position");
         }
 
         // #TEXTURE test ->
@@ -431,7 +431,10 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
         // void main() { ... } ->
         // float4 main(SPSL_FS_Input input) { float4 spsl_fragcolor; ... return spsl_fragcolor; }
         size_t open_brace = source.find("{", main);
-        size_t close_brace = source.find("}", open_brace);
+        // size_t close_brace = source.find("}", open_brace);
+        // the above line breaks if there is a } in a comment or a string
+        size_t close_brace = source.rfind("}");
+
         std::string main_body = source.substr(open_brace + 1, close_brace - open_brace - 1);
         source.replace(main, close_brace - main + 1, "float4 main(SPSL_FS_Input input) : SV_TARGET { float4 spsl_fragcolor; " + main_body + " return spsl_fragcolor; }");
         

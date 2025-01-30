@@ -68,7 +68,7 @@ static void Label(const Clay_String text, const int cornerRadius)
         CLAY_TEXT(text, CLAY_TEXT_CONFIG({
            .textColor = { 255, 255, 255, 255 },
            .fontId = 0,
-           .fontSize = 24,
+           .fontSize = 30,
         }));
    }
 }
@@ -93,48 +93,22 @@ static Clay_RenderCommandArray createLayout()
         CLAY_BORDER({
             .left = { 20, COLOR_BLUE },
             .right = { 20, COLOR_BLUE },
-            .bottom = { 20, COLOR_BLUE }
+            .top = { 20, COLOR_BLUE },
+            .bottom = { 20, COLOR_BLUE },
         }),
         CLAY_RECTANGLE({
             .color = COLOR_LIGHT,
         })
     ) {
-        Label(CLAY_STRING("Rounded - Button 1"), 0);
+        Label(CLAY_STRING("Rounded - Button 1"), 5);
         Label(CLAY_STRING("Straight - Button 2") , 0);
         Label(CLAY_STRING("Straight - 3") , 0);
-        Label(CLAY_STRING("Rounded+ - Button 4") , 0);
+        Label(CLAY_STRING("Rounded+ - Button 4") , 10);
         Label(CLAY_STRING("More test text"), 0);
         Label(CLAY_STRING("What is wrong with text"), 0);
         Label(CLAY_STRING("I need longer text"), 0);
-        Label(CLAY_STRING("tiny"), 0);
-        Label(CLAY_STRING("bit big"), 0);
-        Label(CLAY_STRING("A"), 0);
-        Label(CLAY_STRING("AA"), 0);
-        Label(CLAY_STRING("AAA"), 0);
-        Label(CLAY_STRING("somestuff"), 0);
-        Label(CLAY_STRING("thingwithnospace"), 0);
-        Label(CLAY_STRING("AAAAAA"), 0);
-        Label(CLAY_STRING("AAAAAAA"), 0);
-        Label(CLAY_STRING("AAAAAAAA"), 0);
-        Label(CLAY_STRING("This is a really long sentence for testing"), 0);
     }
     return Clay_EndLayout();
-}
-
-void printRenderCommands(Clay_RenderCommandArray arr) {
-    for (uint32_t i = 0; i < arr.length; i++) {
-        Clay_RenderCommand* cmd = Clay_RenderCommandArray_Get(&arr, i);
-        Clay_BoundingBox boundingBox = cmd->boundingBox;
-        switch (cmd->commandType) {
-            case CLAY_RENDER_COMMAND_TYPE_RECTANGLE: {
-                Clay_RectangleElementConfig* config = cmd->config.rectangleElementConfig;
-                printf("Rectangle: %f\n", boundingBox.width);
-            } break;
-            case CLAY_RENDER_COMMAND_TYPE_TEXT: {
-                Clay_TextElementConfig* config = cmd->config.textElementConfig;
-            } break;
-        }
-    }
 }
 
 int main(int argc, char** argv) {
@@ -177,7 +151,7 @@ int main(int argc, char** argv) {
     texm.freeTexture(texDef);
 
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-    sFont font = textm.loadFont("fonts/arial.ttf", 32, "spsl/text.spslv", "spsl/text.spslf");
+    sFont font = textm.loadFont("fonts/arial.ttf", 64, "spsl/text.spslv", "spsl/text.spslf");
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
     printf("Time to load font: %f\n", elapsed.count());
@@ -244,8 +218,6 @@ int main(int argc, char** argv) {
     mat4 proj = orthographic(0, win.width, 0, win.height, -1, 1);
     // textm.setTextProj(textobj, proj);
     // textm.setTextModel(textobj, translate({400, 300, 0}));
-
-    printRenderCommands(createLayout());
 
     while (!winm.shouldClose(win)) {
         winm.updateWindow(&win);

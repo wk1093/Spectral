@@ -9,6 +9,8 @@
 #include "../text/module.h"
 #include "../shdr/module.h"
 
+#define CLAY_COLOR_TO_VEC4(color) {(color).r / 255.0f, (color).g / 255.0f, (color).b / 255.0f, (color).a / 255.0f}
+
 struct sIUIGlobalState {
     WindowModule* winm;
     GraphicsModule* gfxm;
@@ -20,6 +22,9 @@ struct sIUIGlobalState {
     sMesh rect_mesh;
     sUniforms rect_uniforms;
 
+    // rounded rects use the same mesh and vertex defs, but a different shader
+    sShaderProgram rounded_rect_shader;
+    sUniforms rounded_rect_uniforms;
 
     sWindow* win;
 
@@ -45,11 +50,25 @@ sIndex __rect_indices[] = {
 };
 struct sInternalRectUniforms {
     vec4 color;
+
     mat4 proj;
     mat4 view;
     mat4 model;
     float z;
 };
+
+struct sInternalRoundedRectUniforms {
+    vec4 color;
+    vec2 topleft;
+    vec2 widheight;
+    float radius;
+
+    mat4 proj;
+    mat4 view;
+    mat4 model;
+    float z;
+};
+
 
 void clayerr(Clay_ErrorData errorData) {
     printf("UI Error: %s\n", errorData.errorText.chars);
@@ -108,6 +127,28 @@ void Clay_Spectral_Init(WindowModule* winm, GraphicsModule* gfxm, TextModule* te
         return;
     }
     __globalIUIState.rect_uniforms = gfxm->createUniforms(rect_shader, rect_uniform_def);
+
+    sShader rounded_rect_vert_shader = shdr->compile(gfxm, "spsl/iui/rounded_rect.spslv", sShaderType::VERTEX, rect_vert_def);
+    sShader rounded_rect_frag_shader = shdr->compile(gfxm, "spsl/iui/rounded_rect.spslf", sShaderType::FRAGMENT);
+    sShaderProgram rounded_rect_shader = gfxm->createShaderProgram({rounded_rect_vert_shader, rounded_rect_frag_shader});
+    __globalIUIState.rounded_rect_shader = rounded_rect_shader;
+
+    sUniformDefinition rounded_rect_uniform_def = {
+        {sShaderType::FRAGMENT, "uColor", sUniformType::FLOAT, 4},
+        {sShaderType::FRAGMENT, "uTopLeft", sUniformType::FLOAT, 2},
+        {sShaderType::FRAGMENT, "uWidthHeight", sUniformType::FLOAT, 2},
+        {sShaderType::FRAGMENT, "uRadius", sUniformType::FLOAT, 1},
+        {sShaderType::VERTEX, "uProj", sUniformType::FLOAT, 4, 4},
+        {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
+        {sShaderType::VERTEX, "uModel", sUniformType::FLOAT, 4, 4},
+        {sShaderType::VERTEX, "uZ", sUniformType::FLOAT, 1}
+    };
+    if (rounded_rect_uniform_def.size() != sizeof(sInternalRoundedRectUniforms)) {
+        printf("ERROR: Uniform definition size mismatch\n");
+        return;
+    }
+
+    __globalIUIState.rounded_rect_uniforms = gfxm->createUniforms(rounded_rect_shader, rounded_rect_uniform_def);
 }
 
 // custom clay implementation using our graphics library
@@ -124,23 +165,40 @@ void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, 
         Clay_RenderCommand* renderCommand = Clay_RenderCommandArray_Get(&renderCommands, i);
         Clay_BoundingBox boundingBox = renderCommand->boundingBox;
         boundingBox.y = win->height - boundingBox.y - boundingBox.height;
-        // printf("y: %f\n", boundingBox.y);
         switch (renderCommand->commandType) {
             case CLAY_RENDER_COMMAND_TYPE_RECTANGLE: {
                 Clay_RectangleElementConfig *config = renderCommand->config.rectangleElementConfig;
                 Clay_Color color = config->color;
 
-                sInternalRectUniforms uniforms = {};
-                uniforms.color = {color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f};
-                uniforms.proj = proj;
-                uniforms.view = view;
-                uniforms.model = scale({boundingBox.width, boundingBox.height, 1.0f}) * translate({boundingBox.x, boundingBox.y, 0.0f});
-                uniforms.z = z;
-                z += 0.01f;
+                if (config->cornerRadius.topLeft == 0) {
+                    sInternalRectUniforms uniforms = {};
+                    uniforms.color = {color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f};
+                    uniforms.proj = proj;
+                    uniforms.view = view;
+                    uniforms.model = scale({boundingBox.width, boundingBox.height, 1.0f}) * translate({boundingBox.x, boundingBox.y, 0.0f});
+                    uniforms.z = z;
+                    z += 0.01f;
 
-                __globalIUIState.gfxm->useShaderProgram(__globalIUIState.rect_shader);
-                __globalIUIState.gfxm->setUniforms(__globalIUIState.rect_uniforms, &uniforms);
-                __globalIUIState.gfxm->drawMesh(__globalIUIState.rect_mesh);
+                    __globalIUIState.gfxm->useShaderProgram(__globalIUIState.rect_shader);
+                    __globalIUIState.gfxm->setUniforms(__globalIUIState.rect_uniforms, &uniforms);
+                    __globalIUIState.gfxm->drawMesh(__globalIUIState.rect_mesh);
+                } else {
+                    sInternalRoundedRectUniforms uniforms = {};
+                    uniforms.color = {color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f};
+                    uniforms.proj = proj;
+                    uniforms.view = view;
+                    uniforms.model = scale({boundingBox.width, boundingBox.height, 1.0f}) * translate({boundingBox.x, boundingBox.y, 0.0f});
+                    uniforms.z = z;
+                    uniforms.topleft = {boundingBox.x, renderCommand->boundingBox.y};
+                    uniforms.widheight = {boundingBox.width, boundingBox.height};
+                    uniforms.radius = config->cornerRadius.topLeft;
+                    z += 0.01f;
+
+                    __globalIUIState.gfxm->useShaderProgram(__globalIUIState.rounded_rect_shader);
+                    __globalIUIState.gfxm->setUniforms(__globalIUIState.rounded_rect_uniforms, &uniforms);
+                    __globalIUIState.gfxm->drawMesh(__globalIUIState.rect_mesh);
+
+                }
             } break;
             case CLAY_RENDER_COMMAND_TYPE_TEXT: {
                 Clay_TextElementConfig *config = renderCommand->config.textElementConfig;
@@ -160,6 +218,48 @@ void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, 
                 z += 0.01f;
                 __globalIUIState.textm->drawText(textel);
                 __globalIUIState.textm->freeText(textel);
+            } break;
+            case CLAY_RENDER_COMMAND_TYPE_BORDER: {
+                Clay_BorderElementConfig *config = renderCommand->config.borderElementConfig;
+
+                sInternalRectUniforms uniforms = {};
+                uniforms.proj = proj;
+                uniforms.view = view;
+                uniforms.z = z;
+
+                if (config->bottom.width > 0) {
+                    // draw a rect
+                    uniforms.color = CLAY_COLOR_TO_VEC4(config->bottom.color);
+                    uniforms.model = scale({boundingBox.width, (float)config->bottom.width, 1.0f}) * translate({boundingBox.x, boundingBox.y, 0.0f});
+                    __globalIUIState.gfxm->useShaderProgram(__globalIUIState.rect_shader);
+                    __globalIUIState.gfxm->setUniforms(__globalIUIState.rect_uniforms, &uniforms);
+                    __globalIUIState.gfxm->drawMesh(__globalIUIState.rect_mesh);
+                }
+                if (config->left.width > 0) {
+                    // draw a rect
+                    uniforms.color = CLAY_COLOR_TO_VEC4(config->left.color);
+                    uniforms.model = scale({(float)config->left.width, boundingBox.height, 1.0f}) * translate({boundingBox.x, boundingBox.y, 0.0f});
+                    __globalIUIState.gfxm->useShaderProgram(__globalIUIState.rect_shader);
+                    __globalIUIState.gfxm->setUniforms(__globalIUIState.rect_uniforms, &uniforms);
+                    __globalIUIState.gfxm->drawMesh(__globalIUIState.rect_mesh);
+                }
+                if (config->right.width > 0) {
+                    // draw a rect
+                    uniforms.color = CLAY_COLOR_TO_VEC4(config->right.color);
+                    uniforms.model = scale({(float)config->right.width, boundingBox.height, 1.0f}) * translate({boundingBox.x + boundingBox.width - config->right.width, boundingBox.y, 0.0f});
+                    __globalIUIState.gfxm->useShaderProgram(__globalIUIState.rect_shader);
+                    __globalIUIState.gfxm->setUniforms(__globalIUIState.rect_uniforms, &uniforms);
+                    __globalIUIState.gfxm->drawMesh(__globalIUIState.rect_mesh);
+                }
+                if (config->top.width > 0) {
+                    // draw a rect
+                    uniforms.color = CLAY_COLOR_TO_VEC4(config->top.color);
+                    uniforms.model = scale({boundingBox.width, (float)config->top.width, 1.0f}) * translate({boundingBox.x, boundingBox.y + boundingBox.height - config->top.width, 0.0f});
+                    __globalIUIState.gfxm->useShaderProgram(__globalIUIState.rect_shader);
+                    __globalIUIState.gfxm->setUniforms(__globalIUIState.rect_uniforms, &uniforms);
+                    __globalIUIState.gfxm->drawMesh(__globalIUIState.rect_mesh);
+                }
+                z += 0.01f;
             } break;
         }
     }
