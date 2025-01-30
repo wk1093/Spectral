@@ -99,12 +99,33 @@ static Clay_RenderCommandArray createLayout()
             .color = COLOR_LIGHT,
         })
     ) {
-        Label(CLAY_STRING("Rounded - Button 1"), 10);
+        Label(CLAY_STRING("Rounded - Button 1"), 0);
         Label(CLAY_STRING("Straight - Button 2") , 0);
         Label(CLAY_STRING("Straight - 3") , 0);
-        Label(CLAY_STRING("Rounded+ - Button 4") , 20);
+        Label(CLAY_STRING("Rounded+ - Button 4") , 0);
+        Label(CLAY_STRING("More test text"), 0);
+        Label(CLAY_STRING("What is wrong with text"), 0);
+        Label(CLAY_STRING("I need longer text"), 0);
+        Label(CLAY_STRING("tiny"), 0);
+        Label(CLAY_STRING("bit big"), 0);
     }
     return Clay_EndLayout();
+}
+
+void printRenderCommands(Clay_RenderCommandArray arr) {
+    for (uint32_t i = 0; i < arr.length; i++) {
+        Clay_RenderCommand* cmd = Clay_RenderCommandArray_Get(&arr, i);
+        Clay_BoundingBox boundingBox = cmd->boundingBox;
+        switch (cmd->commandType) {
+            case CLAY_RENDER_COMMAND_TYPE_RECTANGLE: {
+                Clay_RectangleElementConfig* config = cmd->config.rectangleElementConfig;
+                printf("Rectangle: %f\n", boundingBox.width);
+            } break;
+            case CLAY_RENDER_COMMAND_TYPE_TEXT: {
+                Clay_TextElementConfig* config = cmd->config.textElementConfig;
+            } break;
+        }
+    }
 }
 
 int main(int argc, char** argv) {
@@ -147,13 +168,15 @@ int main(int argc, char** argv) {
     texm.freeTexture(texDef);
 
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-    sFont font = textm.loadFont("fonts/arial.ttf", 16, "spsl/text.spslv", "spsl/text.spslf");
+    sFont font = textm.loadFont("fonts/arial.ttf", 32, "spsl/text.spslv", "spsl/text.spslf");
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
     printf("Time to load font: %f\n", elapsed.count());
 
     // sText textobj = textm.createText(font, "Hello, World!"); // creates a vertex defintion, a shader, and uniforms, and a mesh
     Clay_Spectral_Init(&winm, &gfxm, &textm, &shdr, &win, &font);
+
+
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
     if (vertexDefinitionSize(vertDef) != sizeof(Vertex)) {
@@ -212,6 +235,8 @@ int main(int argc, char** argv) {
     mat4 proj = orthographic(0, win.width, 0, win.height, -1, 1);
     // textm.setTextProj(textobj, proj);
     // textm.setTextModel(textobj, translate({400, 300, 0}));
+
+    printRenderCommands(createLayout());
 
     while (!winm.shouldClose(win)) {
         winm.updateWindow(&win);

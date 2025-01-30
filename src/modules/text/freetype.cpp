@@ -73,7 +73,7 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
         return {nullptr};
     }
 
-    FT_Set_Char_Size(face, 0, size << 6, 128, 128);
+    FT_Set_Char_Size(face, 0, size << 6, 96, 96);
 
     int max_dim = (1+ (face->size->metrics.height >> 6)) * ceilf(sqrtf(128));
     int tex_width = 1;
@@ -85,7 +85,7 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
     int pen_y = 0;
 
     for (int i = 0; i < 128; ++i) {
-        FT_Load_Char(face, i, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_LIGHT);
+        FT_Load_Char(face, i, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_NORMAL);
         FT_Bitmap* bmp = &face->glyph->bitmap;
 
         if (pen_x + bmp->width >= tex_width) {
@@ -185,9 +185,9 @@ CEXPORT sText createText(sFont font, const char* text) {
     }
 
     float x = 0.0f;
-    float y = 0.0f;
+    float y = font.size / 2;
 
-    float scale = 1.0f;
+    float scale = 2.0f;
     float offset = 0.0f;
 
     std::vector<uint32_t> indices;
@@ -196,25 +196,22 @@ CEXPORT sText createText(sFont font, const char* text) {
         char c = text[i];
         sInternalFont::CharacterDef def = internalFont->characters[c];
 
+        if (c == ' ') {
+            x += def.advance;
+            continue;
+        }
+
         float xpos = x + def.bearing.x;
         float ypos = y - (def.size.y - def.bearing.y);
 
         float w = def.size.x;
         float h = def.size.y;
 
-        // TextVertex vertices[4] = {
-        //     {{xpos*scale+offset, (ypos + h)*scale+offset, 0.0f}, {0.0f, 0.0f}},
-        //     {{xpos*scale+offset, ypos*scale+offset, 0.0f}, {0.0f, 1.0f}},
-        //     {{(xpos + w)*scale+offset, ypos*scale+offset, 0.0f}, {1.0f, 1.0f}},
-        //     {{(xpos + w)*scale+offset, (ypos + h)*scale+offset, 0.0f}, {1.0f, 0.0f}}
-        // };
-        // i forgot to put the uv coords above
-        // the uvs are calculated into the atlas
         TextVertex vertices[4] = {
-            {{xpos*scale+offset, (ypos + h)*scale+offset}, {def.offset.x / internalFont->atlasWidth, def.offset.y / internalFont->atlasHeight}},
-            {{xpos*scale+offset, ypos*scale+offset}, {def.offset.x / internalFont->atlasWidth, (def.offset.y + h) / internalFont->atlasHeight}},
-            {{(xpos + w)*scale+offset, ypos*scale+offset}, {(def.offset.x + w) / internalFont->atlasWidth, (def.offset.y + h) / internalFont->atlasHeight}},
-            {{(xpos + w)*scale+offset, (ypos + h)*scale+offset}, {(def.offset.x + w) / internalFont->atlasWidth, def.offset.y / internalFont->atlasHeight}}
+            {{xpos, (ypos + h)}, {def.offset.x / internalFont->atlasWidth, def.offset.y / internalFont->atlasHeight}},
+            {{xpos, ypos}, {def.offset.x / internalFont->atlasWidth, (def.offset.y + h) / internalFont->atlasHeight}},
+            {{(xpos + w), ypos}, {(def.offset.x + w) / internalFont->atlasWidth, (def.offset.y + h) / internalFont->atlasHeight}},
+            {{(xpos + w), (ypos + h)}, {(def.offset.x + w) / internalFont->atlasWidth, def.offset.y / internalFont->atlasHeight}}
         };
 
         indices.push_back(i * 4);
@@ -288,32 +285,39 @@ CEXPORT void setTextProj(sText text, mat4 proj) {
 CEXPORT vec2 measureText(sFont font, const char* text) {
     sInternalFont* internal = (sInternalFont*)font.internal;
 
-    float x = 0.0f;
-    float y = font.size;
-
+    float x = 0.0f;   // Current x position
     float maxTextWidth = 0.0f;
-    float lineTextWidth = 0.0f;
+    float minY = 0.0f, maxY = 0.0f;
 
     for (size_t i = 0; i < strlen(text); ++i) {
         char c = text[i];
         sInternalFont::CharacterDef def = internal->characters[c];
 
-        if (c == '\n') {
-            maxTextWidth = fmaxf(maxTextWidth, lineTextWidth);
-            lineTextWidth = 0.0f;
-            y += font.size;
+        if (c == ' ') {
+            // Space: just move forward
+            x += def.advance;
             continue;
         }
-        if (def.advance != 0) lineTextWidth += def.advance;
-        else lineTextWidth += (def.size.x + def.bearing.x);
+
+        // X position for the glyph
+        float xpos = x + def.bearing.x;
+        float ypos = -def.bearing.y;  // Baseline adjustment for top of glyph
+
+        // Update bounds
+        float w = def.size.x;
+        float h = def.size.y;
+        maxTextWidth = fmaxf(maxTextWidth, xpos + w);
+        minY = fminf(minY, ypos);
+        maxY = fmaxf(maxY, ypos + h);
+
+        // Advance for the next character
+        x += def.advance;
     }
-    maxTextWidth = fmaxf(maxTextWidth, lineTextWidth);
 
+    // Height is based on the difference between maxY and minY
+    float textHeight = maxY - minY;
 
-
-    return {maxTextWidth, y};
-
-
+    return {maxTextWidth, textHeight};
 }
 
 CEXPORT void setTextZ(sText text, float z) {

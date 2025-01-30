@@ -174,7 +174,7 @@ namespace graphics {
 struct GraphicsModule : Module {
     graphics::SetClearColor setClearColor;
     graphics::Clear clear;
-    graphics::Init init;
+    graphics::Init internal_init;
     graphics::CreateMesh internal_createMesh;
     graphics::DrawMesh drawMesh;
     graphics::UseShaderProgram useShaderProgram;
@@ -195,6 +195,13 @@ struct GraphicsModule : Module {
     graphics::SetScissor setScissor;
     graphics::EnableScissor enableScissor;
     graphics::DisableScissor disableScissor;
+
+    sWindow* win;
+
+    void init(sWindow* win) {
+        this->win = win;
+        internal_init(win);
+    }
 
     sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexCount, sIndex* indices, size_t indexCount) {
         sMesh mesh = internal_createMesh(vertexShader, vertices, vertexCount, indices, indexCount);
@@ -263,7 +270,7 @@ struct GraphicsModule : Module {
     explicit GraphicsModule(const char* dynlib) : Module(dynlib, "gfx") {
         setClearColor = (graphics::SetClearColor)lib.getSymbol("setClearColor");
         clear = (graphics::Clear)lib.getSymbol("clear");
-        init = (graphics::Init)lib.getSymbol("init");
+        internal_init = (graphics::Init)lib.getSymbol("init");
         internal_createMesh = (graphics::CreateMesh)lib.getSymbol("createMesh");
         drawMesh = (graphics::DrawMesh)lib.getSymbol("drawMesh");
         useShaderProgram = (graphics::UseShaderProgram)lib.getSymbol("useShaderProgram");
