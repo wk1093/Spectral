@@ -60,11 +60,12 @@ Clay_Dimensions Clay_Spectral_MeasureText(Clay_StringSlice text, Clay_TextElemen
         return {};
     }
     Clay_Dimensions result = {};
-    vec2 size = __globalIUIState.textm->measureText(__globalIUIState.fonts[0], text.chars);
+    sFont font = __globalIUIState.fonts[0];
+    vec2 size = __globalIUIState.textm->measureText(font, text.chars);
     int fs = config->fontSize;
-    float scaleFactor = (float)fs / (float)(2*__globalIUIState.fonts[0].size);
+    float scaleFactor = (float)fs / (float)(2*font.size);
     result.width = size.x * scaleFactor;
-    result.height = fs;
+    result.height = size.y * scaleFactor;
     return result;
 }
 
@@ -150,7 +151,7 @@ void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, 
                 cloned[text.length] = '\0';
                 sFont font = __globalIUIState.fonts[0];
                 float scaleFactor = (float)fs / (float)(2*font.size);
-                sText textel = __globalIUIState.textm->createText(__globalIUIState.fonts[0], cloned);
+                sText textel = __globalIUIState.textm->createText(font, cloned);
                 __globalIUIState.textm->setTextProj(textel, proj);
                 __globalIUIState.textm->setTextView(textel, view);
                 __globalIUIState.textm->setTextModel(textel, scale({scaleFactor, scaleFactor, 1.0f}) * translate({boundingBox.x, boundingBox.y, 0.0f}));

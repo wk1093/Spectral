@@ -287,37 +287,28 @@ CEXPORT vec2 measureText(sFont font, const char* text) {
 
     float x = 0.0f;   // Current x position
     float maxTextWidth = 0.0f;
-    float minY = 0.0f, maxY = 0.0f;
-
+    float maxY = 0.0f;
+    printf("Measureing %s\n", text);
     for (size_t i = 0; i < strlen(text); ++i) {
         char c = text[i];
         sInternalFont::CharacterDef def = internal->characters[c];
 
+        // X position for the glyph
+        float xpos = x + def.advance;
+
         if (c == ' ') {
-            // Space: just move forward
-            x += def.advance;
-            continue;
+            maxTextWidth += def.advance / 2;
+            break;
         }
 
-        // X position for the glyph
-        float xpos = x + def.bearing.x;
-        float ypos = -def.bearing.y;  // Baseline adjustment for top of glyph
+        maxTextWidth = fmaxf(maxTextWidth, xpos);
+        maxY = fmaxf(maxY, def.bearing.y + def.size.y);
 
-        // Update bounds
-        float w = def.size.x;
-        float h = def.size.y;
-        maxTextWidth = fmaxf(maxTextWidth, xpos + w);
-        minY = fminf(minY, ypos);
-        maxY = fmaxf(maxY, ypos + h);
 
-        // Advance for the next character
         x += def.advance;
     }
 
-    // Height is based on the difference between maxY and minY
-    float textHeight = maxY - minY;
-
-    return {maxTextWidth, textHeight};
+    return {maxTextWidth, maxY};
 }
 
 CEXPORT void setTextZ(sText text, float z) {
