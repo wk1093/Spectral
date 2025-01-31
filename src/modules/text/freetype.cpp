@@ -39,7 +39,7 @@ struct sInternalFont {
         vec2 offset;
         vec2 size;
         vec2 bearing;
-        uint32_t advance;
+        double advance;
     } characters[128]; // for now just ascii is supported
     int atlasWidth;
     int atlasHeight;
@@ -74,8 +74,8 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
         return {nullptr};
     }
 
-    FT_Set_Char_Size(face, 0, size << 6, 96 * 2, 96 * 2);
-    internal->scale = 0.5f;
+    FT_Set_Char_Size(face, 0, size << 6, 96, 96);
+    internal->scale = 1.0f;
 
     int max_dim = (1+ (face->size->metrics.height >> 6)) * ceilf(sqrtf(128));
     int tex_width = 1;
@@ -106,7 +106,9 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
         internal->characters[i].offset = vec2(pen_x, pen_y);
         internal->characters[i].size = vec2(bmp->width, bmp->rows);
         internal->characters[i].bearing = vec2(face->glyph->bitmap_left, face->glyph->bitmap_top);
-        internal->characters[i].advance = face->glyph->advance.x >> 6;
+        // internal->characters[i].advance = face->glyph->advance.x >> 6;
+        // we lose some precision by doing that, so let's cast to double
+        internal->characters[i].advance = (double)face->glyph->advance.x / 64.0;
 
         pen_x += bmp->width + 1;
     }
@@ -186,11 +188,10 @@ CEXPORT sText createText(sFont font, const char* text) {
         return {nullptr};
     }
 
-    float x = 0.0f;
-    float y = font.size / (2*internalFont->scale);
+    double x = 0.0f;
+    double y = font.size / (2);
 
-    float scale = 0.5f;
-    float offset = 0.0f;
+    float scale = internalFont->scale;
 
     std::vector<uint32_t> indices;
 

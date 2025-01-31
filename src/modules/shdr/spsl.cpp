@@ -137,7 +137,7 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
         source.replace(pos, 13, "gl_Position");
     }
     if (type == sShaderType::FRAGMENT) {
-        source = "out vec4 spsl_fragcolor;\n" + source;
+        source = "out vec4 spsl_fragcolor;\nlayout(origin_upper_left) in vec4 gl_FragCoord;\n" + source;
         // spsl_fragpos -> gl_FragCoord
         while (true) {
             size_t pos = source.find("spsl_fragpos");

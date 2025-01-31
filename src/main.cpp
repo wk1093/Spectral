@@ -100,7 +100,7 @@ static Clay_RenderCommandArray createLayout()
             .color = COLOR_LIGHT,
         })
     ) {
-        Label(CLAY_STRING("Rounded - Button 1"), 5);
+        Label(CLAY_STRING("Rounded - Button 1"), 20);
         Label(CLAY_STRING("Straight - Button 2") , 0);
         Label(CLAY_STRING("Straight - 3") , 0);
         Label(CLAY_STRING("Rounded+ - Button 4") , 10);
@@ -114,7 +114,7 @@ static Clay_RenderCommandArray createLayout()
 int main(int argc, char** argv) {
     const char* window_module;
     const char* graphics_module;
-    bool use_dx = true;
+    bool use_dx = false;
     if (use_dx) {
         window_module = "glfw_noapi";
         graphics_module = "d3d11_1";
