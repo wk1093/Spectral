@@ -25,6 +25,11 @@ set(BUILD_DOC OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 set(BUILD_OSSFUZZ OFF CACHE BOOL "" FORCE)
 
+if (NOT WIN32)
+    set(SPEC_DX11 OFF CACHE BOOL "" FORCE)
+endif()
+
+
 set(CMAKE_CXX_STANDARD 17)
 
 # the platform is determined by the CMAKE_SYSTEM_NAME variable
@@ -101,53 +106,53 @@ FetchContent_Declare(
 )
 
 set(ZLIB_HEADERS
-    ${zlib_SOURCE_DIR}/zlib.h
-    ${zlib_SOURCE_DIR}/zconf.h
+    ${zlib-source_SOURCE_DIR}/zlib.h
+    ${zlib-source_SOURCE_DIR}/zconf.h
 )
 # zconf.h needs to be generated from zconf.h.in
-configure_file(${zlib_SOURCE_DIR}/zconf.h.in ${zlib_SOURCE_DIR}/zconf.h @ONLY)
+configure_file(${zlib-source_SOURCE_DIR}/zconf.h.in ${zlib-source_SOURCE_DIR}/zconf.h @ONLY)
 set(ZLIB_SOURCES
-    ${zlib_SOURCE_DIR}/adler32.c
-    ${zlib_SOURCE_DIR}/compress.c
-    ${zlib_SOURCE_DIR}/crc32.c
-    ${zlib_SOURCE_DIR}/crc32.h
-    ${zlib_SOURCE_DIR}/deflate.c
-    ${zlib_SOURCE_DIR}/deflate.h
-    ${zlib_SOURCE_DIR}/gzclose.c
-    ${zlib_SOURCE_DIR}/gzguts.h
-    ${zlib_SOURCE_DIR}/gzlib.c
-    ${zlib_SOURCE_DIR}/gzread.c
-    ${zlib_SOURCE_DIR}/gzwrite.c
-    ${zlib_SOURCE_DIR}/infback.c
-    ${zlib_SOURCE_DIR}/inffast.c
-    ${zlib_SOURCE_DIR}/inffast.h
-    ${zlib_SOURCE_DIR}/inffixed.h
-    ${zlib_SOURCE_DIR}/inflate.c
-    ${zlib_SOURCE_DIR}/inflate.h
-    ${zlib_SOURCE_DIR}/inftrees.c
-    ${zlib_SOURCE_DIR}/inftrees.h
-    ${zlib_SOURCE_DIR}/trees.c
-    ${zlib_SOURCE_DIR}/trees.h
-    ${zlib_SOURCE_DIR}/uncompr.c
-    ${zlib_SOURCE_DIR}/zutil.c
-    ${zlib_SOURCE_DIR}/zutil.h
+    ${zlib-source_SOURCE_DIR}/adler32.c
+    ${zlib-source_SOURCE_DIR}/compress.c
+    ${zlib-source_SOURCE_DIR}/crc32.c
+    ${zlib-source_SOURCE_DIR}/crc32.h
+    ${zlib-source_SOURCE_DIR}/deflate.c
+    ${zlib-source_SOURCE_DIR}/deflate.h
+    ${zlib-source_SOURCE_DIR}/gzclose.c
+    ${zlib-source_SOURCE_DIR}/gzguts.h
+    ${zlib-source_SOURCE_DIR}/gzlib.c
+    ${zlib-source_SOURCE_DIR}/gzread.c
+    ${zlib-source_SOURCE_DIR}/gzwrite.c
+    ${zlib-source_SOURCE_DIR}/infback.c
+    ${zlib-source_SOURCE_DIR}/inffast.c
+    ${zlib-source_SOURCE_DIR}/inffast.h
+    ${zlib-source_SOURCE_DIR}/inffixed.h
+    ${zlib-source_SOURCE_DIR}/inflate.c
+    ${zlib-source_SOURCE_DIR}/inflate.h
+    ${zlib-source_SOURCE_DIR}/inftrees.c
+    ${zlib-source_SOURCE_DIR}/inftrees.h
+    ${zlib-source_SOURCE_DIR}/trees.c
+    ${zlib-source_SOURCE_DIR}/trees.h
+    ${zlib-source_SOURCE_DIR}/uncompr.c
+    ${zlib-source_SOURCE_DIR}/zutil.c
+    ${zlib-source_SOURCE_DIR}/zutil.h
 )
 
 add_library(ZLIB ${ZLIB_SOURCES})
 add_library(ZLIB::ZLIB ALIAS ZLIB)
 target_sources(ZLIB PUBLIC
     FILE_SET HEADERS
-    BASE_DIRS ${ZLIB_INCLUDE_DIRS}
+    BASE_DIRS ${zlib-source_SOURCE_DIR}
     FILES ${ZLIB_HEADERS}
 )
 set_target_properties(ZLIB PROPERTIES
     OUTPUT_NAME $<IF:$<BOOL:${UNIX}>,z,zlib>
     WINDOWS_EXPORT_ALL_SYMBOLS ON
-    ARCHIVE_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
-    COMPILE_PDB_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
-    LIBRARY_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
-    PDB_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
-    RUNTIME_OUTPUT_DIRECTORY ${zlib_BINARY_DIR}
+    ARCHIVE_OUTPUT_DIRECTORY ${zlib-source_BINARY_DIR}
+    COMPILE_PDB_OUTPUT_DIRECTORY ${zlib-source_BINARY_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${zlib-source_BINARY_DIR}
+    PDB_OUTPUT_DIRECTORY ${zlib-source_BINARY_DIR}
+    RUNTIME_OUTPUT_DIRECTORY ${zlib-source_BINARY_DIR}
     DEBUG_POSTFIX d
     DEFINE_SYMBOL ZLIB_INTERNAL
     VERSION ${ZLIB_VERSION}
@@ -200,6 +205,12 @@ endif()
 
 Find_Package(OpenGL REQUIRED)
 
+if(WIN32)
+    set(OPENGL_LIB opengl32)
+else()
+    set(OPENGL_LIB GL)
+endif()
+
 if (SPEC_DX11)
     # This will just see if we can find the dx11 dlls and copy them to the bin/lib folder
     # This requires that the developer has the Windows SDK installed, but should make it so the user doesn't need to
@@ -249,14 +260,14 @@ if(SPEC_EOGLL)
     target_include_directories(win_eogll PUBLIC ${glfw_BINARY_DIR}/src)
 
     add_module(gfx eogll gfx/eogll.cpp)
-    target_link_libraries(gfx_eogll eogll opengl32)
+    target_link_libraries(gfx_eogll eogll ${OPENGL_LIB})
 else()
     add_subdirectory(${eogll_SOURCE_DIR}/thirdparty/stb ${CMAKE_BINARY_DIR}/stb)
 endif()
 
 if(SPEC_GLAD)
     add_module(gfx glad gfx/glad.cpp)
-    target_link_libraries(gfx_glad glad opengl32)
+    target_link_libraries(gfx_glad glad ${OPENGL_LIB})
 endif()
 if(SPEC_DX11)
     add_module(gfx d3d11_1 gfx/d3d11_1.cpp)

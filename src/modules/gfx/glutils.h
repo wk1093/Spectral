@@ -5,6 +5,9 @@
 #elif __linux__
 #include <GL/glx.h>
 #include <GL/glxext.h>
+#include <dlfcn.h>
+#include <unistd.h>
+#include <sys/types.h>
 #else
 #error "Unsupported platform"
 #endif

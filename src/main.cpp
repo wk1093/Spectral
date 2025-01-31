@@ -79,7 +79,7 @@ static Clay_RenderCommandArray createLayout()
     CLAY(CLAY_ID("MainContent"),
         CLAY_LAYOUT({
             .sizing = {
-                .width = CLAY_SIZING_GROW(),
+                .width = CLAY_SIZING_FIXED(300),
                 .height = CLAY_SIZING_GROW(),
             },
             .padding = { 10, 10 },
