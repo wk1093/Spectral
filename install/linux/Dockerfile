@@ -10,9 +10,3 @@ RUN set -ex; \
     mkdir build; \
     cmake -DCMAKE_BUILD_TYPE=Release -G Ninja -B build .; \
     cmake --build build;
-
-WORKDIR /usr/src/Spectral/build
-
-CMD ["/bin/bash", "-c", "ls", "/usr/src/Spectral/build"]
-
-# COPY --from=build /usr/src/Spectral/build/Spectral.lin_x86_64 ./Spectral.lin_x86_64
