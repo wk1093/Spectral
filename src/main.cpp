@@ -63,7 +63,7 @@ static void Label(const Clay_String text, const int cornerRadius)
     CLAY(CLAY_LAYOUT({ .padding = {8, 8} }),
         CLAY_RECTANGLE({
             .color = Clay_Hovered() ? COLOR_BLUE : COLOR_ORANGE,
-            .cornerRadius = cornerRadius,
+            .cornerRadius = (float)cornerRadius,
         })) {
         CLAY_TEXT(text, CLAY_TEXT_CONFIG({
            .textColor = { 255, 255, 255, 255 },
@@ -114,7 +114,7 @@ static Clay_RenderCommandArray createLayout()
 int main(int argc, char** argv) {
     const char* window_module;
     const char* graphics_module;
-    bool use_dx = false;
+    bool use_dx = true;
     if (use_dx) {
         window_module = "glfw_noapi";
         graphics_module = "d3d11_1";
