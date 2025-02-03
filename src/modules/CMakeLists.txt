@@ -204,6 +204,10 @@ endif()
 if(SPEC_EOGLL)
     FetchContent_MakeAvailable(eogll)
 elseif(SPEC_GLAD)
+    # make sure eogll is cloned, but can't use makeavailable because it will build it
+    if (NOT EXISTS ${eogll_SOURCE_DIR}/CMakeLists.txt)
+        FetchContent_Populate(eogll)
+    endif()
     # Eogll normally provides GLAD, but if it is not being used, we need to provide it ourselves
     add_subdirectory(${eogll_SOURCE_DIR}/thirdparty/glad ${CMAKE_BINARY_DIR}/glad)
 endif()
