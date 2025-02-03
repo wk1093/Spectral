@@ -63,7 +63,7 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
     FT_Face face;
     FT_Error error = FT_New_Face(__freetype_context.ft, path, 0, &face);
     if (error) {
-        printf("Error loading font %s\n", path);
+        printf("Error loading font '%s'\n", path);
         printf("Error code: %d\n", error);
         return {nullptr};
     }
