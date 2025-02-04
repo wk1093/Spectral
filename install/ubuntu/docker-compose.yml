@@ -1,7 +1,7 @@
 version: "3"
 services:
   app:
-    image: spectral_linux:latest
+    image: spectral_ubuntu:latest
     build: .
     environment:
       - DISPLAY=${DISPLAY}
