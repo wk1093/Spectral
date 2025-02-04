@@ -15,8 +15,4 @@ RUN set -ex; \
     cmake -DCMAKE_BUILD_TYPE=Release -G Ninja -B build .; \
     cmake --build build;
 
-FROM ubuntu:latest AS runtime
-
-COPY --from=build /usr/src /usr/src
-
 CMD ["/bin/bash", "-c", "cd /usr/src/spectral/bin; ./Spectral.lin_x86_64 glfw_gl glad"]
