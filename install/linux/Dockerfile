@@ -6,11 +6,17 @@ RUN set -ex; \
     mkdir -p /usr/src/; \
     cd /usr/src/;
 
+WORKDIR /usr/src/
+
 RUN set -ex; \
     git clone https://github.com/wk1093/spectral.git; \
     cd spectral; \
     mkdir build; \
     cmake -DCMAKE_BUILD_TYPE=Release -G Ninja -B build .; \
     cmake --build build;
+
+FROM ubuntu:latest AS runtime
+
+COPY --from=build /usr/src /usr/src
 
 CMD ["/bin/bash", "-c", "cd /usr/src/spectral/bin; ./Spectral.lin_x86_64 glfw_gl glad"]
