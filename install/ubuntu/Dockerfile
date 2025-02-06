@@ -1,4 +1,4 @@
-FROM ubuntu:latest AS build
+FROM docker.io/ubuntu:latest AS build
 
 RUN set -ex; \
     apt-get update; \

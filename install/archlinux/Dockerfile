@@ -17,7 +17,7 @@
 
 # CMD ["/bin/bash", "-c", "cd /usr/src/spectral/bin; ./Spectral.lin_x86_64 glfw_gl glad"]
 
-FROM archlinux:latest AS build
+FROM docker.io/archlinux:latest AS build
 
 RUN set -ex; \
     pacman --noconfirm -Syu; \
