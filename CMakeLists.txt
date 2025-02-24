@@ -8,10 +8,12 @@ set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-rpath,lib/${SPECTRAL_FULLPLAT} -Wl,-rpath-li
 include_directories(src/include)
 
 add_subdirectory(src/modules)
+add_subdirectory(src/game)
 
 add_executable(Spectral src/main.cpp)
 # add ./lib to the RPATH
 add_dependencies(Spectral SpectralModules)
+add_dependencies(Spectral game_game)
 target_link_libraries(Spectral SpectralInterface)
 
 set_target_properties(Spectral PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)

@@ -81,8 +81,8 @@ private:
         char* path = (char*)malloc(strlen(path_in) + 2);
         strcpy(path, path_in);
         strcat(path, ".");
-        char* setdlldir = (char*)malloc(strlen(SPECTRAL_PLATFORM) + 5);
-        strcpy(setdlldir, "lib/");
+        char* setdlldir = (char*)malloc(strlen(SPECTRAL_PLATFORM) + 7);
+        strcpy(setdlldir, "./lib/");
         strcat(setdlldir, SPECTRAL_PLATFORM);
         if (!SetDllDirectoryA(setdlldir)) {
             printf("Error setting DLL directory\n");
@@ -102,6 +102,7 @@ private:
             handle = NULL;
 #ifdef _WIN32
             printf("Error code: %d\n", GetLastError());
+            printf("libdir: %s\n", setdlldir);
 #else
             printf("Error: %s\n", dlerror());
 #endif

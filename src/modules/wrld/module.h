@@ -77,7 +77,7 @@ The engine is split into 3 parts:
 - Compiler: This part is used to compile the game into the runtime format. This part will integrate with CMake, and will be used to make a game project into a game dll. This part will be put in the game/ directory of the output from the first part.
 
 
-So a final compiled game will look like this:ABC
+So a final compiled game will look like this:
 - game/
   - assets.dll
   - levels/

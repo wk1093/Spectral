@@ -1,4 +1,4 @@
-#include "modules/gfx/module.h"
+#include "gfx/module.h"
 #pragma pack(1)
 struct Vertex {
     float position[3];
