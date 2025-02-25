@@ -118,7 +118,7 @@ CEXPORT int game_main(GameContext* ctx) {
 
     sWindow win = winm.loadWindow(window_title.c_str(), 800, 600, true);
     gfxm.init(&win);
-    textm.init(&gfxm, &shdr);
+    textm.init(&gfxm, &shdr, &assetm);
 
     gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
@@ -128,15 +128,13 @@ CEXPORT int game_main(GameContext* ctx) {
     texm.freeTexture(texDef);
 
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-    sFont font = textm.loadFont("fonts/arial.ttf", 64, "spsl/text.spslv", "spsl/text.spslf");
+    // sFont font = textm.loadFont("fonts/arial.ttf", 64, "spsl/text.spslv", "spsl/text.spslf");
+    sFont font = textm.loadFontAsset("fonts/arial.ttf", 64, "spsl/text.spslv", "spsl/text.spslf");
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
     printf("Time to load font: %f\n", elapsed.count());
 
-    // sText textobj = textm.createText(font, "Hello, World!"); // creates a vertex defintion, a shader, and uniforms, and a mesh
-    Clay_Spectral_Init(&winm, &gfxm, &textm, &shdr, &win, &font);
-
-
+    Clay_Spectral_Init(&winm, &gfxm, &textm, &shdr, &win, &font, &assetm);
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
     if (vertexDefinitionSize(vertDef) != sizeof(Vertex)) {

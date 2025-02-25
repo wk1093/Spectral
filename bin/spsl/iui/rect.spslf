@@ -1,6 +1,0 @@
-
-#UNIFORM vec4 uColor;
-
-void main() {
-    spsl_fragcolor = uColor;
-}

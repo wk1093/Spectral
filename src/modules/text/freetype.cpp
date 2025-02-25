@@ -16,17 +16,19 @@ struct sFreeTypeContext {
     FT_Library ft;
     GraphicsModule* gfxm;
     ShaderModule* shdr;
+    AssetLoader* assetm;
 };
 
 static sFreeTypeContext __freetype_context;
 
-CEXPORT void init(GraphicsModule* gfxm, ShaderModule* shdr) {
+CEXPORT void init(GraphicsModule* gfxm, ShaderModule* shdr, AssetLoader* assetm) {
     FT_Error error = FT_Init_FreeType(&__freetype_context.ft);
     if (error) {
         printf("Error initializing FreeType\n");
     }
     __freetype_context.gfxm = gfxm;
     __freetype_context.shdr = shdr;
+    __freetype_context.assetm = assetm;
 }
 
 struct sInternalFont {
@@ -59,21 +61,16 @@ struct TextUniforms {
     float z;
 };
 
-CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const char* fragpath) {
-    FT_Face face;
-    FT_Error error = FT_New_Face(__freetype_context.ft, path, 0, &face);
-    if (error) {
-        printf("Error loading font '%s'\n", path);
-        printf("Error code: %d\n", error);
-        return {nullptr};
+sVertexDefinition* fontVertDef() {
+    sVertexDefinition* vertDef = __freetype_context.gfxm->createVertexDefinition({2, 2});
+    if (vertexDefinitionSize(vertDef) != sizeof(TextVertex)) {
+        printf("ERROR: Vertex definition size does not match vertex size\n");
+        return nullptr;
     }
+    return vertDef;
+}
 
-    sInternalFont* internal = (sInternalFont*)malloc(sizeof(sInternalFont));
-    if (!internal) {
-        printf("Error allocating memory for font\n");
-        return {nullptr};
-    }
-
+void setupFont(FT_Face face, sInternalFont* internal, int size, sShader vert, sShader frag) {
     FT_Set_Char_Size(face, 0, size << 6, 96, 96);
     internal->scale = 1.0f;
 
@@ -127,13 +124,6 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
 
     free(pixels);
 
-    internal->vertDef = __freetype_context.gfxm->createVertexDefinition({2, 2});
-    if (vertexDefinitionSize(internal->vertDef) != sizeof(TextVertex)) {
-        printf("ERROR: Vertex definition size does not match vertex size\n");
-        return {nullptr};
-    }
-    sShader vert = __freetype_context.shdr->compile(__freetype_context.gfxm, vertpath, sShaderType::VERTEX, internal->vertDef);
-    sShader frag = __freetype_context.shdr->compile(__freetype_context.gfxm, fragpath, sShaderType::FRAGMENT);
     internal->shader = __freetype_context.gfxm->createShaderProgram({vert, frag});
     internal->vertexShader = vert;
 
@@ -146,10 +136,66 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
     };
     if (uniformDef.size() != sizeof(TextUniforms)) {
         printf("ERROR: Uniform definition size does not match shader data size\n");
-        return {nullptr};
+        return;
     }
 
     internal->uniforms = __freetype_context.gfxm->createUniforms(internal->shader, uniformDef);
+}
+
+CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const char* fragpath) {
+    FT_Face face;
+    FT_Error error = FT_New_Face(__freetype_context.ft, path, 0, &face);
+    if (error) {
+        printf("Error loading font '%s'\n", path);
+        printf("Error code: %d\n", error);
+        return {nullptr};
+    }
+
+    sInternalFont* internal = (sInternalFont*)malloc(sizeof(sInternalFont));
+    if (!internal) {
+        printf("Error allocating memory for font\n");
+        return {nullptr};
+    }
+
+    sVertexDefinition* vertDef = fontVertDef();
+
+    sShader vert = __freetype_context.shdr->compile(__freetype_context.gfxm, vertpath, sShaderType::VERTEX, vertDef);
+    sShader frag = __freetype_context.shdr->compile(__freetype_context.gfxm, fragpath, sShaderType::FRAGMENT, nullptr);
+
+    setupFont(face, internal, size, vert, frag);
+
+    return {internal};
+}
+
+CEXPORT sFont loadFontAsset(const char* path, int size, const char* vertpath, const char* fragpath) {
+    AssetBuffer abuf = __freetype_context.assetm->loadAsset(path);
+    if (!abuf.data) {
+        printf("Error loading font asset '%s'\n", path);
+        return {nullptr};
+    }
+
+    sInternalFont* internal = (sInternalFont*)malloc(sizeof(sInternalFont));
+    if (!internal) {
+        printf("Error allocating memory for font\n");
+        return {nullptr};
+    }
+
+    FT_Face face;
+    FT_Error error = FT_New_Memory_Face(__freetype_context.ft, (const FT_Byte*)abuf.data, abuf.len, 0, &face);
+    if (error) {
+        printf("Error loading font asset '%s'\n", path);
+        printf("Error code: %d\n", error);
+        return {nullptr};
+    }
+
+    sVertexDefinition* vertDef = fontVertDef();
+
+    TextAssetBuffer vertabuf = __freetype_context.assetm->loadTextAsset(vertpath);
+    TextAssetBuffer fragabuf = __freetype_context.assetm->loadTextAsset(fragpath);
+    sShader vert = __freetype_context.shdr->createShader(__freetype_context.gfxm, (const char*)vertabuf.data, vertabuf.len, sShaderType::VERTEX, vertDef);
+    sShader frag = __freetype_context.shdr->createShader(__freetype_context.gfxm, (const char*)fragabuf.data, fragabuf.len, sShaderType::FRAGMENT);
+
+    setupFont(face, internal, size, vert, frag);
 
     return {internal};
 }

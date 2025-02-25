@@ -8,6 +8,7 @@
 #include "../gfx/module.h"
 #include "../text/module.h"
 #include "../shdr/module.h"
+#include "../asset.h"
 
 #define CLAY_COLOR_TO_VEC4(color) {(color).r / 255.0f, (color).g / 255.0f, (color).b / 255.0f, (color).a / 255.0f}
 
@@ -88,7 +89,7 @@ Clay_Dimensions Clay_Spectral_MeasureText(Clay_StringSlice text, Clay_TextElemen
     return result;
 }
 
-void Clay_Spectral_Init(WindowModule* winm, GraphicsModule* gfxm, TextModule* textm, ShaderModule* shdr, sWindow* win, sFont* fonts) {
+void Clay_Spectral_Init(WindowModule* winm, GraphicsModule* gfxm, TextModule* textm, ShaderModule* shdr, sWindow* win, sFont* fonts, AssetLoader* assetm) {
     __globalIUIState.fonts = fonts;
     __globalIUIState.winm = winm;
     __globalIUIState.gfxm = gfxm;
@@ -109,8 +110,12 @@ void Clay_Spectral_Init(WindowModule* winm, GraphicsModule* gfxm, TextModule* te
         return;
     }
     __globalIUIState.rect_vert_def = rect_vert_def;
-    sShader rect_vert_shader = shdr->compile(gfxm, "spsl/iui/rect.spslv", sShaderType::VERTEX, rect_vert_def);
-    sShader rect_frag_shader = shdr->compile(gfxm, "spsl/iui/rect.spslf", sShaderType::FRAGMENT);
+    // sShader rect_vert_shader = shdr->compile(gfxm, "spsl/iui/rect.spslv", sShaderType::VERTEX, rect_vert_def);
+    // sShader rect_frag_shader = shdr->compile(gfxm, "spsl/iui/rect.spslf", sShaderType::FRAGMENT);
+    TextAssetBuffer rect_vert_abuf = assetm->loadTextAsset("spsl/iui/rect.spslv");
+    TextAssetBuffer rect_frag_abuf = assetm->loadTextAsset("spsl/iui/rect.spslf");
+    sShader rect_vert_shader = shdr->createShader(gfxm, (const char*)rect_vert_abuf.data, rect_vert_abuf.len, sShaderType::VERTEX, rect_vert_def);
+    sShader rect_frag_shader = shdr->createShader(gfxm, (const char*)rect_frag_abuf.data, rect_frag_abuf.len, sShaderType::FRAGMENT);
     sShaderProgram rect_shader = gfxm->createShaderProgram({rect_vert_shader, rect_frag_shader});
     __globalIUIState.rect_shader = rect_shader;
     __globalIUIState.rect_mesh = gfxm->createMesh(rect_vert_shader, __rect_vertices, sizeof(__rect_vertices), __rect_indices, sizeof(__rect_indices));
@@ -128,8 +133,12 @@ void Clay_Spectral_Init(WindowModule* winm, GraphicsModule* gfxm, TextModule* te
     }
     __globalIUIState.rect_uniforms = gfxm->createUniforms(rect_shader, rect_uniform_def);
 
-    sShader rounded_rect_vert_shader = shdr->compile(gfxm, "spsl/iui/rounded_rect.spslv", sShaderType::VERTEX, rect_vert_def);
-    sShader rounded_rect_frag_shader = shdr->compile(gfxm, "spsl/iui/rounded_rect.spslf", sShaderType::FRAGMENT);
+    // sShader rounded_rect_vert_shader = shdr->compile(gfxm, "spsl/iui/rounded_rect.spslv", sShaderType::VERTEX, rect_vert_def);
+    // sShader rounded_rect_frag_shader = shdr->compile(gfxm, "spsl/iui/rounded_rect.spslf", sShaderType::FRAGMENT);
+    TextAssetBuffer rounded_rect_vert_abuf = assetm->loadTextAsset("spsl/iui/rounded_rect.spslv");
+    TextAssetBuffer rounded_rect_frag_abuf = assetm->loadTextAsset("spsl/iui/rounded_rect.spslf");
+    sShader rounded_rect_vert_shader = shdr->createShader(gfxm, (const char*)rounded_rect_vert_abuf.data, rounded_rect_vert_abuf.len, sShaderType::VERTEX, rect_vert_def);
+    sShader rounded_rect_frag_shader = shdr->createShader(gfxm, (const char*)rounded_rect_frag_abuf.data, rounded_rect_frag_abuf.len, sShaderType::FRAGMENT);
     sShaderProgram rounded_rect_shader = gfxm->createShaderProgram({rounded_rect_vert_shader, rounded_rect_frag_shader});
     __globalIUIState.rounded_rect_shader = rounded_rect_shader;
 

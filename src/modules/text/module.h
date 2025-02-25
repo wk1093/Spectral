@@ -4,6 +4,7 @@
 #include "../math/module.h"
 #include "../gfx/module.h"
 #include "../shdr/module.h"
+#include "../asset.h"
 
 struct sFont {
     void* internal;
@@ -15,8 +16,9 @@ struct sText {
 };
 
 namespace text {
-    typedef void (*Init)(GraphicsModule* gfxm, ShaderModule* shdr);
+    typedef void (*Init)(GraphicsModule* gfxm, ShaderModule* shdr, AssetLoader* assetm);
     typedef sFont (*LoadFont)(const char* path, int size, const char* vertpath, const char* fragpath);
+    typedef sFont (*LoadFontAsset)(const char* path, int size, const char* vertpath, const char* fragpath);
     typedef sText (*CreateText)(sFont font, const char* text);
     typedef void (*DrawText)(sText text);
     typedef void (*FreeText)(sText text);
@@ -32,6 +34,7 @@ namespace text {
 struct TextModule : public Module {
     text::Init init;
     text::LoadFont internal_loadFont;
+    text::LoadFontAsset internal_loadFontAsset;
     text::CreateText createText;
     text::DrawText drawText;
     text::FreeText freeText;
@@ -49,9 +52,16 @@ struct TextModule : public Module {
         return f;
     }
 
+    sFont loadFontAsset(const char* path, int size, const char* vertpath, const char* fragpath) {
+        sFont f = internal_loadFontAsset(path, size, vertpath, fragpath);
+        f.size = size;
+        return f;
+    }
+
     TextModule(const char* path) : Module(path, "text") {
         init = (text::Init)lib.getSymbol("init");
         internal_loadFont = (text::LoadFont)lib.getSymbol("loadFont");
+        internal_loadFontAsset = (text::LoadFontAsset)lib.getSymbol("loadFontAsset");
         createText = (text::CreateText)lib.getSymbol("createText");
         drawText = (text::DrawText)lib.getSymbol("drawText");
         freeText = (text::FreeText)lib.getSymbol("freeText");
