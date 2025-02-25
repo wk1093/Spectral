@@ -205,67 +205,67 @@ CEXPORT int game_main(GameContext* ctx) {
         else lastFPS = lastFPS * 0.95 + fps * 0.05;
         winm.setWindowTitle(win, (window_title + " - " + std::to_string((int)lastFPS) + " FPS").c_str());
 
-        // float mousex, mousey;
-        // winm.getMousePosition(win, &mousex, &mousey);
-        // float dx = mousex - win.width / 2;
-        // float dy = mousey - win.height / 2;
+        float mousex, mousey;
+        winm.getMousePosition(win, &mousex, &mousey);
+        float dx = mousex - win.width / 2;
+        float dy = mousey - win.height / 2;
         
-        // if (winm.getTime(win) < 0.1 || !mouse_locked) {
-        //     dx = 0;
-        //     dy = 0;
-        // }
-        // if (mouse_locked)
-        //     winm.setMousePosition(win, win.width / 2, win.height / 2);
+        if (winm.getTime(win) < 0.1 || !mouse_locked) {
+            dx = 0;
+            dy = 0;
+        }
+        if (mouse_locked)
+            winm.setMousePosition(win, win.width / 2, win.height / 2);
         
-        // if (winm.isKeyPressed(win, Key::Escape)) {
-        //     mouse_locked = false;
-        //     winm.setCursorMode(win, CursorMode::Normal);
-        // }
+        if (winm.isKeyPressed(win, Key::Escape)) {
+            mouse_locked = false;
+            winm.setCursorMode(win, CursorMode::Normal);
+        }
 
-        // if (winm.isMouseButtonPressed(win, 0)) {
-        //     mouse_locked = true;
-        //     winm.setCursorMode(win, CursorMode::Disabled);
-        // }
+        if (winm.isMouseButtonPressed(win, 0)) {
+            mouse_locked = true;
+            winm.setCursorMode(win, CursorMode::Disabled);
+        }
 
-        // if (dx != 0) {
-        //     camYaw(&camera, dx * sensitivity);
-        // }
-        // if (dy != 0) {
-        //     camPitch(&camera, -dy * sensitivity);
-        // }
+        if (dx != 0) {
+            camYaw(&camera, dx * sensitivity);
+        }
+        if (dy != 0) {
+            camPitch(&camera, -dy * sensitivity);
+        }
 
-        // vec3 fixed_forward = camera.forward; // we need to align the forward so it doesn't go up and down
-        // fixed_forward.y = 0;
-        // fixed_forward = normalize(fixed_forward);
-        // // basic movement and gravity (no jumping yet)
-        // if (winm.isKeyPressed(win, Key::W)) {
-        //     camMove(&camera, fixed_forward, speed * win.dt);
-        // }
-        // if (winm.isKeyPressed(win, Key::S)) {
-        //     camMove(&camera, -fixed_forward, speed * win.dt);
-        // }
-        // if (winm.isKeyPressed(win, Key::A)) {
-        //     camMove(&camera, camera.left(fixed_forward), speed * win.dt);
-        // }
-        // if (winm.isKeyPressed(win, Key::D)) {
-        //     camMove(&camera, camera.right(fixed_forward), speed * win.dt);
-        // }
+        vec3 fixed_forward = camera.forward; // we need to align the forward so it doesn't go up and down
+        fixed_forward.y = 0;
+        fixed_forward = normalize(fixed_forward);
+        // basic movement and gravity (no jumping yet)
+        if (winm.isKeyPressed(win, Key::W)) {
+            camMove(&camera, fixed_forward, speed * win.dt);
+        }
+        if (winm.isKeyPressed(win, Key::S)) {
+            camMove(&camera, -fixed_forward, speed * win.dt);
+        }
+        if (winm.isKeyPressed(win, Key::A)) {
+            camMove(&camera, camera.left(fixed_forward), speed * win.dt);
+        }
+        if (winm.isKeyPressed(win, Key::D)) {
+            camMove(&camera, camera.right(fixed_forward), speed * win.dt);
+        }
 
-        // // gravity
-        // if (camera.pos.y > 3) {
-        //     yvel -= 9.8f * win.dt;
-        // } else {
-        //     camera.pos.y = 3;
-        //     yvel = 0;
-        // }
+        // gravity
+        if (camera.pos.y > 3) {
+            yvel -= 9.8f * win.dt;
+        } else {
+            camera.pos.y = 3;
+            yvel = 0;
+        }
 
-        // // jumping
-        // if (winm.isKeyPressed(win, Key::Space) && camera.pos.y == 3) {
-        //     yvel = 250.0f * win.dt;
-        // }
+        // jumping
+        if (winm.isKeyPressed(win, Key::Space) && camera.pos.y == 3) {
+            yvel = 250.0f * win.dt;
+        }
 
-        // camera.pos.y += yvel * win.dt;
-        // yvel *= 0.99f * (win.dt * 60);
+        camera.pos.y += yvel * win.dt;
+        yvel *= 0.99f * (win.dt * 60);
 
 
         Clay_RenderCommandArray layout = createLayout();
