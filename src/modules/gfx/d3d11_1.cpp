@@ -391,6 +391,7 @@ CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefini
                 MessageBoxA(0, (char *) errorBlob->GetBufferPointer(), "Fatal Error", MB_OK);
                 printf("ERROR CODE: %lu\n", GetLastError());
                 errorBlob->Release();
+                return {nullptr};
             }
             hResult = __d3d11_1_context.device->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &pixelShader);
             if (FAILED(hResult)) {

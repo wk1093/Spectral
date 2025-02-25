@@ -89,11 +89,13 @@ CEXPORT sShader compile(GraphicsModule* gfxm, const char* path, sShaderType type
 }
 
 CEXPORT sShader createShader(GraphicsModule* gfxm, const char* data, size_t len, sShaderType type, sVertexDefinition* vertDef) {
-    std::string shd(data, len);
+    char* str = (char*)malloc(len + 1);
+    memcpy(str, data, len);
+    str[len] = 0;
 #ifdef SPECTRAL_OUTPUT_GLSL
-    return compile_glsl(gfxm, shd.c_str(), type, vertDef);
+    return compile_glsl(gfxm, str, type, vertDef);
 #elif defined(SPECTRAL_OUTPUT_HLSL)
-    return compile_hlsl(gfxm, shd.c_str(), type, vertDef);
+    return compile_hlsl(gfxm, str, type, vertDef);
 #else
 #error "Invalid shader output format"
 #endif
@@ -184,12 +186,15 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* shader, sShaderType type,
     std::string source = shader;
     preprocess(source);
 
+
     std::string unifs;
 
     while (true) {
         size_t unif = source.find("#UNIFORM");
         if (unif == std::string::npos) break;
-        size_t eof = source.find("\n", unif);
+        size_t eof0 = source.find("\r", unif);
+        size_t eof1 = source.find("\n", unif);
+        size_t eof = eof0 < eof1 ? eof0 : eof1;
         std::string line = source.substr(unif + 8, eof - unif - 8);
         unifs += line + "\n";
         source.replace(unif, eof - unif, "");
@@ -197,7 +202,6 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* shader, sShaderType type,
 
     source = "cbuffer SPSL_Uniforms {\n" + unifs + "};\n" + source;
     source = hlsl_header + source;
-
     // vecX -> floatX
     size_t offset = 0;
     while (true) {
@@ -251,7 +255,10 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* shader, sShaderType type,
             size_t vsin = source.find("#VS_IN");
             if (vsin == std::string::npos) break;
             // find end of line
-            size_t eol = source.find("\n", vsin);
+            // size_t eol = source.find("\n", vsin);
+            size_t eol0 = source.find("\r", vsin);
+            size_t eol1 = source.find("\n", vsin);
+            size_t eol = eol0 < eol1 ? eol0 : eol1;
             std::string line = source.substr(vsin+6, eol - vsin-6);
             // find ; at the end and replace it with :
             size_t semicolon = line.find(";");
@@ -271,7 +278,11 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* shader, sShaderType type,
         while (true) {
             size_t vsout = source.find("#VS_OUT");
             if (vsout == std::string::npos) break;
-            size_t eol = source.find("\n", vsout);
+            // size_t eol = source.find("\n", vsout);
+            size_t eol0 = source.find("\r", vsout);
+            size_t eol1 = source.find("\n", vsout);
+            size_t eol = eol0 < eol1 ? eol0 : eol1;
+
             std::string line = source.substr(vsout+7, eol-vsout-7);
             size_t semicolon = line.find(";");
             line.replace(semicolon, 1, ":");
@@ -374,15 +385,19 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* shader, sShaderType type,
         }
         return s;
     } else {
-        printf("INPUT SHADER: \n%s\n", shader);
-        std::string inputs;
+        // std::string inputs;
+        std::stringstream inputs_stream;
 
         // second pass: #FS_IN -> inputs
         std::vector<std::string> input_names;
         while (true) {
             size_t fsin = source.find("#FS_IN");
             if (fsin == std::string::npos) break;
-            size_t eol = source.find("\n", fsin);
+            // size_t eol = source.find("\n", fsin);
+            // we want to use \r or \n
+            size_t eol0 = source.find("\r", fsin);
+            size_t eol1 = source.find("\n", fsin);
+            size_t eol = eol0 < eol1 ? eol0 : eol1;
             std::string line = source.substr(fsin+6, eol - fsin-6);
             size_t semicolon = line.find(";");
             line.replace(semicolon, 1, ":");
@@ -390,8 +405,14 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* shader, sShaderType type,
             std::string name = line.substr(last_space + 1, semicolon - last_space - 1);
             input_names.push_back(name);
             source.replace(fsin, eol - fsin, "");
-            inputs += line + "C_" + name + "e;\n";
+            // inputs += line + "C_" + name + "e;\n";
+            // the above line seems to corrupt in rare cases and the inputs string becomes gibberish
+            inputs_stream << line << "C_" << name << "e;\n";
         }
+
+        std::string inputs = inputs_stream.str();
+
+        // for some reason there is \r and wierd characters in the inputs string
 
         // spsl_fragpos -> input.position
         while (true) {
@@ -407,7 +428,10 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* shader, sShaderType type,
         while (true) {
             size_t tex = source.find("#TEXTURE");
             if (tex == std::string::npos) break;
-            size_t eol = source.find("\n", tex);
+            // size_t eol = source.find("\n", tex);
+            size_t eol0 = source.find("\r", tex);
+            size_t eol1 = source.find("\n", tex);
+            size_t eol = eol0 < eol1 ? eol0 : eol1;
             std::string name = source.substr(tex + 9, eol - tex - 10);
             
             source.replace(tex, eol - tex, "Texture2D spsltexture_" + name + " : register(t" + std::to_string(texs) + ");\nSamplerState spslsampler_" + name + " : register(s" + std::to_string(texs) + ");\n");
@@ -462,7 +486,6 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* shader, sShaderType type,
         sShader s = gfxm->createShader(source.c_str(), type, vertDef);
         if (s.internal == nullptr) {
             printf("Failed to compile shader\n");
-            printf("Generated source:\n%s\n", source.c_str());
         }
         return s;
     }
@@ -515,7 +538,10 @@ void preprocess(std::string& source) {
     while (true) {
         size_t comment = source.find("//");
         if (comment == std::string::npos) break;
-        size_t eol = source.find("\n", comment);
+        // size_t eol = source.find("\n", comment);
+        size_t eol0 = source.find("\r", comment);
+        size_t eol1 = source.find("\n", comment);
+        size_t eol = eol0 < eol1 ? eol0 : eol1;
         source.replace(comment, eol - comment, "");
     }
 

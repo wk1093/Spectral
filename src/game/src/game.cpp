@@ -146,12 +146,10 @@ CEXPORT int game_main(GameContext* ctx) {
     
     sShader vert{};
     sShader frag{};
-    // vert = shdr.compile(&gfxm, "spsl/basic.spslv", sShaderType::VERTEX, vertDef);
-    frag = shdr.compile(&gfxm, "spsl/basic.spslf", sShaderType::FRAGMENT);
     TextAssetBuffer abufVert = assetm.loadTextAsset("spsl/basic.spslv");
-    // TextAssetBuffer abufFrag = assetm.loadTextAsset("spsl/basic.spslf");
+    TextAssetBuffer abufFrag = assetm.loadTextAsset("spsl/basic.spslf");
     vert = shdr.createShader(&gfxm, (const char*)abufVert.data, abufVert.len, sShaderType::VERTEX, vertDef);
-    // frag = shdr.createShader(&gfxm, (const char*)abufFrag.data, abufFrag.len, sShaderType::FRAGMENT);
+    frag = shdr.createShader(&gfxm, (const char*)abufFrag.data, abufFrag.len, sShaderType::FRAGMENT);
     sShaderProgram shader = gfxm.createShaderProgram({vert, frag});
     static const float fov = 80.0f;
     static const float nearp = 0.001f;
