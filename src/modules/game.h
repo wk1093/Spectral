@@ -29,8 +29,6 @@ class Game : Module {
         if (!main) {
             printf("Error loading main game function\n");
             return;
-        } else {
-            printf("Loaded main game\n");
         }
     }
 };
