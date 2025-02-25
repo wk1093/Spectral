@@ -113,6 +113,7 @@ CEXPORT int game_main(GameContext* ctx) {
     ShaderModule shdr = ctx->shdr;
     TextureModule texm = ctx->texm;
     TextModule textm = ctx->textm;
+    AssetLoader assetm = ctx->assetm;
     std::string window_title = "Test (win_" + std::string(winm.lib.mod_imp) + ", gfx_" + std::string(gfxm.lib.mod_imp) + ")";
 
     sWindow win = winm.loadWindow(window_title.c_str(), 800, 600, true);
@@ -121,7 +122,8 @@ CEXPORT int game_main(GameContext* ctx) {
 
     gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
-    sTextureDefinition texDef = texm.loadTexture("textures/test.png");
+    AssetBuffer abufTex = assetm.loadAsset("textures/test.png");
+    sTextureDefinition texDef = texm.loadTextureFromBuffer(abufTex.data, abufTex.len);
     sTexture tex = gfxm.createTexture(texDef);
     texm.freeTexture(texDef);
 
@@ -144,8 +146,12 @@ CEXPORT int game_main(GameContext* ctx) {
     
     sShader vert{};
     sShader frag{};
-    vert = shdr.compile(&gfxm, "spsl/basic.spslv", sShaderType::VERTEX, vertDef);
+    // vert = shdr.compile(&gfxm, "spsl/basic.spslv", sShaderType::VERTEX, vertDef);
     frag = shdr.compile(&gfxm, "spsl/basic.spslf", sShaderType::FRAGMENT);
+    TextAssetBuffer abufVert = assetm.loadTextAsset("spsl/basic.spslv");
+    // TextAssetBuffer abufFrag = assetm.loadTextAsset("spsl/basic.spslf");
+    vert = shdr.createShader(&gfxm, (const char*)abufVert.data, abufVert.len, sShaderType::VERTEX, vertDef);
+    // frag = shdr.createShader(&gfxm, (const char*)abufFrag.data, abufFrag.len, sShaderType::FRAGMENT);
     sShaderProgram shader = gfxm.createShaderProgram({vert, frag});
     static const float fov = 80.0f;
     static const float nearp = 0.001f;

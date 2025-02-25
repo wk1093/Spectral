@@ -12,13 +12,16 @@
 namespace texload {
     typedef sTextureDefinition (*LoadTexture)(const char*);
     typedef void (*FreeTexture)(sTextureDefinition);
+    typedef sTextureDefinition (*LoadTextureFromBuffer)(const uint8_t*, size_t);
 }
 struct TextureModule : public Module {
     texload::LoadTexture loadTexture;
     texload::FreeTexture freeTexture;
+    texload::LoadTextureFromBuffer loadTextureFromBuffer;
 
     TextureModule(const char* path) : Module(path, "tex") {
         loadTexture = (texload::LoadTexture)lib.getSymbol("loadTexture");
         freeTexture = (texload::FreeTexture)lib.getSymbol("freeTexture");
+        loadTextureFromBuffer = (texload::LoadTextureFromBuffer)lib.getSymbol("loadTextureFromBuffer");
     }
 };

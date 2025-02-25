@@ -66,6 +66,9 @@ set(SPECTRAL_FULLPLAT "${SPECTRAL_PLATFORM}_${CMAKE_SYSTEM_PROCESSOR}" CACHE STR
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/" CACHE PATH "" FORCE)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/lib/${SPECTRAL_FULLPLAT}/" CACHE PATH "" FORCE)
 set(zlib_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} CACHE PATH "" FORCE)
+
+find_package(ZLIB REQUIRED)
+
 FetchContent_Declare(
         glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
@@ -86,102 +89,6 @@ FetchContent_Declare(
     GIT_TAG v3.11.3
 )
 FetchContent_MakeAvailable(nlohmann_json)
-find_package(ZLIB)
-if(NOT ZLIB_FOUND)
-    FetchContent_Declare(
-        zlib-source
-        GIT_REPOSITORY https://github.com/madler/zlib.git
-    )
-    # FetchContent_MakeAvailable(zlib-source)
-    FetchContent_GetProperties(zlib-source)
-    if(NOT zlib-source_POPULATED)
-        FetchContent_Populate(zlib-source)
-    endif()
-
-    file(REMOVE ${zlib-source_SOURCE_DIR}/CMakeLists.txt)
-    file(READ ${zlib-source_SOURCE_DIR}/zutil.c ZUTIL)
-    string(REPLACE "malloc(items * size)" "malloc((size_t) items * size)" ZUTIL "${ZUTIL}")
-    file(WRITE ${zlib-source_SOURCE_DIR}/zutil.c "${ZUTIL}")
-
-    FetchContent_Declare(
-        ZLIB
-        SOURCE_DIR ${zlib-source_SOURCE_DIR}
-        BINARY_DIR ${zlib-source_BINARY_DIR}
-        OVERRIDE_FIND_PACKAGE
-    )
-
-
-    set(ZLIB_HEADERS
-        ${zlib-source_SOURCE_DIR}/zlib.h
-        ${zlib-source_SOURCE_DIR}/zconf.h
-    )
-    # zconf.h needs to be generated from zconf.h.in
-    configure_file(${zlib-source_SOURCE_DIR}/zconf.h.in ${zlib-source_SOURCE_DIR}/zconf.h @ONLY)
-    set(ZLIB_SOURCES
-        ${zlib-source_SOURCE_DIR}/adler32.c
-        ${zlib-source_SOURCE_DIR}/compress.c
-        ${zlib-source_SOURCE_DIR}/crc32.c
-        ${zlib-source_SOURCE_DIR}/crc32.h
-        ${zlib-source_SOURCE_DIR}/deflate.c
-        ${zlib-source_SOURCE_DIR}/deflate.h
-        ${zlib-source_SOURCE_DIR}/gzclose.c
-        ${zlib-source_SOURCE_DIR}/gzguts.h
-        ${zlib-source_SOURCE_DIR}/gzlib.c
-        ${zlib-source_SOURCE_DIR}/gzread.c
-        ${zlib-source_SOURCE_DIR}/gzwrite.c
-        ${zlib-source_SOURCE_DIR}/infback.c
-        ${zlib-source_SOURCE_DIR}/inffast.c
-        ${zlib-source_SOURCE_DIR}/inffast.h
-        ${zlib-source_SOURCE_DIR}/inffixed.h
-        ${zlib-source_SOURCE_DIR}/inflate.c
-        ${zlib-source_SOURCE_DIR}/inflate.h
-        ${zlib-source_SOURCE_DIR}/inftrees.c
-        ${zlib-source_SOURCE_DIR}/inftrees.h
-        ${zlib-source_SOURCE_DIR}/trees.c
-        ${zlib-source_SOURCE_DIR}/trees.h
-        ${zlib-source_SOURCE_DIR}/uncompr.c
-        ${zlib-source_SOURCE_DIR}/zutil.c
-        ${zlib-source_SOURCE_DIR}/zutil.h
-    )
-
-    add_library(ZLIB ${ZLIB_SOURCES})
-    add_library(ZLIB::ZLIB ALIAS ZLIB)
-    target_sources(ZLIB PUBLIC
-        FILE_SET HEADERS
-        BASE_DIRS ${zlib-source_SOURCE_DIR}
-        FILES ${ZLIB_HEADERS}
-    )
-    set_target_properties(ZLIB PROPERTIES
-        OUTPUT_NAME $<IF:$<BOOL:${UNIX}>,z,zlib>
-        WINDOWS_EXPORT_ALL_SYMBOLS ON
-        ARCHIVE_OUTPUT_DIRECTORY ${zlib-source_BINARY_DIR}
-        COMPILE_PDB_OUTPUT_DIRECTORY ${zlib-source_BINARY_DIR}
-        LIBRARY_OUTPUT_DIRECTORY ${zlib-source_BINARY_DIR}
-        PDB_OUTPUT_DIRECTORY ${zlib-source_BINARY_DIR}
-        RUNTIME_OUTPUT_DIRECTORY ${zlib-source_BINARY_DIR}
-        DEBUG_POSTFIX d
-        DEFINE_SYMBOL ZLIB_INTERNAL
-        VERSION ${ZLIB_VERSION}
-        SOVERSION ${ZLIB_VERSION_MAJOR}
-    )
-
-    target_compile_definitions(ZLIB PUBLIC
-        $<$<CONFIG:DEBUG>:ZLIB_DEBUG>
-        $<$<BOOL:${ZLIB_HAVE_OFF64_T}>:_LARGEFILE64_SOURCE=1>
-        $<$<NOT:$<BOOL:${ZLIB_HAVE_FSEEKO}>>:NO_FSEEKO>
-        $<$<NOT:$<BOOL:${ZLIB_HAVE_STRERROR}>>:NO_STRERROR>
-        $<$<BOOL:${ZLIB_HAVE_UNISTD_H}>:HAVE_UNISTD_H>
-        $<$<BOOL:${ZLIB_HAVE_STDARG_H}>:HAVE_STDARG_H>
-        $<$<BOOL:${ZLIB_HAVE_HIDDEN}>:HAVE_HIDDEN>
-    )
-
-    if(WIN32 AND BUILD_SHARED_LIBS)
-        target_compile_definitions(ZLIB PUBLIC ZLIB_DLL)
-    endif()
-
-    find_package(ZLIB REQUIRED)
-
-endif()
 
 
 FetchContent_Declare(

@@ -51,8 +51,10 @@ int main(int argc, char** argv) {
     if (!texm.lib.valid()) return 1;
     TextModule textm("ft");
     if (!textm.lib.valid()) return 1;
-
+    AssetLoader assetm;
+    if (!assetm.lib.valid()) return 1;
+    
     Game game;
-    GameContext game_context = {winm, gfxm, shdr, texm, textm};
+    GameContext game_context = {winm, gfxm, shdr, texm, textm, assetm};
     return (game.main(&game_context));
 }

@@ -75,6 +75,22 @@
         "numbers": "cpp",
         "span": "cpp",
         "text_encoding": "cpp",
-        "cinttypes": "cpp"
-    }
+        "cinttypes": "cpp",
+        "bitset": "cpp",
+        "condition_variable": "cpp",
+        "csignal": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "regex": "cpp",
+        "iostream": "cpp",
+        "mutex": "cpp",
+        "ranges": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "valarray": "cpp"
+    },
+    "cmake.generator": "Ninja",
 }

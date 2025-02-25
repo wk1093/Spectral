@@ -69,26 +69,39 @@ bool strendw(const char* a, const char* b) {
     return strncmp(a + alen - blen, b, blen) == 0;
 }
 
-sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef);
-sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef);
+sShader compile_glsl(GraphicsModule* gfxm, const char* shader, sShaderType type, sVertexDefinition* vertDef);
+sShader compile_hlsl(GraphicsModule* gfxm, const char* shader, sShaderType type, sVertexDefinition* vertDef);
 void preprocess(std::string& source);
 
 CEXPORT sShader compile(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef) {
+    std::string shd;
+    if (!readFile(path, shd)) {
+        printf("Failed to read file %s\n", path);
+        return sShader();
+    }
 #ifdef SPECTRAL_OUTPUT_GLSL
-    return compile_glsl(gfxm, path, type, vertDef);
+    return compile_glsl(gfxm, shd.c_str(), type, vertDef);
 #elif defined(SPECTRAL_OUTPUT_HLSL)
-    return compile_hlsl(gfxm, path, type, vertDef);
+    return compile_hlsl(gfxm, shd.c_str(), type, vertDef);
 #else
 #error "Invalid shader output format"
 #endif
 }
 
-sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef) {
-    std::string source;
-    if (!readFile(path, source)) {
-        printf("Failed to read file %s\n", path);
-        return sShader();
-    }
+CEXPORT sShader createShader(GraphicsModule* gfxm, const char* data, size_t len, sShaderType type, sVertexDefinition* vertDef) {
+    std::string shd(data, len);
+#ifdef SPECTRAL_OUTPUT_GLSL
+    return compile_glsl(gfxm, shd.c_str(), type, vertDef);
+#elif defined(SPECTRAL_OUTPUT_HLSL)
+    return compile_hlsl(gfxm, shd.c_str(), type, vertDef);
+#else
+#error "Invalid shader output format"
+#endif
+}
+
+
+sShader compile_glsl(GraphicsModule* gfxm, const char* shader, sShaderType type, sVertexDefinition* vertDef) {
+    std::string source = shader;
 
     preprocess(source);
 
@@ -161,20 +174,14 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
 #endif
     sShader s = gfxm->createShader(source.c_str(), type, vertDef);
     if (s.internal == nullptr) {
-        printf("Failed to compile shader %s\n", path);
+        printf("Failed to compile shader\n");
         printf("Generated source:\n%s\n", source.c_str());
     }
     return s;
 }
 
-sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef) {
-    std::string source;
-    
-    if (!readFile(path, source)) {
-        printf("Failed to read file %s\n", path);
-        return sShader();
-    }
-
+sShader compile_hlsl(GraphicsModule* gfxm, const char* shader, sShaderType type, sVertexDefinition* vertDef) {
+    std::string source = shader;
     preprocess(source);
 
     std::string unifs;
@@ -362,11 +369,12 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
 #endif
         sShader s = gfxm->createShader(source.c_str(), type, vertDef);
         if (s.internal == nullptr) {
-            printf("Failed to compile shader %s\n", path);
+            printf("Failed to compile shader\n");
             printf("Generated source:\n%s\n", source.c_str());
         }
         return s;
     } else {
+        printf("INPUT SHADER: \n%s\n", shader);
         std::string inputs;
 
         // second pass: #FS_IN -> inputs
@@ -453,7 +461,7 @@ sShader compile_hlsl(GraphicsModule* gfxm, const char* path, sShaderType type, s
 #endif
         sShader s = gfxm->createShader(source.c_str(), type, vertDef);
         if (s.internal == nullptr) {
-            printf("Failed to compile shader %s\n", path);
+            printf("Failed to compile shader\n");
             printf("Generated source:\n%s\n", source.c_str());
         }
         return s;
