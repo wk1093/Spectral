@@ -7,6 +7,8 @@ CEXPORT const char* getShaderType() {
     return "glsl";
 }
 
+sWindow* __window_global;
+
 CEXPORT void init(sWindow* win) {
     if (!gladLoadGL((GLADloadfunc)getProcAddress)) {
         printf("Error loading OpenGL\n");
@@ -24,6 +26,7 @@ CEXPORT void init(sWindow* win) {
     // enable blending
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    __window_global = win;
 
 }
 
@@ -32,7 +35,12 @@ CEXPORT void setClearColor(float r, float g, float b, float a) {
 }
 
 CEXPORT void clear() {
+    if (__window_global->did_resize) {
+        glViewport(0, 0, __window_global->width, __window_global->height);
+        __window_global->did_resize = false;
+    }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 }
 
 struct sInternalMesh {

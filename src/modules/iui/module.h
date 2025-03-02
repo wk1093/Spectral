@@ -162,6 +162,8 @@ void Clay_Spectral_Init(WindowModule* winm, GraphicsModule* gfxm, TextModule* te
 
 // custom clay implementation using our graphics library
 void Clay_Spectral_Render(sWindow* win, Clay_RenderCommandArray renderCommands, mat4 proj, mat4 view) {
+    // set clay viewport
+    Clay_SetLayoutDimensions(Clay_Dimensions{(float)win->width, (float)win->height});
     float mousex, mousey;
     __globalIUIState.winm->getMousePosition(*win, &mousex, &mousey);
     Clay_Vector2 mousePos = {mousex, mousey};

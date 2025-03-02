@@ -116,8 +116,8 @@ CEXPORT int game_main(GameContext* ctx) {
     AssetLoader assetm = ctx->assetm;
     std::string window_title = "Test (win_" + std::string(winm.lib.mod_imp) + ", gfx_" + std::string(gfxm.lib.mod_imp) + ")";
 
-    sWindow win = winm.loadWindow(window_title.c_str(), 800, 600, true);
-    gfxm.init(&win);
+    sWindow* win = winm.loadWindow(window_title.c_str(), 800, 600, {true, true});
+    gfxm.init(win);
     textm.init(&gfxm, &shdr, &assetm);
 
     gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
@@ -134,7 +134,7 @@ CEXPORT int game_main(GameContext* ctx) {
     std::chrono::duration<double> elapsed = end - start;
     printf("Time to load font: %f\n", elapsed.count());
 
-    Clay_Spectral_Init(&winm, &gfxm, &textm, &shdr, &win, &font, &assetm);
+    Clay_Spectral_Init(&winm, &gfxm, &textm, &shdr, win, &font, &assetm);
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
     if (vertexDefinitionSize(vertDef) != sizeof(Vertex)) {
@@ -152,7 +152,7 @@ CEXPORT int game_main(GameContext* ctx) {
     static const float fov = 80.0f;
     static const float nearp = 0.001f;
     static const float farp = 1000.0f;
-    static const float aspect_ratio = (float)win.width / (float)win.height;
+    static const float aspect_ratio = (float)win->width / (float)win->height;
 
     bool mouse_locked = false;
 
@@ -192,39 +192,39 @@ CEXPORT int game_main(GameContext* ctx) {
     float yvel = 0.0f;
 
     double lastFPS = 0.0;
-    mat4 proj = orthographic(0, win.width, 0, win.height, -1, 1);
+    mat4 proj = orthographic(0, win->width, 0, win->height, -1, 1);
     // textm.setTextProj(textobj, proj);
     // textm.setTextModel(textobj, translate({400, 300, 0}));
 
-    while (!winm.shouldClose(win)) {
-        winm.updateWindow(&win);
+    while (!winm.shouldClose(*win)) {
+        winm.updateWindow(win);
         gfxm.clear();
 
-        double fps = 1.0 / win.dt;
+        double fps = 1.0 / win->dt;
         if (lastFPS < 30.0) lastFPS = fps;
         else lastFPS = lastFPS * 0.95 + fps * 0.05;
-        winm.setWindowTitle(win, (window_title + " - " + std::to_string((int)lastFPS) + " FPS").c_str());
+        winm.setWindowTitle(*win, (window_title + " - " + std::to_string((int)lastFPS) + " FPS").c_str());
 
         float mousex, mousey;
-        winm.getMousePosition(win, &mousex, &mousey);
-        float dx = mousex - win.width / 2;
-        float dy = mousey - win.height / 2;
+        winm.getMousePosition(*win, &mousex, &mousey);
+        float dx = mousex - win->width / 2;
+        float dy = mousey - win->height / 2;
         
-        if (winm.getTime(win) < 0.1 || !mouse_locked) {
+        if (winm.getTime(*win) < 0.1 || !mouse_locked) {
             dx = 0;
             dy = 0;
         }
         if (mouse_locked)
-            winm.setMousePosition(win, win.width / 2, win.height / 2);
+            winm.setMousePosition(*win, win->width / 2, win->height / 2);
         
-        if (winm.isKeyPressed(win, Key::Escape)) {
+        if (winm.isKeyPressed(*win, Key::Escape)) {
             mouse_locked = false;
-            winm.setCursorMode(win, CursorMode::Normal);
+            winm.setCursorMode(*win, CursorMode::Normal);
         }
 
-        if (winm.isMouseButtonPressed(win, 0)) {
+        if (winm.isMouseButtonPressed(*win, 0)) {
             mouse_locked = true;
-            winm.setCursorMode(win, CursorMode::Disabled);
+            winm.setCursorMode(*win, CursorMode::Disabled);
         }
 
         if (dx != 0) {
@@ -238,42 +238,42 @@ CEXPORT int game_main(GameContext* ctx) {
         fixed_forward.y = 0;
         fixed_forward = normalize(fixed_forward);
         // basic movement and gravity (no jumping yet)
-        if (winm.isKeyPressed(win, Key::W)) {
-            camMove(&camera, fixed_forward, speed * win.dt);
+        if (winm.isKeyPressed(*win, Key::W)) {
+            camMove(&camera, fixed_forward, speed * win->dt);
         }
-        if (winm.isKeyPressed(win, Key::S)) {
-            camMove(&camera, -fixed_forward, speed * win.dt);
+        if (winm.isKeyPressed(*win, Key::S)) {
+            camMove(&camera, -fixed_forward, speed * win->dt);
         }
-        if (winm.isKeyPressed(win, Key::A)) {
-            camMove(&camera, camera.left(fixed_forward), speed * win.dt);
+        if (winm.isKeyPressed(*win, Key::A)) {
+            camMove(&camera, camera.left(fixed_forward), speed * win->dt);
         }
-        if (winm.isKeyPressed(win, Key::D)) {
-            camMove(&camera, camera.right(fixed_forward), speed * win.dt);
+        if (winm.isKeyPressed(*win, Key::D)) {
+            camMove(&camera, camera.right(fixed_forward), speed * win->dt);
         }
 
         // gravity
         if (camera.pos.y > 3) {
-            yvel -= 9.8f * win.dt;
+            yvel -= 9.8f * win->dt;
         } else {
             camera.pos.y = 3;
             yvel = 0;
         }
 
         // jumping
-        if (winm.isKeyPressed(win, Key::Space) && camera.pos.y == 3) {
-            yvel = 250.0f * win.dt;
+        if (winm.isKeyPressed(*win, Key::Space) && camera.pos.y == 3) {
+            yvel = 250.0f * win->dt;
         }
 
-        camera.pos.y += yvel * win.dt;
-        yvel *= 0.99f * (win.dt * 60);
+        camera.pos.y += yvel * win->dt;
+        yvel *= 0.99f * (win->dt * 60);
 
 
         Clay_RenderCommandArray layout = createLayout();
-        Clay_Spectral_Render(&win, layout, proj, identity());
+        Clay_Spectral_Render(win, layout, proj, identity());
 
 
         gfxm.useShaderProgram(shader);
-        shaderData.time = (float)winm.getTime(win);
+        shaderData.time = (float)winm.getTime(*win);
         shaderData.view = view(camera);
         shaderData.viewPos = camera.pos;
 
@@ -285,15 +285,11 @@ CEXPORT int game_main(GameContext* ctx) {
             cube.draw(&gfxm);
         }
 
-        // textm.drawText(textobj);
-
-        
 
         gfxm.present();
-        winm.swapBuffers(win);
+        winm.swapBuffers(*win);
     }
 
-    // textm.freeText(textobj);
     textm.freeFont(font);
 
     gfxm.freeShaderProgram(shader);
@@ -302,7 +298,6 @@ CEXPORT int game_main(GameContext* ctx) {
     gfxm.freeTexture(tex);
     gfxm.freeUniforms(uniforms);
     gfxm.freeVertexDefinition(vertDef);
-    gfxm.destroy();
 
     winm.destroyWindow(win);
 

@@ -93,12 +93,14 @@ CEXPORT sShader createShader(GraphicsModule* gfxm, const char* data, size_t len,
     memcpy(str, data, len);
     str[len] = 0;
 #ifdef SPECTRAL_OUTPUT_GLSL
-    return compile_glsl(gfxm, str, type, vertDef);
+    sShader s = compile_glsl(gfxm, str, type, vertDef);
 #elif defined(SPECTRAL_OUTPUT_HLSL)
-    return compile_hlsl(gfxm, str, type, vertDef);
+    sShader s = compile_hlsl(gfxm, str, type, vertDef);
 #else
 #error "Invalid shader output format"
 #endif
+    free(str);
+    return s;
 }
 
 

@@ -65,8 +65,6 @@ size_t uniformElementSize(sUniformElement element) {
     return element.countx * element.county * uniformTypeSize(element.type);
 }
 
-// typedef sUniformElement sUniformDefinition[];
-
 struct sUniformDefinition {
     sUniformElement* elements;
     size_t count;
@@ -238,7 +236,7 @@ struct GraphicsModule : Module {
     }
 
     void freeVertexDefinition(sVertexDefinition* def) {
-        free(def->elements);
+        // free(def->elements);
         free(def);
     }
 

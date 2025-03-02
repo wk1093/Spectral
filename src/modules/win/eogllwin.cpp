@@ -41,26 +41,46 @@ int toGLKey(Key k) {
     return keys[static_cast<unsigned long>(k)];
 }
 
-CEXPORT sWindow loadWindow(const char* title, int width, int height, bool vsync) {
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    sWindow* win = (sWindow*)glfwGetWindowUserPointer(window);
+    win->width = width;
+    win->height = height;
+}
+
+CEXPORT sWindow* loadWindow(const char* title, int width, int height, sWindowFlags flags) {
     if (eogllInit() != EOGLL_SUCCESS) {
         printf("Error initializing EOGLL\n");
         return {nullptr};
     }
-    EogllWindow* internal = eogllCreateWindow(width, height, title, eogllDefaultWindowHints());
+    EogllWindowHints hints = eogllDefaultWindowHints();
+    hints.resizable = flags.resizable;
+    EogllWindow* internal = eogllCreateWindow(width, height, title, hints);
     if (!internal) {
         eogllTerminate();
         printf("Error creating window\n");
         return {nullptr};
     }
-    if (vsync)
+    if (flags.vsync)
         glfwSwapInterval(1);
-    return {internal};
+    
+    sWindow* window = (sWindow*)malloc(sizeof(sWindow));
+    window->internal = internal;
+    window->flags = flags;
+    window->width = width;
+    window->height = height;
+
+    glfwSetWindowUserPointer(internal->window, window);
+    glfwSetFramebufferSizeCallback(internal->window, framebuffer_size_callback);
+
+    return window;
 
 }
 
-CEXPORT void destroyWindow(sWindow window) {
-    eogllDestroyWindow((EogllWindow*)window.internal);
+CEXPORT void destroyWindow(sWindow* window) {
+    eogllDestroyWindow((EogllWindow*)(window->internal));
     eogllTerminate();
+    free(window);
+
 }
 
 CEXPORT void updateWindow(sWindow window) {

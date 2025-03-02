@@ -6,15 +6,21 @@
 
 struct WindowModule;
 
+struct sWindowFlags {
+    bool vsync;
+    bool resizable;
+};
+
 struct sWindow {
     void* internal;
     WindowModule* creator;
     double dt;
     double lastTime;
     std::chrono::high_resolution_clock::time_point startTime;
-    bool vsync;
     int width;
     int height;
+    sWindowFlags flags;
+    bool did_resize;
 };
 
 // Required for compatibility with different windowing libraries
@@ -37,9 +43,9 @@ enum class CursorMode {
 };
 
 namespace window {
-    typedef sWindow (*WindowLoader)(const char *name, int width, int height, bool vsync);
-    typedef void (*WindowDestructor)(sWindow window);
-    typedef void (*WindowUpdate)(sWindow window);
+    typedef sWindow* (*WindowLoader)(const char *name, int width, int height, sWindowFlags flags);
+    typedef void (*WindowDestructor)(sWindow* window);
+    typedef void (*WindowUpdate)(sWindow* window);
     typedef void (*WindowSwapBuffers)(sWindow window);
     typedef bool (*WindowShouldClose)(sWindow window);
     typedef void (*WindowSetShouldClose)(sWindow window, bool value);
@@ -50,6 +56,7 @@ namespace window {
     typedef void (*WindowSetMousePosition)(sWindow window, float x, float y);
     typedef void (*WindowSetCursorMode)(sWindow window, CursorMode mode);
     typedef void (*WindowSetWindowTitle)(sWindow window, const char* title);
+    typedef void (*WindowSetResizable)(sWindow window, bool resizable);
 }
 
 struct WindowModule : Module {
@@ -67,18 +74,24 @@ struct WindowModule : Module {
     window::WindowSetCursorMode setCursorMode;
     window::WindowSetWindowTitle setWindowTitle;
 
-    sWindow loadWindow(const char* name, int width, int height, bool vsync) {
-        sWindow w = internal_loadWindow(name, width, height, vsync);
-        w.creator = this;
-        w.startTime = std::chrono::high_resolution_clock::now();
-        w.vsync = vsync;
-        w.width = width;
-        w.height = height;
+    sWindow* loadWindow(const char* name, int width, int height, sWindowFlags flags) {
+        sWindow* w = internal_loadWindow(name, width, height, flags);
+        w->creator = this;
+        w->startTime = std::chrono::high_resolution_clock::now();
+        w->flags = flags;
+        w->width = width;
+        w->height = height;
+        w->did_resize = false;
         return w;
     }
 
+    sWindow* loadWindow(const char* name, int width, int height, bool vsync=true, bool resizable=false) {
+        sWindowFlags flags = {vsync, false};
+        return loadWindow(name, width, height, flags);
+    }
+
     void updateWindow(sWindow* window) {
-        internal_updateWindow(*window);
+        internal_updateWindow(window);
         double cur = getTime(*window);
         window->dt = cur - window->lastTime;
         window->lastTime = cur;

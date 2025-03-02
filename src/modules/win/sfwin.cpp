@@ -39,22 +39,32 @@ sf::Keyboard::Key toSFKey(Key k) {
     return keys[static_cast<unsigned long>(k)];
 }
 
-CEXPORT sWindow loadWindow(const char* title, int width, int height, bool vsync) {
-    auto* win = new sf::RenderWindow(sf::VideoMode(width, height), title);
+CEXPORT sWindow* loadWindow(const char* title, int width, int height, sWindowFlags flags) {
+    printf("SFML Window is deprecated, and will be removed in the future\n");
+    bool resize = flags.resizable;
+    auto* win = new sf::RenderWindow(sf::VideoMode(width, height), title, resize ? sf::Style::Default : sf::Style::Close);
     if (!win->isOpen()) {
         printf("Error creating window\n");
         return {nullptr};
     }
 
     // Set vsync
-    win->setVerticalSyncEnabled(vsync);
+    win->setVerticalSyncEnabled(flags.vsync);
 
-    return {win};
+    sWindow* window = (sWindow*)malloc(sizeof(sWindow));
+    window->internal = win;
+    window->flags = flags;
+    window->width = width;
+    window->height = height;
+
+    return window;
+
 }
 
-CEXPORT void destroyWindow(sWindow window) {
-    ((sf::RenderWindow*)window.internal)->close();
-    delete (sf::RenderWindow*)window.internal;
+CEXPORT void destroyWindow(sWindow* window) {
+    ((sf::RenderWindow*)(window->internal))->close();
+    delete (sf::RenderWindow*)(window->internal);
+    free(window);
 }
 
 CEXPORT void updateWindow(sWindow window) {

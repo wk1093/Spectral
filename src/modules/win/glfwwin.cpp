@@ -40,7 +40,15 @@ int toGLKey(Key k) {
     return keys[static_cast<unsigned long>(k)];
 }
 
-CEXPORT sWindow loadWindow(const char* title, int width, int height, bool vsync) {
+// viewport size callback
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    sWindow* win = (sWindow*)glfwGetWindowUserPointer(window);
+    win->width = width;
+    win->height = height;
+    win->did_resize = true;
+}
+
+CEXPORT sWindow* loadWindow(const char* title, int width, int height, sWindowFlags flags) {
     if (!glfwInit()) {
         printf("Error initializing GLFW\n");
         return {nullptr};
@@ -52,26 +60,37 @@ CEXPORT sWindow loadWindow(const char* title, int width, int height, bool vsync)
 #endif
     glfwWindowHint(GLFW_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, flags.resizable ? GLFW_TRUE : GLFW_FALSE);
     GLFWwindow* internal = glfwCreateWindow(width, height, title, NULL, NULL);
     glfwMakeContextCurrent(internal);
-    if (vsync)
+    if (flags.vsync)
         glfwSwapInterval(1);
     if (!internal) {
         glfwTerminate();
         printf("Error creating window\n");
         return {nullptr};
     }
-    return {internal};
 
+    sWindow* win = (sWindow*)malloc(sizeof(sWindow));
+    win->internal = internal;
+    win->width = width;
+    win->height = height;
+    win->flags = flags;
+
+    // set viewport size callback
+    glfwSetWindowUserPointer(internal, win);
+    glfwSetFramebufferSizeCallback(internal, framebuffer_size_callback);
+
+    return win;
 }
 
-CEXPORT void destroyWindow(sWindow window) {
-    glfwDestroyWindow((GLFWwindow*)window.internal);
+CEXPORT void destroyWindow(sWindow* window) {
+    glfwDestroyWindow((GLFWwindow*)(window->internal));
     glfwTerminate();
+    free(window);
 }
 
-CEXPORT void updateWindow(sWindow window) {
+CEXPORT void updateWindow(sWindow* window) {
     glfwPollEvents();
 }
 

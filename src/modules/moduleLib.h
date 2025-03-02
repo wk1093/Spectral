@@ -108,6 +108,7 @@ private:
 #endif
         }
         free(path);
+        free(setdlldir);
     }
 public:
 
@@ -120,7 +121,9 @@ public:
     DynamicLibrary(const char* path, const char* ident) {
         mod_name = ident;
         mod_imp = path;
-        load(makePath(path, ident));
+        char* p = makePath(path, ident);
+        load(p);
+        free(p);
     }
 
     static char* makePath(const char* path, const char* ident) {

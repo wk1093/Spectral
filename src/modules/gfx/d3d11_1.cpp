@@ -174,6 +174,7 @@ CEXPORT void init(sWindow* win) {
         depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
         depthStencilDesc.CPUAccessFlags = 0;
         depthStencilDesc.SampleDesc.Count = 4;
+        depthStencilDesc.SampleDesc.Quality = 0;
 
         ID3D11Texture2D* depthBuffer;
 
@@ -262,6 +263,56 @@ CEXPORT void setClearColor(float r, float g, float b, float a) {
 }
 
 CEXPORT void clear() {
+    if (__d3d11_1_context.win->did_resize) {
+        // resize all the buffers and everything
+        __d3d11_1_context.deviceContext->OMSetRenderTargets(0, 0, 0);
+        __d3d11_1_context.frameBufferView->Release();
+
+        HRESULT res = __d3d11_1_context.swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+        if (FAILED(res)) {
+            MessageBoxA(0, "ResizeBuffers() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+        ID3D11Texture2D* d3d11FrameBuffer;
+        res = __d3d11_1_context.swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&d3d11FrameBuffer);
+        if (FAILED(res)) {
+            MessageBoxA(0, "GetBuffer() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+
+        res = __d3d11_1_context.device->CreateRenderTargetView(d3d11FrameBuffer, 0, &__d3d11_1_context.frameBufferView);
+        if (FAILED(res)) {
+            MessageBoxA(0, "CreateRenderTargetView() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+
+        D3D11_TEXTURE2D_DESC depthStencilDesc = {};
+        d3d11FrameBuffer->GetDesc(&depthStencilDesc);
+
+        d3d11FrameBuffer->Release();
+
+        depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+        ID3D11Texture2D* depthBuffer;
+        res = __d3d11_1_context.device->CreateTexture2D(&depthStencilDesc, 0, &depthBuffer);
+        if (FAILED(res)) {
+            MessageBoxA(0, "CreateTexture2D() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+
+        res = __d3d11_1_context.device->CreateDepthStencilView(depthBuffer, 0, &__d3d11_1_context.depthStencilView);
+        if (FAILED(res)) {
+            MessageBoxA(0, "CreateDepthStencilView() failed", "Fatal Error", MB_OK);
+            printf("ERROR CODE: %lu\n", GetLastError());
+        }
+
+        depthBuffer->Release();
+
+        __d3d11_1_context.win->did_resize = false;
+
+    }
+
     __d3d11_1_context.deviceContext->ClearRenderTargetView(__d3d11_1_context.frameBufferView, __clearColor);
     __d3d11_1_context.deviceContext->ClearDepthStencilView(__d3d11_1_context.depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
     RECT rect;
@@ -275,7 +326,7 @@ CEXPORT void clear() {
 }
 
 CEXPORT void present() {
-    bool vsync = __d3d11_1_context.win->vsync;
+    bool vsync = __d3d11_1_context.win->flags.vsync;
     __d3d11_1_context.swapChain->Present(vsync, 0);
 }
 
@@ -374,6 +425,7 @@ CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefini
                 MessageBoxA(0, (char *) errorBlob->GetBufferPointer(), "Fatal Error", MB_OK);
                 printf("ERROR CODE: %lu\n", GetLastError());
                 errorBlob->Release();
+                return {nullptr};
             }
             hResult = __d3d11_1_context.device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &vertexShader);
             if (FAILED(hResult)) {
@@ -493,6 +545,11 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
                                                                      vertexShader.shaderBlob->GetBufferPointer(),
                                                                      vertexShader.shaderBlob->GetBufferSize(), &inputLayout);
 
+        // delete strs
+        for (auto str : strs) {
+            delete str;
+        }
+
         if (FAILED(hResult)) {
             MessageBoxA(0, "CreateInputLayout() failed", "Fatal Error", MB_OK);
             printf("ERROR CODE: %lu\n", GetLastError());
@@ -552,6 +609,9 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
         MessageBoxA(0, "CreateBuffer() failed", "Fatal Error", MB_OK);
         printf("ERROR CODE: %lu\n", GetLastError());
     }
+
+    delete[] fakeBuffer;
+    delete[] fakeBuffer2;
 
     return {internal};
 }
