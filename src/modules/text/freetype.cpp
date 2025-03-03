@@ -162,6 +162,8 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
     sShader vert = __freetype_context.shdr->compile(__freetype_context.gfxm, vertpath, sShaderType::VERTEX, vertDef);
     sShader frag = __freetype_context.shdr->compile(__freetype_context.gfxm, fragpath, sShaderType::FRAGMENT, nullptr);
 
+    internal->vertDef = vertDef;
+
     setupFont(face, internal, size, vert, frag);
 
     return {internal};
@@ -194,6 +196,8 @@ CEXPORT sFont loadFontAsset(const char* path, int size, const char* vertpath, co
     TextAssetBuffer fragabuf = __freetype_context.assetm->loadTextAsset(fragpath);
     sShader vert = __freetype_context.shdr->createShader(__freetype_context.gfxm, (const char*)vertabuf.data, vertabuf.len, sShaderType::VERTEX, vertDef);
     sShader frag = __freetype_context.shdr->createShader(__freetype_context.gfxm, (const char*)fragabuf.data, fragabuf.len, sShaderType::FRAGMENT);
+
+    internal->vertDef = vertDef;
 
     setupFont(face, internal, size, vert, frag);
 
@@ -309,6 +313,7 @@ CEXPORT void freeFont(sFont font) {
     __freetype_context.gfxm->freeShaderProgram(internal->shader);
     __freetype_context.gfxm->freeVertexDefinition(internal->vertDef);
     free(internal);
+
 }
 
 CEXPORT void setTextColor(sText text, vec3 color) {

@@ -289,9 +289,7 @@ CEXPORT int game_main(GameContext* ctx) {
         gfxm.present();
         winm.swapBuffers(*win);
     }
-
     textm.freeFont(font);
-
     gfxm.freeShaderProgram(shader);
     gfxm.freeShader(vert);
     gfxm.freeShader(frag);
@@ -300,6 +298,8 @@ CEXPORT int game_main(GameContext* ctx) {
     gfxm.freeVertexDefinition(vertDef);
 
     winm.destroyWindow(win);
+
+    gfxm.destroy();
 
     return 0;
 }

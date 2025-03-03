@@ -31,11 +31,9 @@ int main(int argc, char** argv) {
     
     Game game;
     GameContext game_context = {winm, gfxm, shdr, texm, textm, assetm};
-    int a = game.main(&game_context); // TODO: why does this cause error when returning?
+    int a = game.main(&game_context);
 
     printf("Game returned %d\n", a);
-
-    gfxm.destroy();
 
     return a;
 }
