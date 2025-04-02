@@ -1,3 +1,9 @@
+/**
+ * \defgroup WindowModuleG Window Module
+ * \ingroup WindowModuleG
+ * @{
+ */
+
 #pragma once
 #include "../moduleLib.h"
 
@@ -152,3 +158,5 @@ struct WindowModule : Module {
     }
 
 };
+
+// @}
