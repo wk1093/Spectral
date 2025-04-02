@@ -15,3 +15,6 @@ This module manages opening a window to eventually be drawn to by the graphics m
 - `int width`: width of the window.
 - `int height`: height of the window.
 - `sWindowFlags flags`: The window flags given to `loadWindow`
+
+### `enum class Key`
+represents a key
