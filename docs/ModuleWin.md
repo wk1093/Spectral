@@ -1,4 +1,4 @@
-# group `ModuleWin` {#group___module_win}
+# group `ModuleWin` 
 
 ## Summary
 
@@ -17,7 +17,7 @@
 
 ## Members
 
-#### `enum `[`Key`](#group___module_win_1gab3c7af4820830f9166ede9e5623c4e73) {#group___module_win_1gab3c7af4820830f9166ede9e5623c4e73}
+#### `enum `[`Key`](#group___module_win_1gab3c7af4820830f9166ede9e5623c4e73) 
 
  Values                         | Descriptions                                
 --------------------------------|---------------------------------------------
@@ -124,7 +124,7 @@ F15            |
 Pause            | 
 KeyCount            | 
 
-#### `enum `[`CursorMode`](#group___module_win_1ga3bbf59221044115f117dc97bb8930648) {#group___module_win_1ga3bbf59221044115f117dc97bb8930648}
+#### `enum `[`CursorMode`](#group___module_win_1ga3bbf59221044115f117dc97bb8930648) 
 
  Values                         | Descriptions                                
 --------------------------------|---------------------------------------------
@@ -140,17 +140,17 @@ The cursor mode may not be supported on all platforms or windowing libraries.
 
 **See also**: WindowModule::setCursorMode
 
-#### `public inline `[`sWindow`](docs/ModuleWin.md#structs_window)` * `[`loadWindow`](#group___module_win_1gaf37eab1ce1cde80532f09d9b32133184)`(const char * name,int width,int height,`[`sWindowFlags`](docs/ModuleWin.md#structs_window_flags)` flags)` {#group___module_win_1gaf37eab1ce1cde80532f09d9b32133184}
+#### `public inline `[`sWindow`](docs/ModuleWin.md#structs_window)` * `[`loadWindow`](#group___module_win_1gaf37eab1ce1cde80532f09d9b32133184)`(const char * name,int width,int height,`[`sWindowFlags`](docs/ModuleWin.md#structs_window_flags)` flags)` 
 
-#### `public inline `[`sWindow`](docs/ModuleWin.md#structs_window)` * `[`loadWindow`](#group___module_win_1gafbb39fabdd17eabc5fc13c5f35b26a59)`(const char * name,int width,int height,bool vsync,bool resizable)` {#group___module_win_1gafbb39fabdd17eabc5fc13c5f35b26a59}
+#### `public inline `[`sWindow`](docs/ModuleWin.md#structs_window)` * `[`loadWindow`](#group___module_win_1gafbb39fabdd17eabc5fc13c5f35b26a59)`(const char * name,int width,int height,bool vsync,bool resizable)` 
 
-#### `public inline void `[`updateWindow`](#group___module_win_1ga332a23ed050d2f60c9aa706580ade3f3)`(`[`sWindow`](docs/ModuleWin.md#structs_window)` * window)` {#group___module_win_1ga332a23ed050d2f60c9aa706580ade3f3}
+#### `public inline void `[`updateWindow`](#group___module_win_1ga332a23ed050d2f60c9aa706580ade3f3)`(`[`sWindow`](docs/ModuleWin.md#structs_window)` * window)` 
 
-#### `public inline double `[`getTime`](#group___module_win_1ga9efdb8131b23be2226b841d1969265a2)`(`[`sWindow`](docs/ModuleWin.md#structs_window)` window)` {#group___module_win_1ga9efdb8131b23be2226b841d1969265a2}
+#### `public inline double `[`getTime`](#group___module_win_1ga9efdb8131b23be2226b841d1969265a2)`(`[`sWindow`](docs/ModuleWin.md#structs_window)` window)` 
 
-#### `public inline  explicit `[`WindowModule`](#group___module_win_1ga2427e19698191d79b01bde5e380533ff)`(const char * dynlib)` {#group___module_win_1ga2427e19698191d79b01bde5e380533ff}
+#### `public inline  explicit `[`WindowModule`](#group___module_win_1ga2427e19698191d79b01bde5e380533ff)`(const char * dynlib)` 
 
-# struct `sWindowFlags` {#structs_window_flags}
+# struct `sWindowFlags` 
 
 ## Summary
 
@@ -159,7 +159,7 @@ The cursor mode may not be supported on all platforms or windowing libraries.
 
 ## Members
 
-# struct `sWindow` {#structs_window}
+# struct `sWindow` 
 
 Window structure.
 
@@ -174,7 +174,7 @@ Certain members of this structure are meant to be not accessed directly, but can
 
 ## Members
 
-# struct `WindowModule` {#struct_window_module}
+# struct `WindowModule` 
 
 ```
 struct WindowModule

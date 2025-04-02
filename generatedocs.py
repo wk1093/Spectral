@@ -7,4 +7,4 @@ import shutil
 
 subprocess.run("doxygen", shell=True)
 
-sp = subprocess.run("moxygen docgen/xml/ -a -l cpp -g -o docs/%s.md", shell=True)
+sp = subprocess.run("moxygen docgen/xml/ -H -l cpp -g -o docs/%s.md", shell=True)
