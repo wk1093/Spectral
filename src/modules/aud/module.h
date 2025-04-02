@@ -7,6 +7,8 @@ struct sAudioClip {
 
 struct sAudioSource {
     void* internal;
+    float posX, posY, posZ;
+    float velX, velY, velZ;
 };
 
 namespace audio {

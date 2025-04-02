@@ -13,3 +13,4 @@ build-*/
 *.pdb
 *.zip
 *.lin_x86_64
+bin/

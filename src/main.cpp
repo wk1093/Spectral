@@ -1,4 +1,5 @@
 #include "modules/game.h"
+// #include "modules/aud/module.h"
 
 int main(int argc, char** argv) {
     const char* window_module;
@@ -28,7 +29,11 @@ int main(int argc, char** argv) {
     if (!textm.lib.valid()) return 1;
     AssetLoader assetm;
     if (!assetm.lib.valid()) return 1;
+    // AudioModule audm("openal");
+    // if (!audm.lib.valid()) return 1;
     
+    // audm.init();
+
     Game game;
     GameContext game_context = {winm, gfxm, shdr, texm, textm, assetm};
     int a = game.main(&game_context);

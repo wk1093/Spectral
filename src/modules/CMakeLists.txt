@@ -143,6 +143,15 @@ if (SPEC_DX11)
     endforeach()
 endif()
 
+# OpenAL
+FetchContent_Declare(
+    openal
+    GIT_REPOSITORY https://github.com/kcat/openal-soft.git
+    GIT_TAG 1.24.2
+)
+FetchContent_MakeAvailable(openal)
+
+
 macro(add_module mod impl source)
     add_library(${mod}_${impl} SHARED ${source})
     set_target_properties(${mod}_${impl} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/modules/${SPECTRAL_FULLPLAT}/${mod}")
@@ -210,6 +219,8 @@ target_link_libraries(wrld_main nlohmann_json zip)
 add_module(text ft text/freetype.cpp)
 target_link_libraries(text_ft freetype)
 
+add_module(aud openal aud/openal.cpp)
+target_link_libraries(aud_openal OpenAL)
 
 add_custom_target(
         SpectralModules ALL
