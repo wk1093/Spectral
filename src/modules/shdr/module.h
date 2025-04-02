@@ -71,7 +71,7 @@ public:
      * @details The ShaderModule is a dynamic library that provides functionality for compiling and creating shaders. It uses the GraphicsModule to compile the shader. The shader is compiled from the file at the given path.
      * 
      * @param dynlib The dynamic library implementation to use.
-     * @param dynp2 The type of shader to compile TO. This is given as a string, normally from the graphics module.
+     * @param dynp2 The output type. This is given as a string, normally straight from the graphics module's getShaderType function.
      * @see GraphicsModule::getShaderType
      */
     explicit ShaderModule(const char* dynlib, const char* dynp2) : Module(combine_strs_with_delim(dynlib, dynp2, '_'), "shdr") {
