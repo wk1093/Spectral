@@ -42,7 +42,7 @@ public:
      * @param vertDef The vertex definition to use for the shader. Only required for vertex shaders.
      * @return The compiled shader.
      * @note This function will compile from any type of shader file (glsl, hlsl, spsl, etc.) depending on which implementation is used.
-     * @see sShaderType
+     * @see #sShaderType
      */
     sShader compile(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef=nullptr) {
         return internal_compile(gfxm, path, type, vertDef);
@@ -72,7 +72,8 @@ public:
      * 
      * @param dynlib The dynamic library implementation to use.
      * @param dynp2 The output type. This is given as a string, normally straight from the graphics module's getShaderType function.
-     * @see GraphicsModule::getShaderType
+     * @see #GraphicsModule::getShaderType
+     * @todo update this once the graphics module has docs
      */
     explicit ShaderModule(const char* dynlib, const char* dynp2) : Module(combine_strs_with_delim(dynlib, dynp2, '_'), "shdr") {
         internal_compile = (shader::Compile)lib.getSymbol("compile");

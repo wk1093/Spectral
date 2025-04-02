@@ -1,3 +1,8 @@
+/**
+ * @file win/module.h
+ * @brief Window module interface.
+ */
+
 #pragma once
 #include "../moduleLib.h"
 
@@ -26,6 +31,8 @@ struct sWindowFlags {
     bool resizable;
 };
 
+typedef struct sWindowFlags sWindowFlags_t;
+
 /**
  * @brief Window structure.
  * 
@@ -46,7 +53,7 @@ struct sWindow {
     int height;
     /// @brief The window flags.
     /// @details This is a structure containing various properties of the window.
-    /// @see sWindowFlags
+    /// @see #sWindowFlags_t
     sWindowFlags flags;
 
     void* internal;
@@ -330,7 +337,7 @@ public:
      * @note This is useful for first-person camera controls or similar applications.
      * @note This should not be relied on for gameplay, as there will be an input module for that
      * @todo Update this once the input module is implemented.
-     * @see CursorMode
+     * @see #CursorMode
      */
     void setCursorMode(sWindow* window, CursorMode mode) {
         internal_setCursorMode(*window, mode);
@@ -351,14 +358,13 @@ public:
     }
 
     /**
-     * @brief Set the resizable property of the specified window.
+     * @brief Get the time since the window was created.
      * 
-     * @details This function sets the resizable property of the specified window.
+     * @details This function retrieves the time since the window was created in seconds.
      * 
-     * @param window A pointer to the window to set the resizable property for.
-     * @param resizable true to make the window resizable, false to make it non-resizable.
-     * @note This may not be supported on all platforms or windowing libraries.
-     * @note This is useful for allowing users to resize the window to their preference.
+     * @param window A pointer to the window to get the time for.
+     * @return The time since the window was created in seconds.
+     * @note This can be used for timing purposes, such as calculating the frame rate or elapsed time.
      */
     double getTime(sWindow window) {
         auto now = std::chrono::high_resolution_clock::now();

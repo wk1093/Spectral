@@ -919,9 +919,11 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 #### Parameters
 * `dynlib` The dynamic library implementation to use. 
 
-* `dynp2` The type of shader to compile TO. This is given as a string, normally from the graphics module. 
+* `dynp2` The output type. This is given as a string, normally straight from the graphics module's getShaderType function. 
 
-**See also**: GraphicsModule::getShaderType
+**See also**: GraphicsModule::getShaderType 
+
+> Todo: update this once the graphics module has docs
 
 # struct `sInternalFont` <a id="structs_internal_font"></a>
 
@@ -1562,7 +1564,7 @@ This is the height of the window in pixels.
 The window flags.
 
 This is a structure containing various properties of the window. 
-**See also**: sWindowFlags
+**See also**: sWindowFlags_t
 
 #### `public void * `[`internal`](#structs_window_1aadb4ff0f06902a4c4a5a3f1ef62dec38) <a id="structs_window_1aadb4ff0f06902a4c4a5a3f1ef62dec38"></a>
 
@@ -2009,9 +2011,9 @@ These functions will do something different depending on the implementation sele
 `public inline bool `[`isMouseButtonPressed`](#struct_window_module_1a2184127a99441dce7fd7a800aaf6eb10)`(`[`sWindow`](#structs_window)` * window,int button)` | Check if a specific mouse button is pressed in the specified window.
 `public inline void `[`getMousePosition`](#struct_window_module_1aefd44986d630fb8c25640fdf2f1d4b31)`(`[`sWindow`](#structs_window)` * window,float * x,float * y)` | Get the current mouse position in the specified window.
 `public inline void `[`setMousePosition`](#struct_window_module_1a0b4d8fb8aa1342f1ebddd0b4b8f9e35f)`(`[`sWindow`](#structs_window)` * window,float x,float y)` | Set the mouse position in the specified window.
-`public inline void `[`setCursorMode`](#struct_window_module_1a1d6e0c627191dea66a56d0422bdff373)`(`[`sWindow`](#structs_window)` * window,CursorMode mode)` | Set the cursor mode for the specified window.
+`public inline void `[`setCursorMode`](#struct_window_module_1a1d6e0c627191dea66a56d0422bdff373)`(`[`sWindow`](#structs_window)` * window,`[`CursorMode`](#win_2module_8h_1a3bbf59221044115f117dc97bb8930648)` mode)` | Set the cursor mode for the specified window.
 `public inline void `[`setWindowTitle`](#struct_window_module_1a6e6bc6cecad01a7cad83ddf87b56af90)`(`[`sWindow`](#structs_window)` * window,const char * title)` | Set the title of the specified window.
-`public inline double `[`getTime`](#struct_window_module_1a9efdb8131b23be2226b841d1969265a2)`(`[`sWindow`](#structs_window)` window)` | Set the resizable property of the specified window.
+`public inline double `[`getTime`](#struct_window_module_1a9efdb8131b23be2226b841d1969265a2)`(`[`sWindow`](#structs_window)` window)` | Get the time since the window was created.
 `public inline  explicit `[`WindowModule`](#struct_window_module_1a2427e19698191d79b01bde5e380533ff)`(const char * dynlib)` | Constructor for the [WindowModule](#struct_window_module) class.
 
 ## Members
@@ -2204,7 +2206,7 @@ This should not be relied on for gameplay, as there will be an input module for 
 
 > Todo: Update this once the input module is implemented.
 
-#### `public inline void `[`setCursorMode`](#struct_window_module_1a1d6e0c627191dea66a56d0422bdff373)`(`[`sWindow`](#structs_window)` * window,CursorMode mode)` <a id="struct_window_module_1a1d6e0c627191dea66a56d0422bdff373"></a>
+#### `public inline void `[`setCursorMode`](#struct_window_module_1a1d6e0c627191dea66a56d0422bdff373)`(`[`sWindow`](#structs_window)` * window,`[`CursorMode`](#win_2module_8h_1a3bbf59221044115f117dc97bb8930648)` mode)` <a id="struct_window_module_1a1d6e0c627191dea66a56d0422bdff373"></a>
 
 Set the cursor mode for the specified window.
 
@@ -2213,7 +2215,7 @@ This function sets the cursor mode for the specified window.
 #### Parameters
 * `window` A pointer to the window to set the cursor mode for. 
 
-* `mode` The cursor mode to set (e.g., CursorMode::Normal, CursorMode::Hidden). 
+* `mode` The cursor mode to set (e.g., [CursorMode::Normal](#win_2module_8h_1a3bbf59221044115f117dc97bb8930648a960b44c579bc2f6818d2daaf9e4c16f0), [CursorMode::Hidden](#win_2module_8h_1a3bbf59221044115f117dc97bb8930648a7acdf85c69cc3c5305456a293524386e)). 
 
 This may not be supported on all platforms or windowing libraries. 
 
@@ -2223,7 +2225,7 @@ This should not be relied on for gameplay, as there will be an input module for 
 
 > Todo: Update this once the input module is implemented. 
 
-**See also**: CursorMode
+**See also**: [CursorMode](#win_2module_8h_1a3bbf59221044115f117dc97bb8930648)
 
 #### `public inline void `[`setWindowTitle`](#struct_window_module_1a6e6bc6cecad01a7cad83ddf87b56af90)`(`[`sWindow`](#structs_window)` * window,const char * title)` <a id="struct_window_module_1a6e6bc6cecad01a7cad83ddf87b56af90"></a>
 
@@ -2242,18 +2244,17 @@ This is useful for displaying the current state of the application or game in th
 
 #### `public inline double `[`getTime`](#struct_window_module_1a9efdb8131b23be2226b841d1969265a2)`(`[`sWindow`](#structs_window)` window)` <a id="struct_window_module_1a9efdb8131b23be2226b841d1969265a2"></a>
 
-Set the resizable property of the specified window.
+Get the time since the window was created.
 
-This function sets the resizable property of the specified window.
+This function retrieves the time since the window was created in seconds.
 
 #### Parameters
-* `window` A pointer to the window to set the resizable property for. 
+* `window` A pointer to the window to get the time for. 
 
-* `resizable` true to make the window resizable, false to make it non-resizable. 
+#### Returns
+The time since the window was created in seconds. 
 
-This may not be supported on all platforms or windowing libraries. 
-
-This is useful for allowing users to resize the window to their preference.
+This can be used for timing purposes, such as calculating the frame rate or elapsed time.
 
 #### `public inline  explicit `[`WindowModule`](#struct_window_module_1a2427e19698191d79b01bde5e380533ff)`(const char * dynlib)` <a id="struct_window_module_1a2427e19698191d79b01bde5e380533ff"></a>
 
