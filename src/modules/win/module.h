@@ -126,8 +126,12 @@ namespace window {
  */
 struct WindowModule : Module {
     window::WindowLoader internal_loadWindow;
-    window::WindowDestructor destroyWindow;
     window::WindowUpdate internal_updateWindow;
+
+    /// @brief Destructor function pointer for the window module.
+    /// @details This function is used to destroy a window created by the window module.
+    /// @note This function will be loaded from the module file (a dynamic library), and the implementation may vary.
+    window::WindowDestructor destroyWindow;
     window::WindowSwapBuffers swapBuffers;
     window::WindowShouldClose shouldClose;
     window::WindowSetShouldClose setShouldClose;
