@@ -14,3 +14,7 @@ build-*/
 *.zip
 *.lin_x86_64
 bin/
+docgen/html/
+docgen/xml/
+docgen/output.json
+__pycache__/

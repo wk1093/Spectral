@@ -1,3 +1,0 @@
-# Spectral
-
-a game engine

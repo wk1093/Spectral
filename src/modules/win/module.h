@@ -6,20 +6,53 @@
 
 struct WindowModule;
 
+/*
+ * @brief Window module interface.
+ * 
+ * Window flags structure. This is used to set various properties of the window.
+
+ * @note The flags are not guaranteed to be supported on all platforms or windowing libraries.
+ * @note The flags may be ignored or have no effect depending on the windowing library used.
+*/
 struct sWindowFlags {
+    /// @brief Whether vertical sync is enabled.
+    /// @details If true, the window will synchronize its frame rate with the monitor's refresh rate.
+    /// @note This may help reduce screen tearing and improve performance.
+    /// @note This may not be supported on all platforms or windowing libraries.
     bool vsync;
+    /// @brief Whether the window is fullscreen.
+    /// @details If true, the window will be displayed in fullscreen mode.
+    /// @note This may not be supported on all platforms or windowing libraries.
     bool resizable;
 };
 
+/**
+ * @brief Window structure.
+ * 
+ * This structure represents a window created by the window module.
+ * It contains various properties and methods for interacting with the window.
+ * 
+ * @note Certain members of this structure are meant to be not accessed directly, but cannot be made private due to the internal implementation.
+ */
 struct sWindow {
+    /// @brief Delta time since the last frame.
+    /// @details This is the time in seconds since the last frame was rendered.
+    double dt;
+    /// @brief The width of the window.
+    /// @details This is the width of the window in pixels.
+    int width;
+    /// @brief The height of the window.
+    /// @details This is the height of the window in pixels.
+    int height;
+    /// @brief The window flags.
+    /// @details This is a structure containing various properties of the window.
+    /// @see sWindowFlags
+    sWindowFlags flags;
+
     void* internal;
     WindowModule* creator;
-    double dt;
     double lastTime;
     std::chrono::high_resolution_clock::time_point startTime;
-    int width;
-    int height;
-    sWindowFlags flags;
     bool did_resize;
 };
 
