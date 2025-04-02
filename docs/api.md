@@ -29,7 +29,7 @@
 `struct `[`sD3D11_1Context.scissor`](#structs_d3_d11__1_context_8scissor) | 
 `struct `[`sFont`](#structs_font) | 
 `struct `[`sFreeTypeContext`](#structs_free_type_context) | 
-`struct `[`ShaderModule`](#struct_shader_module) | 
+`struct `[`ShaderModule`](#struct_shader_module) | [ShaderModule](#struct_shader_module) is a module that provides functionality for compiling and creating shaders.
 `struct `[`sInternalFont`](#structs_internal_font) | 
 `struct `[`sInternalMesh`](#structs_internal_mesh) | 
 `struct `[`sInternalRectUniforms`](#structs_internal_rect_uniforms) | 
@@ -427,7 +427,7 @@ struct AudioModule
 --------------------------------|---------------------------------------------
 `public `[`WindowModule`](#struct_window_module)` `[`winm`](#struct_game_context_1adf7f1d5403d8c252c64e942e61cea40e) | 
 `public GraphicsModule `[`gfxm`](#struct_game_context_1a98856d42044a8ad116a14ff4b0691dde) | 
-`public ShaderModule `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) | 
+`public `[`ShaderModule`](#struct_shader_module)` `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) | 
 `public TextureModule `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) | 
 `public TextModule `[`textm`](#struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87) | 
 `public AssetLoader `[`assetm`](#struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4) | 
@@ -438,7 +438,7 @@ struct AudioModule
 
 #### `public GraphicsModule `[`gfxm`](#struct_game_context_1a98856d42044a8ad116a14ff4b0691dde) <a id="struct_game_context_1a98856d42044a8ad116a14ff4b0691dde"></a>
 
-#### `public ShaderModule `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) <a id="struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c"></a>
+#### `public `[`ShaderModule`](#struct_shader_module)` `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) <a id="struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c"></a>
 
 #### `public TextureModule `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) <a id="struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132"></a>
 
@@ -830,7 +830,7 @@ struct ScriptLoaderModule
 --------------------------------|---------------------------------------------
 `public FT_Library `[`ft`](#structs_free_type_context_1abfbf78e89226a529cf63d1944f666a0b) | 
 `public GraphicsModule * `[`gfxm`](#structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380) | 
-`public ShaderModule * `[`shdr`](#structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3) | 
+`public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3) | 
 `public AssetLoader * `[`assetm`](#structs_free_type_context_1a14e9ff02e52ed0041ed631f5c77ac794) | 
 
 ## Members
@@ -839,7 +839,7 @@ struct ScriptLoaderModule
 
 #### `public GraphicsModule * `[`gfxm`](#structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380) <a id="structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380"></a>
 
-#### `public ShaderModule * `[`shdr`](#structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3) <a id="structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3"></a>
+#### `public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3) <a id="structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3"></a>
 
 #### `public AssetLoader * `[`assetm`](#structs_free_type_context_1a14e9ff02e52ed0041ed631f5c77ac794) <a id="structs_free_type_context_1a14e9ff02e52ed0041ed631f5c77ac794"></a>
 
@@ -850,27 +850,78 @@ struct ShaderModule
   : public Module
 ```  
 
+[ShaderModule](#struct_shader_module) is a module that provides functionality for compiling and creating shaders.
+
+The [ShaderModule](#struct_shader_module) is a dynamic library that provides functionality for compiling and creating shaders. It uses the GraphicsModule to compile the shader. The shader is compiled from the file at the given path.
+
+This is helpful because it allows us to write a single shader in a single language, instead of having to rewrite it to support each graphics API.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public shader::Compile `[`internal_compile`](#struct_shader_module_1a831233154d87223fddbb44e7b442cbb2) | 
-`public shader::CreateShader `[`internal_createShader`](#struct_shader_module_1aed564b2c54d09e7381a457d274a31399) | 
-`public inline sShader `[`compile`](#struct_shader_module_1a4820c0e1c54fd78e687fd292c478c9ac)`(GraphicsModule * gfxm,const char * path,sShaderType type,sVertexDefinition * vertDef)` | 
-`public inline sShader `[`createShader`](#struct_shader_module_1a79a43cd49d1fe6e25f246c3b284b62a0)`(GraphicsModule * gfxm,const char * data,size_t len,sShaderType type,sVertexDefinition * vertDef)` | 
-`public inline  explicit `[`ShaderModule`](#struct_shader_module_1a003135da7d77e951b291b8431ec6546f)`(const char * dynlib,const char * dynp2)` | 
+`public inline sShader `[`compile`](#struct_shader_module_1a4820c0e1c54fd78e687fd292c478c9ac)`(GraphicsModule * gfxm,const char * path,sShaderType type,sVertexDefinition * vertDef)` | Compiles a shader from a file.
+`public inline sShader `[`createShader`](#struct_shader_module_1a79a43cd49d1fe6e25f246c3b284b62a0)`(GraphicsModule * gfxm,const char * data,size_t len,sShaderType type,sVertexDefinition * vertDef)` | Creates a shader from a string.
+`public inline  explicit `[`ShaderModule`](#struct_shader_module_1a003135da7d77e951b291b8431ec6546f)`(const char * dynlib,const char * dynp2)` | Constructs a [ShaderModule](#struct_shader_module) object.
 
 ## Members
 
-#### `public shader::Compile `[`internal_compile`](#struct_shader_module_1a831233154d87223fddbb44e7b442cbb2) <a id="struct_shader_module_1a831233154d87223fddbb44e7b442cbb2"></a>
-
-#### `public shader::CreateShader `[`internal_createShader`](#struct_shader_module_1aed564b2c54d09e7381a457d274a31399) <a id="struct_shader_module_1aed564b2c54d09e7381a457d274a31399"></a>
-
 #### `public inline sShader `[`compile`](#struct_shader_module_1a4820c0e1c54fd78e687fd292c478c9ac)`(GraphicsModule * gfxm,const char * path,sShaderType type,sVertexDefinition * vertDef)` <a id="struct_shader_module_1a4820c0e1c54fd78e687fd292c478c9ac"></a>
+
+Compiles a shader from a file.
+
+Uses the GraphicsModule to compile the shader. The shader is compiled from the file at the given path.
+
+#### Parameters
+* `gfxm` The GraphicsModule to use for compilation. 
+
+* `path` The path to the shader file. 
+
+* `type` The type of shader to compile. 
+
+* `vertDef` The vertex definition to use for the shader. Only required for vertex shaders. 
+
+#### Returns
+The compiled shader. 
+
+This function will compile from any type of shader file (glsl, hlsl, spsl, etc.) depending on which implementation is used. 
+
+**See also**: sShaderType
 
 #### `public inline sShader `[`createShader`](#struct_shader_module_1a79a43cd49d1fe6e25f246c3b284b62a0)`(GraphicsModule * gfxm,const char * data,size_t len,sShaderType type,sVertexDefinition * vertDef)` <a id="struct_shader_module_1a79a43cd49d1fe6e25f246c3b284b62a0"></a>
 
+Creates a shader from a string.
+
+Uses the GraphicsModule to create the shader. The shader is created from the string data.
+
+#### Parameters
+* `gfxm` The GraphicsModule to use for creating the shader. 
+
+* `data` The shader data. 
+
+* `len` The length of the shader data. 
+
+* `type` The type of shader to create. 
+
+* `vertDef` The vertex definition to use for the shader. Only required for vertex shaders. 
+
+#### Returns
+The created shader. 
+
+**See also**: [ShaderModule::compile](#struct_shader_module_1a4820c0e1c54fd78e687fd292c478c9ac)
+
 #### `public inline  explicit `[`ShaderModule`](#struct_shader_module_1a003135da7d77e951b291b8431ec6546f)`(const char * dynlib,const char * dynp2)` <a id="struct_shader_module_1a003135da7d77e951b291b8431ec6546f"></a>
+
+Constructs a [ShaderModule](#struct_shader_module) object.
+
+The [ShaderModule](#struct_shader_module) is a dynamic library that provides functionality for compiling and creating shaders. It uses the GraphicsModule to compile the shader. The shader is compiled from the file at the given path.
+
+#### Parameters
+* `dynlib` The dynamic library implementation to use. 
+
+* `dynp2` The type of shader to compile TO. This is given as a string, normally from the graphics module. 
+
+**See also**: GraphicsModule::getShaderType
 
 # struct `sInternalFont` <a id="structs_internal_font"></a>
 
@@ -1151,7 +1202,7 @@ struct ShaderModule
 `public `[`WindowModule`](#struct_window_module)` * `[`winm`](#structs_i_u_i_global_state_1ae701579167a3b125ad16a562a097326b) | 
 `public GraphicsModule * `[`gfxm`](#structs_i_u_i_global_state_1a33895b03ee8de07c99487dd193862ae8) | 
 `public TextModule * `[`textm`](#structs_i_u_i_global_state_1a709550ce99b4622905bead54c5874e67) | 
-`public ShaderModule * `[`shdr`](#structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034) | 
+`public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034) | 
 `public sShaderProgram `[`rect_shader`](#structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e) | 
 `public sVertexDefinition * `[`rect_vert_def`](#structs_i_u_i_global_state_1afc973fcfc990a1a5d1b81e6fd86cf215) | 
 `public sMesh `[`rect_mesh`](#structs_i_u_i_global_state_1a6a12ae7165329fe65b5255d371f263b0) | 
@@ -1169,7 +1220,7 @@ struct ShaderModule
 
 #### `public TextModule * `[`textm`](#structs_i_u_i_global_state_1a709550ce99b4622905bead54c5874e67) <a id="structs_i_u_i_global_state_1a709550ce99b4622905bead54c5874e67"></a>
 
-#### `public ShaderModule * `[`shdr`](#structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034) <a id="structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034"></a>
+#### `public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034) <a id="structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034"></a>
 
 #### `public sShaderProgram `[`rect_shader`](#structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e) <a id="structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e"></a>
 

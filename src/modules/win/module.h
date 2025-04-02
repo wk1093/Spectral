@@ -92,6 +92,7 @@ enum class CursorMode {
     Disabled
 };
 
+/// @cond DOXYGEN_OMIT
 namespace window {
     typedef sWindow* (*WindowLoader)(const char *name, int width, int height, sWindowFlags flags);
     typedef void (*WindowDestructor)(sWindow* window);
@@ -108,6 +109,7 @@ namespace window {
     typedef void (*WindowSetWindowTitle)(sWindow window, const char* title);
     typedef void (*WindowSetResizable)(sWindow window, bool resizable);
 }
+/// @endcond
 
 /**
  * @brief Window module class.
