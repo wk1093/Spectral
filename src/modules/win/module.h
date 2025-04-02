@@ -1,6 +1,6 @@
 /**
- * \defgroup WindowModuleG Window Module
- * \ingroup WindowModuleG
+ * \defgroup ModuleWin Window Module
+ * \ingroup ModuleWin
  * @{
  */
 
@@ -74,10 +74,27 @@ enum class Key {
     Numpad9, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11,F12, F13, F14, F15,
     Pause, KeyCount
 };
-
+/**
+ * @brief Cursor mode enumeration.
+ * 
+ * This enumeration defines the different modes for the cursor in the window.
+ * 
+ * @note The cursor mode may not be supported on all platforms or windowing libraries.
+ * @see WindowModule::setCursorMode
+ */
 enum class CursorMode {
+    /// @brief Normal cursor mode.
+    /// @details The cursor is visible and can be moved freely within the window.
+    /// @note This is the default mode.
     Normal = 0,
+    /// @brief Hidden cursor mode.
+    /// @details The cursor is hidden, might be movable depending on the windowing library.
+    /// @warning This may not be supported on all platforms or windowing libraries.
     Hidden,
+    /// @brief Locked cursor mode.
+    /// @details The cursor is hidden and locked to the window, preventing it from leaving the window area.
+    /// @warning This may not be supported on all platforms or windowing libraries.
+    /// @note This is useful for first-person camera controls or similar applications.
     Disabled
 };
 
@@ -98,6 +115,15 @@ namespace window {
     typedef void (*WindowSetResizable)(sWindow window, bool resizable);
 }
 
+/**
+ * @brief Window module class.
+ * 
+ * This class represents the window module and provides methods for creating and managing windows.
+ * It is responsible for loading the windowing library and providing access to its functions.
+ * 
+ * @note This class contains function pointers that will be loaded from the module file (a dynamic library).
+ * @note These functions will do something different depending on the implementation selected at runtime.
+ */
 struct WindowModule : Module {
     window::WindowLoader internal_loadWindow;
     window::WindowDestructor destroyWindow;
