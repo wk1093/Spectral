@@ -1,3 +1,8 @@
+/**
+ * @file gfx/module.h
+ * @brief Graphics module header file.
+ */
+
 #pragma once
 #include "../moduleLib.h"
 
@@ -9,10 +14,21 @@
 #include <cstdlib>
 #include <string>
 
+/**
+ * @brief Index type for vertex buffers.
+ * 
+ * This type is used to index into vertex buffers and is typically a 32-bit unsigned integer.
+ * It is used to represent the indices of vertices in a mesh.
+ */
 typedef unsigned int sIndex;
 
 struct GraphicsModule;
 
+/**
+ * @brief A single abstract vertex definition.
+ * 
+ * This structure defines the layout of a vertex in a vertex buffer. It contains an array of integers that represent the number of components for each attribute in the vertex, and a count of the number of attributes.
+ */
 struct sVertexDefinition {
     int* elements;
     size_t count;

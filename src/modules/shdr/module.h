@@ -1,3 +1,8 @@
+/**
+ * @file shdr/module.h
+ * @brief Shader module interface.
+ */
+
 #pragma once
 #include "../moduleLib.h"
 
