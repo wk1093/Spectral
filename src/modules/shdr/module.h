@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 /// @cond DOXYGEN_OMIT
-const char* combine_strs_with_delim(const char* a, const char* b, char delim) {
+inline const char* combine_strs_with_delim(const char* a, const char* b, char delim) {
     size_t len = strlen(a) + strlen(b) + 2;
     char* out = (char*)malloc(len);
     snprintf(out, len, "%s%c%s", a, delim, b);
@@ -49,7 +49,7 @@ public:
      * @note This function will compile from any type of shader file (glsl, hlsl, spsl, etc.) depending on which implementation is used.
      * @see #sShaderType
      */
-    sShader compile(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef=nullptr) {
+    inline sShader compile(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef=nullptr) {
         return internal_compile(gfxm, path, type, vertDef);
     }
 
@@ -66,7 +66,7 @@ public:
      * @return The created shader.
      * @see ShaderModule::compile
      */
-    sShader createShader(GraphicsModule* gfxm, const char* data, size_t len, sShaderType type, sVertexDefinition* vertDef=nullptr) {
+    inline sShader createShader(GraphicsModule* gfxm, const char* data, size_t len, sShaderType type, sVertexDefinition* vertDef=nullptr) {
         return internal_createShader(gfxm, data, len, type, vertDef);
     }
 
@@ -80,7 +80,7 @@ public:
      * @see #GraphicsModule::getShaderType
      * @todo update this once the graphics module has docs
      */
-    explicit ShaderModule(const char* dynlib, const char* dynp2) : Module(combine_strs_with_delim(dynlib, dynp2, '_'), "shdr") {
+    inline explicit ShaderModule(const char* dynlib, const char* dynp2) : Module(combine_strs_with_delim(dynlib, dynp2, '_'), "shdr") {
         internal_compile = (shader::Compile)lib.getSymbol("compile");
         internal_createShader = (shader::CreateShader)lib.getSymbol("createShader");
     }

@@ -17,7 +17,7 @@
 `struct `[`DynamicLibrary`](#struct_dynamic_library) | 
 `struct `[`DynamicScript`](#struct_dynamic_script) | 
 `struct `[`GameContext`](#struct_game_context) | 
-`struct `[`GraphicsModule`](#struct_graphics_module) | 
+`struct `[`GraphicsModule`](#struct_graphics_module) | Graphics module class.
 `struct `[`mat4.__unnamed14__`](#structmat4_8____unnamed14____) | 
 `struct `[`Module`](#struct_module) | 
 `struct `[`sAudioClip`](#structs_audio_clip) | 
@@ -41,17 +41,17 @@
 `struct `[`sInternalTexture`](#structs_internal_texture) | 
 `struct `[`sInternalUniforms`](#structs_internal_uniforms) | 
 `struct `[`sIUIGlobalState`](#structs_i_u_i_global_state) | 
-`struct `[`sMesh`](#structs_mesh) | 
+`struct `[`sMesh`](#structs_mesh) | Mesh structure.
 `struct `[`sModelTransform`](#structs_model_transform) | 
-`struct `[`sShader`](#structs_shader) | 
-`struct `[`sShaderProgram`](#structs_shader_program) | 
+`struct `[`sShader`](#structs_shader) | Shader structure.
+`struct `[`sShaderProgram`](#structs_shader_program) | Shader program structure.
 `struct `[`sText`](#structs_text) | 
-`struct `[`sTexture`](#structs_texture) | 
-`struct `[`sTextureDefinition`](#structs_texture_definition) | 
-`struct `[`sUniformDefinition`](#structs_uniform_definition) | 
-`struct `[`sUniformElement`](#structs_uniform_element) | 
-`struct `[`sUniforms`](#structs_uniforms) | 
-`struct `[`sVertexDefinition`](#structs_vertex_definition) | 
+`struct `[`sTexture`](#structs_texture) | Texture structure.
+`struct `[`sTextureDefinition`](#structs_texture_definition) | Texture definition structure.
+`struct `[`sUniformDefinition`](#structs_uniform_definition) | Uniform definition structure.
+`struct `[`sUniformElement`](#structs_uniform_element) | Uniform element structure.
+`struct `[`sUniforms`](#structs_uniforms) | Uniforms structure.
+`struct `[`sVertexDefinition`](#structs_vertex_definition) | A single abstract vertex definition.
 `struct `[`swAudio`](#structsw_audio) | 
 `struct `[`swEtc`](#structsw_etc) | 
 `struct `[`swGame`](#structsw_game) | 
@@ -356,23 +356,23 @@ struct AudioModule
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public sMesh `[`mesh`](#struct_cube_1a6c1dc294ff76af6fdd4d641a2b33965b) | 
+`public `[`sMesh`](#structs_mesh)` `[`mesh`](#struct_cube_1a6c1dc294ff76af6fdd4d641a2b33965b) | 
 `public sModelTransform `[`transform`](#struct_cube_1a8a1cbec52faf8f795496db25cfda86e2) | 
-`public inline  `[`Cube`](#struct_cube_1a45ed3e8cf03d53a4437ba7b68641b792)`(GraphicsModule * gfxm,sShader shader)` | 
-`public inline  `[`Cube`](#struct_cube_1a12fffee5de1a903730181063e7306366)`(GraphicsModule * gfxm,sShader shader,vec3 pos)` | 
-`public inline void `[`draw`](#struct_cube_1aa45b4c6de8d3b2c6521f7c8577685da9)`(GraphicsModule * gfxm)` | 
+`public inline  `[`Cube`](#struct_cube_1a45ed3e8cf03d53a4437ba7b68641b792)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,`[`sShader`](#structs_shader)` shader)` | 
+`public inline  `[`Cube`](#struct_cube_1a12fffee5de1a903730181063e7306366)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,`[`sShader`](#structs_shader)` shader,vec3 pos)` | 
+`public inline void `[`draw`](#struct_cube_1aa45b4c6de8d3b2c6521f7c8577685da9)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm)` | 
 
 ## Members
 
-#### `public sMesh `[`mesh`](#struct_cube_1a6c1dc294ff76af6fdd4d641a2b33965b) <a id="struct_cube_1a6c1dc294ff76af6fdd4d641a2b33965b"></a>
+#### `public `[`sMesh`](#structs_mesh)` `[`mesh`](#struct_cube_1a6c1dc294ff76af6fdd4d641a2b33965b) <a id="struct_cube_1a6c1dc294ff76af6fdd4d641a2b33965b"></a>
 
 #### `public sModelTransform `[`transform`](#struct_cube_1a8a1cbec52faf8f795496db25cfda86e2) <a id="struct_cube_1a8a1cbec52faf8f795496db25cfda86e2"></a>
 
-#### `public inline  `[`Cube`](#struct_cube_1a45ed3e8cf03d53a4437ba7b68641b792)`(GraphicsModule * gfxm,sShader shader)` <a id="struct_cube_1a45ed3e8cf03d53a4437ba7b68641b792"></a>
+#### `public inline  `[`Cube`](#struct_cube_1a45ed3e8cf03d53a4437ba7b68641b792)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,`[`sShader`](#structs_shader)` shader)` <a id="struct_cube_1a45ed3e8cf03d53a4437ba7b68641b792"></a>
 
-#### `public inline  `[`Cube`](#struct_cube_1a12fffee5de1a903730181063e7306366)`(GraphicsModule * gfxm,sShader shader,vec3 pos)` <a id="struct_cube_1a12fffee5de1a903730181063e7306366"></a>
+#### `public inline  `[`Cube`](#struct_cube_1a12fffee5de1a903730181063e7306366)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,`[`sShader`](#structs_shader)` shader,vec3 pos)` <a id="struct_cube_1a12fffee5de1a903730181063e7306366"></a>
 
-#### `public inline void `[`draw`](#struct_cube_1aa45b4c6de8d3b2c6521f7c8577685da9)`(GraphicsModule * gfxm)` <a id="struct_cube_1aa45b4c6de8d3b2c6521f7c8577685da9"></a>
+#### `public inline void `[`draw`](#struct_cube_1aa45b4c6de8d3b2c6521f7c8577685da9)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm)` <a id="struct_cube_1aa45b4c6de8d3b2c6521f7c8577685da9"></a>
 
 # struct `DynamicLibrary` <a id="struct_dynamic_library"></a>
 
@@ -426,7 +426,7 @@ struct AudioModule
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
 `public `[`WindowModule`](#struct_window_module)` `[`winm`](#struct_game_context_1adf7f1d5403d8c252c64e942e61cea40e) | 
-`public GraphicsModule `[`gfxm`](#struct_game_context_1a98856d42044a8ad116a14ff4b0691dde) | 
+`public `[`GraphicsModule`](#struct_graphics_module)` `[`gfxm`](#struct_game_context_1a98856d42044a8ad116a14ff4b0691dde) | 
 `public `[`ShaderModule`](#struct_shader_module)` `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) | 
 `public TextureModule `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) | 
 `public TextModule `[`textm`](#struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87) | 
@@ -436,7 +436,7 @@ struct AudioModule
 
 #### `public `[`WindowModule`](#struct_window_module)` `[`winm`](#struct_game_context_1adf7f1d5403d8c252c64e942e61cea40e) <a id="struct_game_context_1adf7f1d5403d8c252c64e942e61cea40e"></a>
 
-#### `public GraphicsModule `[`gfxm`](#struct_game_context_1a98856d42044a8ad116a14ff4b0691dde) <a id="struct_game_context_1a98856d42044a8ad116a14ff4b0691dde"></a>
+#### `public `[`GraphicsModule`](#struct_graphics_module)` `[`gfxm`](#struct_game_context_1a98856d42044a8ad116a14ff4b0691dde) <a id="struct_game_context_1a98856d42044a8ad116a14ff4b0691dde"></a>
 
 #### `public `[`ShaderModule`](#struct_shader_module)` `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) <a id="struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c"></a>
 
@@ -453,120 +453,428 @@ struct GraphicsModule
   : public Module
 ```  
 
+Graphics module class.
+
+This class represents the graphics module that is used to render graphics to the screen. It contains all the functions that are used to create and use shaders, meshes, and textures. It is used to initialize the graphics module and create graphics objects.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public graphics::SetClearColor `[`setClearColor`](#struct_graphics_module_1a279b72496efad30d9e33cddb39af1135) | 
-`public graphics::Clear `[`clear`](#struct_graphics_module_1a2cabe6734a4b364881da939a80a45c89) | 
+`public graphics::SetClearColor `[`internal_setClearColor`](#struct_graphics_module_1a5d0aeb033c68ea792b766a1747429a11) | 
+`public graphics::Clear `[`internal_clear`](#struct_graphics_module_1ad57d9ccec2166fd408c946bf0da633be) | 
 `public graphics::Init `[`internal_init`](#struct_graphics_module_1a668f3c9f78a0ed82fd5eb83ab66be0bd) | 
 `public graphics::CreateMesh `[`internal_createMesh`](#struct_graphics_module_1a26c1d0c149e6190e3c754a03ca07e16a) | 
-`public graphics::DrawMesh `[`drawMesh`](#struct_graphics_module_1a6f228c3c9ea3e354de67019c16797dd9) | 
-`public graphics::UseShaderProgram `[`useShaderProgram`](#struct_graphics_module_1a97e1e94191aacb4661a1b8c072bb113e) | 
+`public graphics::DrawMesh `[`internal_drawMesh`](#struct_graphics_module_1abb3d1bf943838c36fe248e79961bd4c3) | 
+`public graphics::UseShaderProgram `[`internal_useShaderProgram`](#struct_graphics_module_1ab31c7a3574c3d5a43eae68a64713c72e) | 
 `public graphics::CreateShaderProgram `[`internal_createShaderProgram`](#struct_graphics_module_1a89830e249767eba190441aaa2f7a83f3) | 
 `public graphics::CreateShader `[`internal_createShader`](#struct_graphics_module_1a36fbb200db3fb5211a8eb621d15ae528) | 
-`public graphics::Present `[`present`](#struct_graphics_module_1a28aae4d0c3728281805a0110607e5eff) | 
-`public graphics::GetShaderType `[`getShaderType`](#struct_graphics_module_1ac4c69e437b85473639fdbf13dedc715c) | 
-`public graphics::CreateUniforms `[`createUniforms`](#struct_graphics_module_1a5ce46229a39848acea504d6b2230642e) | 
-`public graphics::SetUniforms `[`setUniforms`](#struct_graphics_module_1ab07e131555770050bd52557874e558cd) | 
-`public graphics::CreateTexture `[`createTexture`](#struct_graphics_module_1a75b4a932a2654a200207760126b57903) | 
-`public graphics::UseTexture `[`useTexture`](#struct_graphics_module_1a4e7576dffa3d163a202cfab2ab9c613a) | 
-`public graphics::FreeTexture `[`freeTexture`](#struct_graphics_module_1ab69da4761d2395cafaddd1b14c5d4e82) | 
-`public graphics::FreeShader `[`freeShader`](#struct_graphics_module_1ad729cdbb0dd3b8b5e2e1e8912fae4e31) | 
-`public graphics::FreeShaderProgram `[`freeShaderProgram`](#struct_graphics_module_1abdb61ff5117e75476144a0e8a5f42def) | 
-`public graphics::FreeMesh `[`freeMesh`](#struct_graphics_module_1a26394e8a63d10e0a28577f2645e5c044) | 
-`public graphics::FreeUniforms `[`freeUniforms`](#struct_graphics_module_1a1e35f39a4593b21f84cad67e6fc000e7) | 
-`public graphics::Destroy `[`destroy`](#struct_graphics_module_1a068b0417ad6e0c7e2b99bb855a2b6e1e) | 
-`public graphics::SetScissor `[`setScissor`](#struct_graphics_module_1a1e2429e19d209d6a12b7f6873666c56c) | 
-`public graphics::EnableScissor `[`enableScissor`](#struct_graphics_module_1a668bb0e1708a940d16702dd854bab741) | 
-`public graphics::DisableScissor `[`disableScissor`](#struct_graphics_module_1a7c88993a9e862633e143a6c5845b9fe1) | 
+`public graphics::Present `[`internal_present`](#struct_graphics_module_1a14a027ed632040b54ddeee696b155532) | 
+`public graphics::GetShaderType `[`internal_getShaderType`](#struct_graphics_module_1ab1048236f83d7ea4814cfa0c52e15237) | 
+`public graphics::CreateUniforms `[`internal_createUniforms`](#struct_graphics_module_1a2d43630aeefc344255604c5e62cf0ec0) | 
+`public graphics::SetUniforms `[`internal_setUniforms`](#struct_graphics_module_1ad36b5c748a5ab398d8aa1d3e5d7ecf6e) | 
+`public graphics::CreateTexture `[`internal_createTexture`](#struct_graphics_module_1a92e280f06397e6cf4abfe035c03e3c01) | 
+`public graphics::UseTexture `[`internal_useTexture`](#struct_graphics_module_1aaf2cb447a663a329adbecdd65f2d6358) | 
+`public graphics::FreeTexture `[`internal_freeTexture`](#struct_graphics_module_1a789b5d0061f28da2427973e1d12e1df3) | 
+`public graphics::FreeShader `[`internal_freeShader`](#struct_graphics_module_1a3fc289cc7477f24d33c3bdbb9573eb7b) | 
+`public graphics::FreeShaderProgram `[`internal_freeShaderProgram`](#struct_graphics_module_1a440b03f6b63a736351978ef1c11408a6) | 
+`public graphics::FreeMesh `[`internal_freeMesh`](#struct_graphics_module_1a0a82429e31b837d664488b3e18404072) | 
+`public graphics::FreeUniforms `[`internal_freeUniforms`](#struct_graphics_module_1a9c384efb8ab65b0e3c7c8fcbc83e131c) | 
+`public graphics::Destroy `[`internal_destroy`](#struct_graphics_module_1a731f405b7b684051aa8e435902aef9c6) | 
+`public graphics::SetScissor `[`internal_setScissor`](#struct_graphics_module_1a169762508541ab3f19bb9e63ee61a69e) | 
+`public graphics::EnableScissor `[`internal_enableScissor`](#struct_graphics_module_1a7ae011d215a248275059f75f1394518c) | 
+`public graphics::DisableScissor `[`internal_disableScissor`](#struct_graphics_module_1abe09ca32da9de224f1f07fff6dbf1eeb) | 
 `public `[`sWindow`](#structs_window)` * `[`win`](#struct_graphics_module_1a64839384fd14c416875122e01dc37c28) | 
-`public inline void `[`init`](#struct_graphics_module_1a72054b7c7196a3d2e978a1656451b7ff)`(`[`sWindow`](#structs_window)` * win)` | 
-`public inline sMesh `[`createMesh`](#struct_graphics_module_1a2080f1c1f12e7fe2b86045e099820390)`(sShader vertexShader,void * vertices,size_t vertexCount,sIndex * indices,size_t indexCount)` | 
-`public inline sShaderProgram `[`createShaderProgram`](#struct_graphics_module_1a1291b5f0b13b4883ed273b2f41501bed)`(sShader * shaders,size_t count)` | 
-`public inline sShaderProgram `[`createShaderProgram`](#struct_graphics_module_1a5364ee0b194d3e4c440c9f3fd79a0cec)`(std::initializer_list< sShader > shaders)` | 
-`public inline sVertexDefinition * `[`createVertexDefinition`](#struct_graphics_module_1a0e870b8170deb3edf109c555d621a059)`(int * elements,size_t count)` | 
-`public inline sVertexDefinition * `[`createVertexDefinition`](#struct_graphics_module_1abcd20d04203631a0165af2d7a7ea6791)`(std::initializer_list< int > elements)` | 
-`public inline void `[`freeVertexDefinition`](#struct_graphics_module_1a5edbde39320040e354485c88d17fcba8)`(sVertexDefinition * def)` | 
-`public inline sShader `[`createShader`](#struct_graphics_module_1aeb51f6bdb58db5d47491dc2234c54c2f)`(const char * source,sShaderType type,sVertexDefinition * vertDef)` | 
-`public inline sShader `[`createShader`](#struct_graphics_module_1ace68c26e35a1c72e5edbcc14ba6200c1)`(const char * source,sShaderType type)` | 
-`public inline sShader `[`loadShader`](#struct_graphics_module_1ad4324b10c7a528fc7bd8b3046ebb373d)`(const char * path,sShaderType type,sVertexDefinition * vertDef)` | 
-`public inline sShader `[`loadShader`](#struct_graphics_module_1a5cdae3ca4467aa4b5d234c632617e1a6)`(const char * path,sShaderType type)` | 
-`public inline  explicit `[`GraphicsModule`](#struct_graphics_module_1a4efb7bf742a8d87e5cc043716c310657)`(const char * dynlib)` | 
+`public inline void `[`init`](#struct_graphics_module_1a72054b7c7196a3d2e978a1656451b7ff)`(`[`sWindow`](#structs_window)` * win)` | Initialize the graphics module.
+`public inline void `[`setClearColor`](#struct_graphics_module_1a88a229195b716d94ab78293793d8d674)`(float r,float g,float b,float a)` | Set the clear color for the graphics module.
+`public inline void `[`clear`](#struct_graphics_module_1aac7df8fed5ff4e0e08fe3b00d5dc9367)`()` | Clear the screen.
+`public inline void `[`present`](#struct_graphics_module_1a75745dcb3eea40c69ccb76436af9dfd2)`()` | Present the rendered frame to the screen.
+`public inline void `[`setScissor`](#struct_graphics_module_1a4a1a7bfac82e8d1386e42715fb3faf65)`(int x,int y,int width,int height)` | Set the scissor rectangle for rendering.
+`public inline void `[`enableScissor`](#struct_graphics_module_1a3ab028b9d6531ed4625089aeff8a90b3)`()` | Enable the scissor rectangle for rendering.
+`public inline void `[`disableScissor`](#struct_graphics_module_1a14ccfafb0a35746d6fa545465b3ce8e8)`()` | Disable the scissor rectangle for rendering.
+`public inline void `[`useShaderProgram`](#struct_graphics_module_1ae91c58bf252479f295203992abc89544)`(`[`sShaderProgram`](#structs_shader_program)` program)` | Use a shader program for rendering.
+`public inline void `[`drawMesh`](#struct_graphics_module_1a64d05631f87ad6b1bcc2819867531dd7)`(`[`sMesh`](#structs_mesh)` mesh)` | Draw a mesh to the screen.
+`public inline void `[`freeMesh`](#struct_graphics_module_1a68fb50ee03efd2df6ec267590ab53484)`(`[`sMesh`](#structs_mesh)` mesh)` | Free a mesh.
+`public inline void `[`freeShader`](#struct_graphics_module_1a0fc404fb66e2655dd396eb0f525de5b2)`(`[`sShader`](#structs_shader)` shader)` | Free a shader.
+`public inline void `[`freeShaderProgram`](#struct_graphics_module_1af5ca2086152703a32c69414b11e6cc57)`(`[`sShaderProgram`](#structs_shader_program)` program)` | Free a shader program.
+`public inline void `[`freeUniforms`](#struct_graphics_module_1a3f4db4305879aaf22e35fa5c58dfd968)`(`[`sUniforms`](#structs_uniforms)` uniforms)` | Free a uniforms object.
+`public inline void `[`freeTexture`](#struct_graphics_module_1a809f3292e3f94c6702dbb2020143f38d)`(`[`sTexture`](#structs_texture)` texture)` | Free a texture.
+`public inline void `[`destroy`](#struct_graphics_module_1a472b7333e889e2c0510512a1a41835d5)`()` | Destroy the graphics module.
+`public inline `[`sTexture`](#structs_texture)` `[`createTexture`](#struct_graphics_module_1a2bdacd3c01063fd53d832f3a29b26477)`(`[`sTextureDefinition`](#structs_texture_definition)` def)` | Create a texture from a texture definition.
+`public inline `[`sUniforms`](#structs_uniforms)` `[`createUniforms`](#struct_graphics_module_1a2f08045dbfe589f985952d13f82fd284)`(`[`sShaderProgram`](#structs_shader_program)` program,`[`sUniformDefinition`](#structs_uniform_definition)` def)` | Create a uniforms object from a shader program and a uniform definition.
+`public inline void `[`setUniforms`](#struct_graphics_module_1a51fdd18499e304a05d7ae1886b868a4f)`(`[`sUniforms`](#structs_uniforms)` uniforms,void * data)` | Set the uniforms for a shader program.
+`public inline void `[`useTexture`](#struct_graphics_module_1a0f53efb3be6f4f0d50a3a5355df62d78)`(`[`sShaderProgram`](#structs_shader_program)` program,`[`sTexture`](#structs_texture)` texture,const char * name)` | Use a texture in a shader program.
+`public inline const char * `[`getShaderType`](#struct_graphics_module_1abdb3a71f5aa4c1baa783a4d8cf57a9ed)`()` | Get the shader type as a string.
+`public inline `[`sMesh`](#structs_mesh)` `[`createMesh`](#struct_graphics_module_1a2080f1c1f12e7fe2b86045e099820390)`(`[`sShader`](#structs_shader)` vertexShader,void * vertices,size_t vertexCount,`[`sIndex`](#gfx_2module_8h_1aeec0f5b0bda581fc5280ed5a264d3da9)` * indices,size_t indexCount)` | Create a mesh from a vertex shader, vertices, and indices.
+`public inline `[`sShaderProgram`](#structs_shader_program)` `[`createShaderProgram`](#struct_graphics_module_1a1291b5f0b13b4883ed273b2f41501bed)`(`[`sShader`](#structs_shader)` * shaders,size_t count)` | Create a shader program from an array of shaders.
+`public inline `[`sShaderProgram`](#structs_shader_program)` `[`createShaderProgram`](#struct_graphics_module_1a5364ee0b194d3e4c440c9f3fd79a0cec)`(std::initializer_list< `[`sShader`](#structs_shader)` > shaders)` | Create a shader program from an initializer list of shaders.
+`public inline `[`sVertexDefinition`](#structs_vertex_definition)` * `[`createVertexDefinition`](#struct_graphics_module_1a0e870b8170deb3edf109c555d621a059)`(int * elements,size_t count)` | Create a vertex definition from an array of elements.
+`public inline `[`sVertexDefinition`](#structs_vertex_definition)` * `[`createVertexDefinition`](#struct_graphics_module_1abcd20d04203631a0165af2d7a7ea6791)`(std::initializer_list< int > elements)` | Create a vertex definition from an initializer list of elements.
+`public inline void `[`freeVertexDefinition`](#struct_graphics_module_1a5edbde39320040e354485c88d17fcba8)`(`[`sVertexDefinition`](#structs_vertex_definition)` * def)` | Free a vertex definition.
+`public inline `[`sShader`](#structs_shader)` `[`createShader`](#struct_graphics_module_1ab53c3f4f1d6592726561e8072389377e)`(const char * source,`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` type,`[`sVertexDefinition`](#structs_vertex_definition)` * vertDef)` | Create a shader from a source string and shader type.
+`public inline `[`sShader`](#structs_shader)` `[`loadShader`](#struct_graphics_module_1a31e7e5f097145854b41ba2202ab86cd5)`(const char * path,`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` type,`[`sVertexDefinition`](#structs_vertex_definition)` * vertDef)` | Create a shader from a file path and shader type.
+`public inline  explicit `[`GraphicsModule`](#struct_graphics_module_1a4efb7bf742a8d87e5cc043716c310657)`(const char * dynlib)` | Construct a graphics module from a dynamic library.
 
 ## Members
 
-#### `public graphics::SetClearColor `[`setClearColor`](#struct_graphics_module_1a279b72496efad30d9e33cddb39af1135) <a id="struct_graphics_module_1a279b72496efad30d9e33cddb39af1135"></a>
+#### `public graphics::SetClearColor `[`internal_setClearColor`](#struct_graphics_module_1a5d0aeb033c68ea792b766a1747429a11) <a id="struct_graphics_module_1a5d0aeb033c68ea792b766a1747429a11"></a>
 
-#### `public graphics::Clear `[`clear`](#struct_graphics_module_1a2cabe6734a4b364881da939a80a45c89) <a id="struct_graphics_module_1a2cabe6734a4b364881da939a80a45c89"></a>
+#### `public graphics::Clear `[`internal_clear`](#struct_graphics_module_1ad57d9ccec2166fd408c946bf0da633be) <a id="struct_graphics_module_1ad57d9ccec2166fd408c946bf0da633be"></a>
 
 #### `public graphics::Init `[`internal_init`](#struct_graphics_module_1a668f3c9f78a0ed82fd5eb83ab66be0bd) <a id="struct_graphics_module_1a668f3c9f78a0ed82fd5eb83ab66be0bd"></a>
 
 #### `public graphics::CreateMesh `[`internal_createMesh`](#struct_graphics_module_1a26c1d0c149e6190e3c754a03ca07e16a) <a id="struct_graphics_module_1a26c1d0c149e6190e3c754a03ca07e16a"></a>
 
-#### `public graphics::DrawMesh `[`drawMesh`](#struct_graphics_module_1a6f228c3c9ea3e354de67019c16797dd9) <a id="struct_graphics_module_1a6f228c3c9ea3e354de67019c16797dd9"></a>
+#### `public graphics::DrawMesh `[`internal_drawMesh`](#struct_graphics_module_1abb3d1bf943838c36fe248e79961bd4c3) <a id="struct_graphics_module_1abb3d1bf943838c36fe248e79961bd4c3"></a>
 
-#### `public graphics::UseShaderProgram `[`useShaderProgram`](#struct_graphics_module_1a97e1e94191aacb4661a1b8c072bb113e) <a id="struct_graphics_module_1a97e1e94191aacb4661a1b8c072bb113e"></a>
+#### `public graphics::UseShaderProgram `[`internal_useShaderProgram`](#struct_graphics_module_1ab31c7a3574c3d5a43eae68a64713c72e) <a id="struct_graphics_module_1ab31c7a3574c3d5a43eae68a64713c72e"></a>
 
 #### `public graphics::CreateShaderProgram `[`internal_createShaderProgram`](#struct_graphics_module_1a89830e249767eba190441aaa2f7a83f3) <a id="struct_graphics_module_1a89830e249767eba190441aaa2f7a83f3"></a>
 
 #### `public graphics::CreateShader `[`internal_createShader`](#struct_graphics_module_1a36fbb200db3fb5211a8eb621d15ae528) <a id="struct_graphics_module_1a36fbb200db3fb5211a8eb621d15ae528"></a>
 
-#### `public graphics::Present `[`present`](#struct_graphics_module_1a28aae4d0c3728281805a0110607e5eff) <a id="struct_graphics_module_1a28aae4d0c3728281805a0110607e5eff"></a>
+#### `public graphics::Present `[`internal_present`](#struct_graphics_module_1a14a027ed632040b54ddeee696b155532) <a id="struct_graphics_module_1a14a027ed632040b54ddeee696b155532"></a>
 
-#### `public graphics::GetShaderType `[`getShaderType`](#struct_graphics_module_1ac4c69e437b85473639fdbf13dedc715c) <a id="struct_graphics_module_1ac4c69e437b85473639fdbf13dedc715c"></a>
+#### `public graphics::GetShaderType `[`internal_getShaderType`](#struct_graphics_module_1ab1048236f83d7ea4814cfa0c52e15237) <a id="struct_graphics_module_1ab1048236f83d7ea4814cfa0c52e15237"></a>
 
-#### `public graphics::CreateUniforms `[`createUniforms`](#struct_graphics_module_1a5ce46229a39848acea504d6b2230642e) <a id="struct_graphics_module_1a5ce46229a39848acea504d6b2230642e"></a>
+#### `public graphics::CreateUniforms `[`internal_createUniforms`](#struct_graphics_module_1a2d43630aeefc344255604c5e62cf0ec0) <a id="struct_graphics_module_1a2d43630aeefc344255604c5e62cf0ec0"></a>
 
-#### `public graphics::SetUniforms `[`setUniforms`](#struct_graphics_module_1ab07e131555770050bd52557874e558cd) <a id="struct_graphics_module_1ab07e131555770050bd52557874e558cd"></a>
+#### `public graphics::SetUniforms `[`internal_setUniforms`](#struct_graphics_module_1ad36b5c748a5ab398d8aa1d3e5d7ecf6e) <a id="struct_graphics_module_1ad36b5c748a5ab398d8aa1d3e5d7ecf6e"></a>
 
-#### `public graphics::CreateTexture `[`createTexture`](#struct_graphics_module_1a75b4a932a2654a200207760126b57903) <a id="struct_graphics_module_1a75b4a932a2654a200207760126b57903"></a>
+#### `public graphics::CreateTexture `[`internal_createTexture`](#struct_graphics_module_1a92e280f06397e6cf4abfe035c03e3c01) <a id="struct_graphics_module_1a92e280f06397e6cf4abfe035c03e3c01"></a>
 
-#### `public graphics::UseTexture `[`useTexture`](#struct_graphics_module_1a4e7576dffa3d163a202cfab2ab9c613a) <a id="struct_graphics_module_1a4e7576dffa3d163a202cfab2ab9c613a"></a>
+#### `public graphics::UseTexture `[`internal_useTexture`](#struct_graphics_module_1aaf2cb447a663a329adbecdd65f2d6358) <a id="struct_graphics_module_1aaf2cb447a663a329adbecdd65f2d6358"></a>
 
-#### `public graphics::FreeTexture `[`freeTexture`](#struct_graphics_module_1ab69da4761d2395cafaddd1b14c5d4e82) <a id="struct_graphics_module_1ab69da4761d2395cafaddd1b14c5d4e82"></a>
+#### `public graphics::FreeTexture `[`internal_freeTexture`](#struct_graphics_module_1a789b5d0061f28da2427973e1d12e1df3) <a id="struct_graphics_module_1a789b5d0061f28da2427973e1d12e1df3"></a>
 
-#### `public graphics::FreeShader `[`freeShader`](#struct_graphics_module_1ad729cdbb0dd3b8b5e2e1e8912fae4e31) <a id="struct_graphics_module_1ad729cdbb0dd3b8b5e2e1e8912fae4e31"></a>
+#### `public graphics::FreeShader `[`internal_freeShader`](#struct_graphics_module_1a3fc289cc7477f24d33c3bdbb9573eb7b) <a id="struct_graphics_module_1a3fc289cc7477f24d33c3bdbb9573eb7b"></a>
 
-#### `public graphics::FreeShaderProgram `[`freeShaderProgram`](#struct_graphics_module_1abdb61ff5117e75476144a0e8a5f42def) <a id="struct_graphics_module_1abdb61ff5117e75476144a0e8a5f42def"></a>
+#### `public graphics::FreeShaderProgram `[`internal_freeShaderProgram`](#struct_graphics_module_1a440b03f6b63a736351978ef1c11408a6) <a id="struct_graphics_module_1a440b03f6b63a736351978ef1c11408a6"></a>
 
-#### `public graphics::FreeMesh `[`freeMesh`](#struct_graphics_module_1a26394e8a63d10e0a28577f2645e5c044) <a id="struct_graphics_module_1a26394e8a63d10e0a28577f2645e5c044"></a>
+#### `public graphics::FreeMesh `[`internal_freeMesh`](#struct_graphics_module_1a0a82429e31b837d664488b3e18404072) <a id="struct_graphics_module_1a0a82429e31b837d664488b3e18404072"></a>
 
-#### `public graphics::FreeUniforms `[`freeUniforms`](#struct_graphics_module_1a1e35f39a4593b21f84cad67e6fc000e7) <a id="struct_graphics_module_1a1e35f39a4593b21f84cad67e6fc000e7"></a>
+#### `public graphics::FreeUniforms `[`internal_freeUniforms`](#struct_graphics_module_1a9c384efb8ab65b0e3c7c8fcbc83e131c) <a id="struct_graphics_module_1a9c384efb8ab65b0e3c7c8fcbc83e131c"></a>
 
-#### `public graphics::Destroy `[`destroy`](#struct_graphics_module_1a068b0417ad6e0c7e2b99bb855a2b6e1e) <a id="struct_graphics_module_1a068b0417ad6e0c7e2b99bb855a2b6e1e"></a>
+#### `public graphics::Destroy `[`internal_destroy`](#struct_graphics_module_1a731f405b7b684051aa8e435902aef9c6) <a id="struct_graphics_module_1a731f405b7b684051aa8e435902aef9c6"></a>
 
-#### `public graphics::SetScissor `[`setScissor`](#struct_graphics_module_1a1e2429e19d209d6a12b7f6873666c56c) <a id="struct_graphics_module_1a1e2429e19d209d6a12b7f6873666c56c"></a>
+#### `public graphics::SetScissor `[`internal_setScissor`](#struct_graphics_module_1a169762508541ab3f19bb9e63ee61a69e) <a id="struct_graphics_module_1a169762508541ab3f19bb9e63ee61a69e"></a>
 
-#### `public graphics::EnableScissor `[`enableScissor`](#struct_graphics_module_1a668bb0e1708a940d16702dd854bab741) <a id="struct_graphics_module_1a668bb0e1708a940d16702dd854bab741"></a>
+#### `public graphics::EnableScissor `[`internal_enableScissor`](#struct_graphics_module_1a7ae011d215a248275059f75f1394518c) <a id="struct_graphics_module_1a7ae011d215a248275059f75f1394518c"></a>
 
-#### `public graphics::DisableScissor `[`disableScissor`](#struct_graphics_module_1a7c88993a9e862633e143a6c5845b9fe1) <a id="struct_graphics_module_1a7c88993a9e862633e143a6c5845b9fe1"></a>
+#### `public graphics::DisableScissor `[`internal_disableScissor`](#struct_graphics_module_1abe09ca32da9de224f1f07fff6dbf1eeb) <a id="struct_graphics_module_1abe09ca32da9de224f1f07fff6dbf1eeb"></a>
 
 #### `public `[`sWindow`](#structs_window)` * `[`win`](#struct_graphics_module_1a64839384fd14c416875122e01dc37c28) <a id="struct_graphics_module_1a64839384fd14c416875122e01dc37c28"></a>
 
 #### `public inline void `[`init`](#struct_graphics_module_1a72054b7c7196a3d2e978a1656451b7ff)`(`[`sWindow`](#structs_window)` * win)` <a id="struct_graphics_module_1a72054b7c7196a3d2e978a1656451b7ff"></a>
 
-#### `public inline sMesh `[`createMesh`](#struct_graphics_module_1a2080f1c1f12e7fe2b86045e099820390)`(sShader vertexShader,void * vertices,size_t vertexCount,sIndex * indices,size_t indexCount)` <a id="struct_graphics_module_1a2080f1c1f12e7fe2b86045e099820390"></a>
+Initialize the graphics module.
 
-#### `public inline sShaderProgram `[`createShaderProgram`](#struct_graphics_module_1a1291b5f0b13b4883ed273b2f41501bed)`(sShader * shaders,size_t count)` <a id="struct_graphics_module_1a1291b5f0b13b4883ed273b2f41501bed"></a>
+This function initializes the graphics module with the specified window.
 
-#### `public inline sShaderProgram `[`createShaderProgram`](#struct_graphics_module_1a5364ee0b194d3e4c440c9f3fd79a0cec)`(std::initializer_list< sShader > shaders)` <a id="struct_graphics_module_1a5364ee0b194d3e4c440c9f3fd79a0cec"></a>
+#### Parameters
+* `win` The window to initialize the graphics module with.
 
-#### `public inline sVertexDefinition * `[`createVertexDefinition`](#struct_graphics_module_1a0e870b8170deb3edf109c555d621a059)`(int * elements,size_t count)` <a id="struct_graphics_module_1a0e870b8170deb3edf109c555d621a059"></a>
+#### `public inline void `[`setClearColor`](#struct_graphics_module_1a88a229195b716d94ab78293793d8d674)`(float r,float g,float b,float a)` <a id="struct_graphics_module_1a88a229195b716d94ab78293793d8d674"></a>
 
-#### `public inline sVertexDefinition * `[`createVertexDefinition`](#struct_graphics_module_1abcd20d04203631a0165af2d7a7ea6791)`(std::initializer_list< int > elements)` <a id="struct_graphics_module_1abcd20d04203631a0165af2d7a7ea6791"></a>
+Set the clear color for the graphics module.
 
-#### `public inline void `[`freeVertexDefinition`](#struct_graphics_module_1a5edbde39320040e354485c88d17fcba8)`(sVertexDefinition * def)` <a id="struct_graphics_module_1a5edbde39320040e354485c88d17fcba8"></a>
+This function sets the clear color for the graphics module. This color is used to clear the screen before rendering.
 
-#### `public inline sShader `[`createShader`](#struct_graphics_module_1aeb51f6bdb58db5d47491dc2234c54c2f)`(const char * source,sShaderType type,sVertexDefinition * vertDef)` <a id="struct_graphics_module_1aeb51f6bdb58db5d47491dc2234c54c2f"></a>
+#### Parameters
+* `r` The red component of the clear color (0-1). 
 
-#### `public inline sShader `[`createShader`](#struct_graphics_module_1ace68c26e35a1c72e5edbcc14ba6200c1)`(const char * source,sShaderType type)` <a id="struct_graphics_module_1ace68c26e35a1c72e5edbcc14ba6200c1"></a>
+* `g` The green component of the clear color (0-1). 
 
-#### `public inline sShader `[`loadShader`](#struct_graphics_module_1ad4324b10c7a528fc7bd8b3046ebb373d)`(const char * path,sShaderType type,sVertexDefinition * vertDef)` <a id="struct_graphics_module_1ad4324b10c7a528fc7bd8b3046ebb373d"></a>
+* `b` The blue component of the clear color (0-1). 
 
-#### `public inline sShader `[`loadShader`](#struct_graphics_module_1a5cdae3ca4467aa4b5d234c632617e1a6)`(const char * path,sShaderType type)` <a id="struct_graphics_module_1a5cdae3ca4467aa4b5d234c632617e1a6"></a>
+* `a` The alpha component of the clear color (0-1).
+
+#### `public inline void `[`clear`](#struct_graphics_module_1aac7df8fed5ff4e0e08fe3b00d5dc9367)`()` <a id="struct_graphics_module_1aac7df8fed5ff4e0e08fe3b00d5dc9367"></a>
+
+Clear the screen.
+
+This function clears the screen with the clear color set by setClearColor. This MUST be called before rendering a new frame.
+
+This function must be called before rendering a new frame because it does more than just clearing the screen. It also sets up the viewport and other graphics state (on some platforms).
+
+#### `public inline void `[`present`](#struct_graphics_module_1a75745dcb3eea40c69ccb76436af9dfd2)`()` <a id="struct_graphics_module_1a75745dcb3eea40c69ccb76436af9dfd2"></a>
+
+Present the rendered frame to the screen.
+
+This function presents the rendered frame to the screen. This is typically called at the end of the rendering loop to display the rendered frame. This function does not swap buffers, it just presents the frame. The actual buffer swap is done by the windowing system.
+
+This function must be called at the end of the rendering loop to display the rendered frame (on some platforms).
+
+#### `public inline void `[`setScissor`](#struct_graphics_module_1a4a1a7bfac82e8d1386e42715fb3faf65)`(int x,int y,int width,int height)` <a id="struct_graphics_module_1a4a1a7bfac82e8d1386e42715fb3faf65"></a>
+
+Set the scissor rectangle for rendering.
+
+This function sets the scissor rectangle for rendering. The scissor rectangle is used to limit the area of the screen that is rendered to. This is useful for rendering to a specific area of the screen or for rendering to a texture.
+
+#### Parameters
+* `x` The x coordinate of the scissor rectangle. 
+
+* `y` The y coordinate of the scissor rectangle. 
+
+* `width` The width of the scissor rectangle. 
+
+* `height` The height of the scissor rectangle.
+
+#### `public inline void `[`enableScissor`](#struct_graphics_module_1a3ab028b9d6531ed4625089aeff8a90b3)`()` <a id="struct_graphics_module_1a3ab028b9d6531ed4625089aeff8a90b3"></a>
+
+Enable the scissor rectangle for rendering.
+
+This function enables the scissor rectangle for rendering. When the scissor rectangle is enabled, only the area inside the rectangle is rendered to.
+
+#### `public inline void `[`disableScissor`](#struct_graphics_module_1a14ccfafb0a35746d6fa545465b3ce8e8)`()` <a id="struct_graphics_module_1a14ccfafb0a35746d6fa545465b3ce8e8"></a>
+
+Disable the scissor rectangle for rendering.
+
+This function disables the scissor rectangle for rendering. When the scissor rectangle is disabled, the entire screen is rendered to.
+
+#### `public inline void `[`useShaderProgram`](#struct_graphics_module_1ae91c58bf252479f295203992abc89544)`(`[`sShaderProgram`](#structs_shader_program)` program)` <a id="struct_graphics_module_1ae91c58bf252479f295203992abc89544"></a>
+
+Use a shader program for rendering.
+
+This function uses the specified shader program for rendering. This must be called before rendering a mesh to use the shader program.
+
+#### Parameters
+* `program` The shader program to use for rendering. 
+
+This function must be called before rendering a mesh to use the shader program.
+
+#### `public inline void `[`drawMesh`](#struct_graphics_module_1a64d05631f87ad6b1bcc2819867531dd7)`(`[`sMesh`](#structs_mesh)` mesh)` <a id="struct_graphics_module_1a64d05631f87ad6b1bcc2819867531dd7"></a>
+
+Draw a mesh to the screen.
+
+This function draws the specified mesh to the screen. This must be called after using a shader program to render the mesh.
+
+#### Parameters
+* `mesh` The mesh to draw to the screen.
+
+#### `public inline void `[`freeMesh`](#struct_graphics_module_1a68fb50ee03efd2df6ec267590ab53484)`(`[`sMesh`](#structs_mesh)` mesh)` <a id="struct_graphics_module_1a68fb50ee03efd2df6ec267590ab53484"></a>
+
+Free a mesh.
+
+This function frees the specified mesh. This should be called when the mesh is no longer needed to free the resources used by the mesh.
+
+#### Parameters
+* `mesh` The mesh to free.
+
+#### `public inline void `[`freeShader`](#struct_graphics_module_1a0fc404fb66e2655dd396eb0f525de5b2)`(`[`sShader`](#structs_shader)` shader)` <a id="struct_graphics_module_1a0fc404fb66e2655dd396eb0f525de5b2"></a>
+
+Free a shader.
+
+This function frees the specified shader. This should be called when the shader is no longer needed to free the resources used by the shader.
+
+#### Parameters
+* `shader` The shader to free.
+
+#### `public inline void `[`freeShaderProgram`](#struct_graphics_module_1af5ca2086152703a32c69414b11e6cc57)`(`[`sShaderProgram`](#structs_shader_program)` program)` <a id="struct_graphics_module_1af5ca2086152703a32c69414b11e6cc57"></a>
+
+Free a shader program.
+
+This function frees the specified shader program. This should be called when the shader program is no longer needed to free the resources used by the shader program.
+
+#### `public inline void `[`freeUniforms`](#struct_graphics_module_1a3f4db4305879aaf22e35fa5c58dfd968)`(`[`sUniforms`](#structs_uniforms)` uniforms)` <a id="struct_graphics_module_1a3f4db4305879aaf22e35fa5c58dfd968"></a>
+
+Free a uniforms object.
+
+This function frees the specified uniforms object. This should be called when the uniforms object is no longer needed to free the resources used by the uniforms object.
+
+#### `public inline void `[`freeTexture`](#struct_graphics_module_1a809f3292e3f94c6702dbb2020143f38d)`(`[`sTexture`](#structs_texture)` texture)` <a id="struct_graphics_module_1a809f3292e3f94c6702dbb2020143f38d"></a>
+
+Free a texture.
+
+This function frees the specified texture. This should be called when the texture is no longer needed to free the resources used by the texture.
+
+#### `public inline void `[`destroy`](#struct_graphics_module_1a472b7333e889e2c0510512a1a41835d5)`()` <a id="struct_graphics_module_1a472b7333e889e2c0510512a1a41835d5"></a>
+
+Destroy the graphics module.
+
+This function destroys the graphics module and frees all resources used by the module.
+
+#### `public inline `[`sTexture`](#structs_texture)` `[`createTexture`](#struct_graphics_module_1a2bdacd3c01063fd53d832f3a29b26477)`(`[`sTextureDefinition`](#structs_texture_definition)` def)` <a id="struct_graphics_module_1a2bdacd3c01063fd53d832f3a29b26477"></a>
+
+Create a texture from a texture definition.
+
+This function creates a texture from the specified texture definition.
+
+#### Parameters
+* `def` The texture definition to create the texture from. 
+
+#### Returns
+The created texture.
+
+#### `public inline `[`sUniforms`](#structs_uniforms)` `[`createUniforms`](#struct_graphics_module_1a2f08045dbfe589f985952d13f82fd284)`(`[`sShaderProgram`](#structs_shader_program)` program,`[`sUniformDefinition`](#structs_uniform_definition)` def)` <a id="struct_graphics_module_1a2f08045dbfe589f985952d13f82fd284"></a>
+
+Create a uniforms object from a shader program and a uniform definition.
+
+This function creates a uniforms object from the specified shader program and uniform definition. This is used to set and get uniforms in a shader program.
+
+#### Parameters
+* `program` The shader program to create the uniforms object for. 
+
+* `def` The uniform definition to create the uniforms object from. 
+
+#### Returns
+The created uniforms object.
+
+#### `public inline void `[`setUniforms`](#struct_graphics_module_1a51fdd18499e304a05d7ae1886b868a4f)`(`[`sUniforms`](#structs_uniforms)` uniforms,void * data)` <a id="struct_graphics_module_1a51fdd18499e304a05d7ae1886b868a4f"></a>
+
+Set the uniforms for a shader program.
+
+This function sets the uniforms for the specified shader program. This must be called after creating a uniforms object to set the uniforms in the shader program.
+
+#### Parameters
+* `uniforms` The uniforms object to set the uniforms for. 
+
+* `data` The data to set the uniforms to. This should be a pointer to the data that matches the uniform definition. 
+
+This function must be called after creating a uniforms object to set the uniforms in the shader program. 
+
+This void* data must be the same size as the uniform definition. This is not checked, so it is up to the user to ensure that the data is the correct size.
+
+#### `public inline void `[`useTexture`](#struct_graphics_module_1a0f53efb3be6f4f0d50a3a5355df62d78)`(`[`sShaderProgram`](#structs_shader_program)` program,`[`sTexture`](#structs_texture)` texture,const char * name)` <a id="struct_graphics_module_1a0f53efb3be6f4f0d50a3a5355df62d78"></a>
+
+Use a texture in a shader program.
+
+This function uses the specified texture in the specified shader program. This must be called after using a shader program to use the texture in the shader program.
+
+#### Parameters
+* `program` The shader program to use the texture in. 
+
+* `texture` The texture to use in the shader program. 
+
+* `name` The name of the texture in the shader program.
+
+#### `public inline const char * `[`getShaderType`](#struct_graphics_module_1abdb3a71f5aa4c1baa783a4d8cf57a9ed)`()` <a id="struct_graphics_module_1abdb3a71f5aa4c1baa783a4d8cf57a9ed"></a>
+
+Get the shader type as a string.
+
+This function returns the shader language format as a string. This is used to determine the shader language required for the shader compilation module.
+
+#### `public inline `[`sMesh`](#structs_mesh)` `[`createMesh`](#struct_graphics_module_1a2080f1c1f12e7fe2b86045e099820390)`(`[`sShader`](#structs_shader)` vertexShader,void * vertices,size_t vertexCount,`[`sIndex`](#gfx_2module_8h_1aeec0f5b0bda581fc5280ed5a264d3da9)` * indices,size_t indexCount)` <a id="struct_graphics_module_1a2080f1c1f12e7fe2b86045e099820390"></a>
+
+Create a mesh from a vertex shader, vertices, and indices.
+
+This function creates a mesh from the specified vertex shader, vertices, and indices. This is used to create a mesh that can be rendered to the screen.
+
+#### Parameters
+* `vertexShader` The vertex shader to use for the mesh. 
+
+* `vertices` The vertices to use for the mesh. This should be a pointer to the vertex data. 
+
+* `vertexCount` The number of vertices in the mesh. 
+
+* `indices` The indices to use for the mesh. This should be a pointer to the index data. 
+
+* `indexCount` The number of indices in the mesh. 
+
+#### Returns
+The created mesh.
+
+#### `public inline `[`sShaderProgram`](#structs_shader_program)` `[`createShaderProgram`](#struct_graphics_module_1a1291b5f0b13b4883ed273b2f41501bed)`(`[`sShader`](#structs_shader)` * shaders,size_t count)` <a id="struct_graphics_module_1a1291b5f0b13b4883ed273b2f41501bed"></a>
+
+Create a shader program from an array of shaders.
+
+This function creates a shader program from the specified array of shaders. This is used to create a shader program that can be used to render meshes.
+
+#### Parameters
+* `shaders` The array of shaders to use for the shader program. 
+
+* `count` The number of shaders in the array. 
+
+#### Returns
+The created shader program.
+
+#### `public inline `[`sShaderProgram`](#structs_shader_program)` `[`createShaderProgram`](#struct_graphics_module_1a5364ee0b194d3e4c440c9f3fd79a0cec)`(std::initializer_list< `[`sShader`](#structs_shader)` > shaders)` <a id="struct_graphics_module_1a5364ee0b194d3e4c440c9f3fd79a0cec"></a>
+
+Create a shader program from an initializer list of shaders.
+
+This function creates a shader program from the specified initializer list of shaders. This is used to create a shader program that can be used to render meshes.
+
+#### Parameters
+* `shaders` The initializer list of shaders to use for the shader program. 
+
+#### Returns
+The created shader program.
+
+#### `public inline `[`sVertexDefinition`](#structs_vertex_definition)` * `[`createVertexDefinition`](#struct_graphics_module_1a0e870b8170deb3edf109c555d621a059)`(int * elements,size_t count)` <a id="struct_graphics_module_1a0e870b8170deb3edf109c555d621a059"></a>
+
+Create a vertex definition from an array of elements.
+
+This function creates a vertex definition from the specified array of elements. This is used to define the layout of a vertex in a vertex buffer.
+
+#### Parameters
+* `elements` The array of elements to use for the vertex definition. This should be a pointer to the element data. 
+
+* `count` The number of elements in the array. 
+
+#### Returns
+The created vertex definition.
+
+#### `public inline `[`sVertexDefinition`](#structs_vertex_definition)` * `[`createVertexDefinition`](#struct_graphics_module_1abcd20d04203631a0165af2d7a7ea6791)`(std::initializer_list< int > elements)` <a id="struct_graphics_module_1abcd20d04203631a0165af2d7a7ea6791"></a>
+
+Create a vertex definition from an initializer list of elements.
+
+This function creates a vertex definition from the specified initializer list of elements. This is used to define the layout of a vertex in a vertex buffer.
+
+#### Parameters
+* `elements` The initializer list of elements to use for the vertex definition. 
+
+#### Returns
+The created vertex definition.
+
+#### `public inline void `[`freeVertexDefinition`](#struct_graphics_module_1a5edbde39320040e354485c88d17fcba8)`(`[`sVertexDefinition`](#structs_vertex_definition)` * def)` <a id="struct_graphics_module_1a5edbde39320040e354485c88d17fcba8"></a>
+
+Free a vertex definition.
+
+This function frees the specified vertex definition. This should be called when the vertex definition is no longer needed to free the resources used by the vertex definition.
+
+#### Parameters
+* `def` The vertex definition to free.
+
+#### `public inline `[`sShader`](#structs_shader)` `[`createShader`](#struct_graphics_module_1ab53c3f4f1d6592726561e8072389377e)`(const char * source,`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` type,`[`sVertexDefinition`](#structs_vertex_definition)` * vertDef)` <a id="struct_graphics_module_1ab53c3f4f1d6592726561e8072389377e"></a>
+
+Create a shader from a source string and shader type.
+
+This function creates a shader from the specified source string and shader type, and a vertex definition if the shader is a vertex shader. This is used to create a shader that can be used in a shader program.
+
+#### Parameters
+* `source` The source string to use for the shader. This should be a pointer to the source string. 
+
+* `type` The type of the shader to create. This should be one of the shader types defined in sShaderType. 
+
+* `vertDef` The vertex definition to use for the shader. This should be a pointer to the vertex definition. This is only used if the shader is a vertex shader. 
+
+#### Returns
+The created shader.
+
+#### `public inline `[`sShader`](#structs_shader)` `[`loadShader`](#struct_graphics_module_1a31e7e5f097145854b41ba2202ab86cd5)`(const char * path,`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` type,`[`sVertexDefinition`](#structs_vertex_definition)` * vertDef)` <a id="struct_graphics_module_1a31e7e5f097145854b41ba2202ab86cd5"></a>
+
+Create a shader from a file path and shader type.
+
+This function creates a shader from the specified file path and shader type, and a vertex definition if the shader is a vertex shader. This is used to create a shader that can be used in a shader program.
+
+#### Parameters
+* `path` The file path to the shader source file. This should be a pointer to the file path string. 
+
+* `type` The type of the shader to create. This should be one of the shader types defined in sShaderType. 
+
+* `vertDef` The vertex definition to use for the shader. This should be a pointer to the vertex definition. This is only used if the shader is a vertex shader. 
+
+#### Returns
+The created shader.
 
 #### `public inline  explicit `[`GraphicsModule`](#struct_graphics_module_1a4efb7bf742a8d87e5cc043716c310657)`(const char * dynlib)` <a id="struct_graphics_module_1a4efb7bf742a8d87e5cc043716c310657"></a>
+
+Construct a graphics module from a dynamic library.
+
+This function constructs a graphics module from the specified dynamic library. This is used to load the graphics module at runtime.
+
+#### Parameters
+* `dynlib` The implementation string to use for the graphics module.
 
 # struct `mat4.__unnamed14__` <a id="structmat4_8____unnamed14____"></a>
 
@@ -829,7 +1137,7 @@ struct ScriptLoaderModule
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
 `public FT_Library `[`ft`](#structs_free_type_context_1abfbf78e89226a529cf63d1944f666a0b) | 
-`public GraphicsModule * `[`gfxm`](#structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380) | 
+`public `[`GraphicsModule`](#struct_graphics_module)` * `[`gfxm`](#structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380) | 
 `public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3) | 
 `public AssetLoader * `[`assetm`](#structs_free_type_context_1a14e9ff02e52ed0041ed631f5c77ac794) | 
 
@@ -837,7 +1145,7 @@ struct ScriptLoaderModule
 
 #### `public FT_Library `[`ft`](#structs_free_type_context_1abfbf78e89226a529cf63d1944f666a0b) <a id="structs_free_type_context_1abfbf78e89226a529cf63d1944f666a0b"></a>
 
-#### `public GraphicsModule * `[`gfxm`](#structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380) <a id="structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380"></a>
+#### `public `[`GraphicsModule`](#struct_graphics_module)` * `[`gfxm`](#structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380) <a id="structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380"></a>
 
 #### `public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3) <a id="structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3"></a>
 
@@ -852,7 +1160,7 @@ struct ShaderModule
 
 [ShaderModule](#struct_shader_module) is a module that provides functionality for compiling and creating shaders.
 
-The [ShaderModule](#struct_shader_module) is a dynamic library that provides functionality for compiling and creating shaders. It uses the GraphicsModule to compile the shader. The shader is compiled from the file at the given path.
+The [ShaderModule](#struct_shader_module) is a dynamic library that provides functionality for compiling and creating shaders. It uses the [GraphicsModule](#struct_graphics_module) to compile the shader. The shader is compiled from the file at the given path.
 
 This is helpful because it allows us to write a single shader in a single language, instead of having to rewrite it to support each graphics API.
 
@@ -860,20 +1168,20 @@ This is helpful because it allows us to write a single shader in a single langua
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public inline sShader `[`compile`](#struct_shader_module_1a4820c0e1c54fd78e687fd292c478c9ac)`(GraphicsModule * gfxm,const char * path,sShaderType type,sVertexDefinition * vertDef)` | Compiles a shader from a file.
-`public inline sShader `[`createShader`](#struct_shader_module_1a79a43cd49d1fe6e25f246c3b284b62a0)`(GraphicsModule * gfxm,const char * data,size_t len,sShaderType type,sVertexDefinition * vertDef)` | Creates a shader from a string.
+`public inline `[`sShader`](#structs_shader)` `[`compile`](#struct_shader_module_1a4820c0e1c54fd78e687fd292c478c9ac)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,const char * path,`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` type,`[`sVertexDefinition`](#structs_vertex_definition)` * vertDef)` | Compiles a shader from a file.
+`public inline `[`sShader`](#structs_shader)` `[`createShader`](#struct_shader_module_1a79a43cd49d1fe6e25f246c3b284b62a0)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,const char * data,size_t len,`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` type,`[`sVertexDefinition`](#structs_vertex_definition)` * vertDef)` | Creates a shader from a string.
 `public inline  explicit `[`ShaderModule`](#struct_shader_module_1a003135da7d77e951b291b8431ec6546f)`(const char * dynlib,const char * dynp2)` | Constructs a [ShaderModule](#struct_shader_module) object.
 
 ## Members
 
-#### `public inline sShader `[`compile`](#struct_shader_module_1a4820c0e1c54fd78e687fd292c478c9ac)`(GraphicsModule * gfxm,const char * path,sShaderType type,sVertexDefinition * vertDef)` <a id="struct_shader_module_1a4820c0e1c54fd78e687fd292c478c9ac"></a>
+#### `public inline `[`sShader`](#structs_shader)` `[`compile`](#struct_shader_module_1a4820c0e1c54fd78e687fd292c478c9ac)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,const char * path,`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` type,`[`sVertexDefinition`](#structs_vertex_definition)` * vertDef)` <a id="struct_shader_module_1a4820c0e1c54fd78e687fd292c478c9ac"></a>
 
 Compiles a shader from a file.
 
-Uses the GraphicsModule to compile the shader. The shader is compiled from the file at the given path.
+Uses the [GraphicsModule](#struct_graphics_module) to compile the shader. The shader is compiled from the file at the given path.
 
 #### Parameters
-* `gfxm` The GraphicsModule to use for compilation. 
+* `gfxm` The [GraphicsModule](#struct_graphics_module) to use for compilation. 
 
 * `path` The path to the shader file. 
 
@@ -886,16 +1194,16 @@ The compiled shader.
 
 This function will compile from any type of shader file (glsl, hlsl, spsl, etc.) depending on which implementation is used. 
 
-**See also**: sShaderType
+**See also**: [sShaderType](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)
 
-#### `public inline sShader `[`createShader`](#struct_shader_module_1a79a43cd49d1fe6e25f246c3b284b62a0)`(GraphicsModule * gfxm,const char * data,size_t len,sShaderType type,sVertexDefinition * vertDef)` <a id="struct_shader_module_1a79a43cd49d1fe6e25f246c3b284b62a0"></a>
+#### `public inline `[`sShader`](#structs_shader)` `[`createShader`](#struct_shader_module_1a79a43cd49d1fe6e25f246c3b284b62a0)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,const char * data,size_t len,`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` type,`[`sVertexDefinition`](#structs_vertex_definition)` * vertDef)` <a id="struct_shader_module_1a79a43cd49d1fe6e25f246c3b284b62a0"></a>
 
 Creates a shader from a string.
 
-Uses the GraphicsModule to create the shader. The shader is created from the string data.
+Uses the [GraphicsModule](#struct_graphics_module) to create the shader. The shader is created from the string data.
 
 #### Parameters
-* `gfxm` The GraphicsModule to use for creating the shader. 
+* `gfxm` The [GraphicsModule](#struct_graphics_module) to use for creating the shader. 
 
 * `data` The shader data. 
 
@@ -914,14 +1222,14 @@ The created shader.
 
 Constructs a [ShaderModule](#struct_shader_module) object.
 
-The [ShaderModule](#struct_shader_module) is a dynamic library that provides functionality for compiling and creating shaders. It uses the GraphicsModule to compile the shader. The shader is compiled from the file at the given path.
+The [ShaderModule](#struct_shader_module) is a dynamic library that provides functionality for compiling and creating shaders. It uses the [GraphicsModule](#struct_graphics_module) to compile the shader. The shader is compiled from the file at the given path.
 
 #### Parameters
 * `dynlib` The dynamic library implementation to use. 
 
 * `dynp2` The output type. This is given as a string, normally straight from the graphics module's getShaderType function. 
 
-**See also**: GraphicsModule::getShaderType 
+**See also**: [GraphicsModule::getShaderType](#struct_graphics_module_1abdb3a71f5aa4c1baa783a4d8cf57a9ed)
 
 > Todo: update this once the graphics module has docs
 
@@ -931,11 +1239,11 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public sVertexDefinition * `[`vertDef`](#structs_internal_font_1a6a672e43bca539dfa2f9ef1b8eab0e24) | 
-`public sShaderProgram `[`shader`](#structs_internal_font_1a64159f9203cc0ef7dba30b34cebf3213) | 
-`public sShader `[`vertexShader`](#structs_internal_font_1ae1ad6451a71b31112905ad64fb383543) | 
-`public sUniforms `[`uniforms`](#structs_internal_font_1aa329efa91ed160c3b5465c4da424bfd6) | 
-`public sTexture `[`atlas`](#structs_internal_font_1a1a22c5fa7bdc92300c3288a0948f7e35) | 
+`public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`vertDef`](#structs_internal_font_1a6a672e43bca539dfa2f9ef1b8eab0e24) | 
+`public `[`sShaderProgram`](#structs_shader_program)` `[`shader`](#structs_internal_font_1a64159f9203cc0ef7dba30b34cebf3213) | 
+`public `[`sShader`](#structs_shader)` `[`vertexShader`](#structs_internal_font_1ae1ad6451a71b31112905ad64fb383543) | 
+`public `[`sUniforms`](#structs_uniforms)` `[`uniforms`](#structs_internal_font_1aa329efa91ed160c3b5465c4da424bfd6) | 
+`public `[`sTexture`](#structs_texture)` `[`atlas`](#structs_internal_font_1a1a22c5fa7bdc92300c3288a0948f7e35) | 
 `public struct sInternalFont::CharacterDef `[`characters`](#structs_internal_font_1a014584487cb5ae4a04f2736b4ed20316) | 
 `public int `[`atlasWidth`](#structs_internal_font_1a8ac09d902788eed35ce1d05f12bdcbe8) | 
 `public int `[`atlasHeight`](#structs_internal_font_1a1ce95acf2a7366b1fcb496fe7ca6f2af) | 
@@ -943,15 +1251,15 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
 ## Members
 
-#### `public sVertexDefinition * `[`vertDef`](#structs_internal_font_1a6a672e43bca539dfa2f9ef1b8eab0e24) <a id="structs_internal_font_1a6a672e43bca539dfa2f9ef1b8eab0e24"></a>
+#### `public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`vertDef`](#structs_internal_font_1a6a672e43bca539dfa2f9ef1b8eab0e24) <a id="structs_internal_font_1a6a672e43bca539dfa2f9ef1b8eab0e24"></a>
 
-#### `public sShaderProgram `[`shader`](#structs_internal_font_1a64159f9203cc0ef7dba30b34cebf3213) <a id="structs_internal_font_1a64159f9203cc0ef7dba30b34cebf3213"></a>
+#### `public `[`sShaderProgram`](#structs_shader_program)` `[`shader`](#structs_internal_font_1a64159f9203cc0ef7dba30b34cebf3213) <a id="structs_internal_font_1a64159f9203cc0ef7dba30b34cebf3213"></a>
 
-#### `public sShader `[`vertexShader`](#structs_internal_font_1ae1ad6451a71b31112905ad64fb383543) <a id="structs_internal_font_1ae1ad6451a71b31112905ad64fb383543"></a>
+#### `public `[`sShader`](#structs_shader)` `[`vertexShader`](#structs_internal_font_1ae1ad6451a71b31112905ad64fb383543) <a id="structs_internal_font_1ae1ad6451a71b31112905ad64fb383543"></a>
 
-#### `public sUniforms `[`uniforms`](#structs_internal_font_1aa329efa91ed160c3b5465c4da424bfd6) <a id="structs_internal_font_1aa329efa91ed160c3b5465c4da424bfd6"></a>
+#### `public `[`sUniforms`](#structs_uniforms)` `[`uniforms`](#structs_internal_font_1aa329efa91ed160c3b5465c4da424bfd6) <a id="structs_internal_font_1aa329efa91ed160c3b5465c4da424bfd6"></a>
 
-#### `public sTexture `[`atlas`](#structs_internal_font_1a1a22c5fa7bdc92300c3288a0948f7e35) <a id="structs_internal_font_1a1a22c5fa7bdc92300c3288a0948f7e35"></a>
+#### `public `[`sTexture`](#structs_texture)` `[`atlas`](#structs_internal_font_1a1a22c5fa7bdc92300c3288a0948f7e35) <a id="structs_internal_font_1a1a22c5fa7bdc92300c3288a0948f7e35"></a>
 
 #### `public struct sInternalFont::CharacterDef `[`characters`](#structs_internal_font_1a014584487cb5ae4a04f2736b4ed20316) <a id="structs_internal_font_1a014584487cb5ae4a04f2736b4ed20316"></a>
 
@@ -1072,17 +1380,17 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public enum sShaderType `[`type`](#structs_internal_shader_1ad27bdd546a5f9c95578c1b448f1fca18) | 
+`public enum `[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` `[`type`](#structs_internal_shader_1ad27bdd546a5f9c95578c1b448f1fca18) | 
 `public ID3D11VertexShader * `[`vertexShader`](#structs_internal_shader_1ae3cda846abe6232a6d6cb1cd54daa214) | 
 `public ID3D11PixelShader * `[`pixelShader`](#structs_internal_shader_1a962487d41144cd900b3dd868d4be2a2e) | 
 `public ID3D11GeometryShader * `[`geometryShader`](#structs_internal_shader_1a3363b495ee6a6dc32490cb28df03a495) | 
 `public ID3DBlob * `[`shaderBlob`](#structs_internal_shader_1a14d840178e8076e2f8041a95da1df629) | 
-`public sVertexDefinition * `[`vertDef`](#structs_internal_shader_1ac1079555dfd6932a49979ee6bf8e8cc2) | 
+`public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`vertDef`](#structs_internal_shader_1ac1079555dfd6932a49979ee6bf8e8cc2) | 
 `public unsigned int `[`shader`](#structs_internal_shader_1a2cbdd9d316068a354c7107b4b27a5313) | 
 
 ## Members
 
-#### `public enum sShaderType `[`type`](#structs_internal_shader_1ad27bdd546a5f9c95578c1b448f1fca18) <a id="structs_internal_shader_1ad27bdd546a5f9c95578c1b448f1fca18"></a>
+#### `public enum `[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` `[`type`](#structs_internal_shader_1ad27bdd546a5f9c95578c1b448f1fca18) <a id="structs_internal_shader_1ad27bdd546a5f9c95578c1b448f1fca18"></a>
 
 #### `public ID3D11VertexShader * `[`vertexShader`](#structs_internal_shader_1ae3cda846abe6232a6d6cb1cd54daa214) <a id="structs_internal_shader_1ae3cda846abe6232a6d6cb1cd54daa214"></a>
 
@@ -1092,7 +1400,7 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
 #### `public ID3DBlob * `[`shaderBlob`](#structs_internal_shader_1a14d840178e8076e2f8041a95da1df629) <a id="structs_internal_shader_1a14d840178e8076e2f8041a95da1df629"></a>
 
-#### `public sVertexDefinition * `[`vertDef`](#structs_internal_shader_1ac1079555dfd6932a49979ee6bf8e8cc2) <a id="structs_internal_shader_1ac1079555dfd6932a49979ee6bf8e8cc2"></a>
+#### `public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`vertDef`](#structs_internal_shader_1ac1079555dfd6932a49979ee6bf8e8cc2) <a id="structs_internal_shader_1ac1079555dfd6932a49979ee6bf8e8cc2"></a>
 
 #### `public unsigned int `[`shader`](#structs_internal_shader_1a2cbdd9d316068a354c7107b4b27a5313) <a id="structs_internal_shader_1a2cbdd9d316068a354c7107b4b27a5313"></a>
 
@@ -1134,7 +1442,7 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 `public TextUniforms `[`uniforms`](#structs_internal_text_1a960991b91785e0846c775404d855f376) | 
 `public size_t `[`vertexCount`](#structs_internal_text_1a3828440d55e7a8ff261d31f99a794309) | 
 `public TextVertex * `[`vertices`](#structs_internal_text_1a1da855422acca6d46cabb2b0cb11a9f5) | 
-`public sMesh `[`mesh`](#structs_internal_text_1a6d213238c02fce9804860fd1b8b01e50) | 
+`public `[`sMesh`](#structs_mesh)` `[`mesh`](#structs_internal_text_1a6d213238c02fce9804860fd1b8b01e50) | 
 
 ## Members
 
@@ -1148,7 +1456,7 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
 #### `public TextVertex * `[`vertices`](#structs_internal_text_1a1da855422acca6d46cabb2b0cb11a9f5) <a id="structs_internal_text_1a1da855422acca6d46cabb2b0cb11a9f5"></a>
 
-#### `public sMesh `[`mesh`](#structs_internal_text_1a6d213238c02fce9804860fd1b8b01e50) <a id="structs_internal_text_1a6d213238c02fce9804860fd1b8b01e50"></a>
+#### `public `[`sMesh`](#structs_mesh)` `[`mesh`](#structs_internal_text_1a6d213238c02fce9804860fd1b8b01e50) <a id="structs_internal_text_1a6d213238c02fce9804860fd1b8b01e50"></a>
 
 # struct `sInternalTexture` <a id="structs_internal_texture"></a>
 
@@ -1171,27 +1479,27 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public sUniformDefinition `[`fragmentPart`](#structs_internal_uniforms_1a814f32c0e21d01a4182ec3df7daa095f) | 
-`public sUniformDefinition `[`vertexPart`](#structs_internal_uniforms_1ac7fd7a5670bd40ca2ea3b330b34f634e) | 
-`public sShaderProgram `[`program`](#structs_internal_uniforms_1a7a5cd43afc7d2a716d1cf23d30fbc304) | 
+`public `[`sUniformDefinition`](#structs_uniform_definition)` `[`fragmentPart`](#structs_internal_uniforms_1a814f32c0e21d01a4182ec3df7daa095f) | 
+`public `[`sUniformDefinition`](#structs_uniform_definition)` `[`vertexPart`](#structs_internal_uniforms_1ac7fd7a5670bd40ca2ea3b330b34f634e) | 
+`public `[`sShaderProgram`](#structs_shader_program)` `[`program`](#structs_internal_uniforms_1a7a5cd43afc7d2a716d1cf23d30fbc304) | 
 `public ID3D11Buffer * `[`fragmentBuffer`](#structs_internal_uniforms_1a2a3eff650c882d626e457ca4a493bf56) | 
 `public ID3D11Buffer * `[`vertexBuffer`](#structs_internal_uniforms_1a876756a742c79eccef8bfd5e7725a679) | 
-`public sUniformDefinition `[`def`](#structs_internal_uniforms_1ae005c018e70cd3a63ba34a760ef72962) | 
+`public `[`sUniformDefinition`](#structs_uniform_definition)` `[`def`](#structs_internal_uniforms_1ae005c018e70cd3a63ba34a760ef72962) | 
 `public int * `[`locations`](#structs_internal_uniforms_1a0f02ac581586af29d7ee44ca2b1fed06) | 
 
 ## Members
 
-#### `public sUniformDefinition `[`fragmentPart`](#structs_internal_uniforms_1a814f32c0e21d01a4182ec3df7daa095f) <a id="structs_internal_uniforms_1a814f32c0e21d01a4182ec3df7daa095f"></a>
+#### `public `[`sUniformDefinition`](#structs_uniform_definition)` `[`fragmentPart`](#structs_internal_uniforms_1a814f32c0e21d01a4182ec3df7daa095f) <a id="structs_internal_uniforms_1a814f32c0e21d01a4182ec3df7daa095f"></a>
 
-#### `public sUniformDefinition `[`vertexPart`](#structs_internal_uniforms_1ac7fd7a5670bd40ca2ea3b330b34f634e) <a id="structs_internal_uniforms_1ac7fd7a5670bd40ca2ea3b330b34f634e"></a>
+#### `public `[`sUniformDefinition`](#structs_uniform_definition)` `[`vertexPart`](#structs_internal_uniforms_1ac7fd7a5670bd40ca2ea3b330b34f634e) <a id="structs_internal_uniforms_1ac7fd7a5670bd40ca2ea3b330b34f634e"></a>
 
-#### `public sShaderProgram `[`program`](#structs_internal_uniforms_1a7a5cd43afc7d2a716d1cf23d30fbc304) <a id="structs_internal_uniforms_1a7a5cd43afc7d2a716d1cf23d30fbc304"></a>
+#### `public `[`sShaderProgram`](#structs_shader_program)` `[`program`](#structs_internal_uniforms_1a7a5cd43afc7d2a716d1cf23d30fbc304) <a id="structs_internal_uniforms_1a7a5cd43afc7d2a716d1cf23d30fbc304"></a>
 
 #### `public ID3D11Buffer * `[`fragmentBuffer`](#structs_internal_uniforms_1a2a3eff650c882d626e457ca4a493bf56) <a id="structs_internal_uniforms_1a2a3eff650c882d626e457ca4a493bf56"></a>
 
 #### `public ID3D11Buffer * `[`vertexBuffer`](#structs_internal_uniforms_1a876756a742c79eccef8bfd5e7725a679) <a id="structs_internal_uniforms_1a876756a742c79eccef8bfd5e7725a679"></a>
 
-#### `public sUniformDefinition `[`def`](#structs_internal_uniforms_1ae005c018e70cd3a63ba34a760ef72962) <a id="structs_internal_uniforms_1ae005c018e70cd3a63ba34a760ef72962"></a>
+#### `public `[`sUniformDefinition`](#structs_uniform_definition)` `[`def`](#structs_internal_uniforms_1ae005c018e70cd3a63ba34a760ef72962) <a id="structs_internal_uniforms_1ae005c018e70cd3a63ba34a760ef72962"></a>
 
 #### `public int * `[`locations`](#structs_internal_uniforms_1a0f02ac581586af29d7ee44ca2b1fed06) <a id="structs_internal_uniforms_1a0f02ac581586af29d7ee44ca2b1fed06"></a>
 
@@ -1202,15 +1510,15 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
 `public `[`WindowModule`](#struct_window_module)` * `[`winm`](#structs_i_u_i_global_state_1ae701579167a3b125ad16a562a097326b) | 
-`public GraphicsModule * `[`gfxm`](#structs_i_u_i_global_state_1a33895b03ee8de07c99487dd193862ae8) | 
+`public `[`GraphicsModule`](#struct_graphics_module)` * `[`gfxm`](#structs_i_u_i_global_state_1a33895b03ee8de07c99487dd193862ae8) | 
 `public TextModule * `[`textm`](#structs_i_u_i_global_state_1a709550ce99b4622905bead54c5874e67) | 
 `public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034) | 
-`public sShaderProgram `[`rect_shader`](#structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e) | 
-`public sVertexDefinition * `[`rect_vert_def`](#structs_i_u_i_global_state_1afc973fcfc990a1a5d1b81e6fd86cf215) | 
-`public sMesh `[`rect_mesh`](#structs_i_u_i_global_state_1a6a12ae7165329fe65b5255d371f263b0) | 
-`public sUniforms `[`rect_uniforms`](#structs_i_u_i_global_state_1a1d4a7c3035a6809e70196f02bd18d8b4) | 
-`public sShaderProgram `[`rounded_rect_shader`](#structs_i_u_i_global_state_1a56ec2f4e71a3a6014688528a7f138216) | 
-`public sUniforms `[`rounded_rect_uniforms`](#structs_i_u_i_global_state_1af0f4e55264177d2b17af7462b4fac2c3) | 
+`public `[`sShaderProgram`](#structs_shader_program)` `[`rect_shader`](#structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e) | 
+`public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`rect_vert_def`](#structs_i_u_i_global_state_1afc973fcfc990a1a5d1b81e6fd86cf215) | 
+`public `[`sMesh`](#structs_mesh)` `[`rect_mesh`](#structs_i_u_i_global_state_1a6a12ae7165329fe65b5255d371f263b0) | 
+`public `[`sUniforms`](#structs_uniforms)` `[`rect_uniforms`](#structs_i_u_i_global_state_1a1d4a7c3035a6809e70196f02bd18d8b4) | 
+`public `[`sShaderProgram`](#structs_shader_program)` `[`rounded_rect_shader`](#structs_i_u_i_global_state_1a56ec2f4e71a3a6014688528a7f138216) | 
+`public `[`sUniforms`](#structs_uniforms)` `[`rounded_rect_uniforms`](#structs_i_u_i_global_state_1af0f4e55264177d2b17af7462b4fac2c3) | 
 `public `[`sWindow`](#structs_window)` * `[`win`](#structs_i_u_i_global_state_1aba037195a38a12e07f097ec784590bd9) | 
 `public sFont * `[`fonts`](#structs_i_u_i_global_state_1a26062df2397f0afb6720b4beff1e8fb4) | 
 
@@ -1218,23 +1526,23 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
 #### `public `[`WindowModule`](#struct_window_module)` * `[`winm`](#structs_i_u_i_global_state_1ae701579167a3b125ad16a562a097326b) <a id="structs_i_u_i_global_state_1ae701579167a3b125ad16a562a097326b"></a>
 
-#### `public GraphicsModule * `[`gfxm`](#structs_i_u_i_global_state_1a33895b03ee8de07c99487dd193862ae8) <a id="structs_i_u_i_global_state_1a33895b03ee8de07c99487dd193862ae8"></a>
+#### `public `[`GraphicsModule`](#struct_graphics_module)` * `[`gfxm`](#structs_i_u_i_global_state_1a33895b03ee8de07c99487dd193862ae8) <a id="structs_i_u_i_global_state_1a33895b03ee8de07c99487dd193862ae8"></a>
 
 #### `public TextModule * `[`textm`](#structs_i_u_i_global_state_1a709550ce99b4622905bead54c5874e67) <a id="structs_i_u_i_global_state_1a709550ce99b4622905bead54c5874e67"></a>
 
 #### `public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034) <a id="structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034"></a>
 
-#### `public sShaderProgram `[`rect_shader`](#structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e) <a id="structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e"></a>
+#### `public `[`sShaderProgram`](#structs_shader_program)` `[`rect_shader`](#structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e) <a id="structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e"></a>
 
-#### `public sVertexDefinition * `[`rect_vert_def`](#structs_i_u_i_global_state_1afc973fcfc990a1a5d1b81e6fd86cf215) <a id="structs_i_u_i_global_state_1afc973fcfc990a1a5d1b81e6fd86cf215"></a>
+#### `public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`rect_vert_def`](#structs_i_u_i_global_state_1afc973fcfc990a1a5d1b81e6fd86cf215) <a id="structs_i_u_i_global_state_1afc973fcfc990a1a5d1b81e6fd86cf215"></a>
 
-#### `public sMesh `[`rect_mesh`](#structs_i_u_i_global_state_1a6a12ae7165329fe65b5255d371f263b0) <a id="structs_i_u_i_global_state_1a6a12ae7165329fe65b5255d371f263b0"></a>
+#### `public `[`sMesh`](#structs_mesh)` `[`rect_mesh`](#structs_i_u_i_global_state_1a6a12ae7165329fe65b5255d371f263b0) <a id="structs_i_u_i_global_state_1a6a12ae7165329fe65b5255d371f263b0"></a>
 
-#### `public sUniforms `[`rect_uniforms`](#structs_i_u_i_global_state_1a1d4a7c3035a6809e70196f02bd18d8b4) <a id="structs_i_u_i_global_state_1a1d4a7c3035a6809e70196f02bd18d8b4"></a>
+#### `public `[`sUniforms`](#structs_uniforms)` `[`rect_uniforms`](#structs_i_u_i_global_state_1a1d4a7c3035a6809e70196f02bd18d8b4) <a id="structs_i_u_i_global_state_1a1d4a7c3035a6809e70196f02bd18d8b4"></a>
 
-#### `public sShaderProgram `[`rounded_rect_shader`](#structs_i_u_i_global_state_1a56ec2f4e71a3a6014688528a7f138216) <a id="structs_i_u_i_global_state_1a56ec2f4e71a3a6014688528a7f138216"></a>
+#### `public `[`sShaderProgram`](#structs_shader_program)` `[`rounded_rect_shader`](#structs_i_u_i_global_state_1a56ec2f4e71a3a6014688528a7f138216) <a id="structs_i_u_i_global_state_1a56ec2f4e71a3a6014688528a7f138216"></a>
 
-#### `public sUniforms `[`rounded_rect_uniforms`](#structs_i_u_i_global_state_1af0f4e55264177d2b17af7462b4fac2c3) <a id="structs_i_u_i_global_state_1af0f4e55264177d2b17af7462b4fac2c3"></a>
+#### `public `[`sUniforms`](#structs_uniforms)` `[`rounded_rect_uniforms`](#structs_i_u_i_global_state_1af0f4e55264177d2b17af7462b4fac2c3) <a id="structs_i_u_i_global_state_1af0f4e55264177d2b17af7462b4fac2c3"></a>
 
 #### `public `[`sWindow`](#structs_window)` * `[`win`](#structs_i_u_i_global_state_1aba037195a38a12e07f097ec784590bd9) <a id="structs_i_u_i_global_state_1aba037195a38a12e07f097ec784590bd9"></a>
 
@@ -1242,18 +1550,22 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
 # struct `sMesh` <a id="structs_mesh"></a>
 
+Mesh structure.
+
+This structure represents a mesh that can be used in a shader program. Implementation defined elsewhere. It is used to create and draw meshes to the screen.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
 `public void * `[`internal`](#structs_mesh_1a5eea482db47731c601ec10514b5052a6) | 
-`public GraphicsModule * `[`creator`](#structs_mesh_1a10d729e60d51c4dd812519dc55a5226a) | 
+`public `[`GraphicsModule`](#struct_graphics_module)` * `[`creator`](#structs_mesh_1a10d729e60d51c4dd812519dc55a5226a) | 
 
 ## Members
 
 #### `public void * `[`internal`](#structs_mesh_1a5eea482db47731c601ec10514b5052a6) <a id="structs_mesh_1a5eea482db47731c601ec10514b5052a6"></a>
 
-#### `public GraphicsModule * `[`creator`](#structs_mesh_1a10d729e60d51c4dd812519dc55a5226a) <a id="structs_mesh_1a10d729e60d51c4dd812519dc55a5226a"></a>
+#### `public `[`GraphicsModule`](#struct_graphics_module)` * `[`creator`](#structs_mesh_1a10d729e60d51c4dd812519dc55a5226a) <a id="structs_mesh_1a10d729e60d51c4dd812519dc55a5226a"></a>
 
 # struct `sModelTransform` <a id="structs_model_transform"></a>
 
@@ -1290,6 +1602,10 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
 # struct `sShader` <a id="structs_shader"></a>
 
+Shader structure.
+
+This structure represents a shader that can be used in a shader program. Implementation defined elsewhere. It is a single shader (not a shader program) and is used to create shader programs.
+
 ## Summary
 
  Members                        | Descriptions                                
@@ -1302,21 +1618,22 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
 # struct `sShaderProgram` <a id="structs_shader_program"></a>
 
+Shader program structure.
+
+This structure represents a shader program that can be used to render meshes. Implementation defined elsewhere. It is a collection of shaders that are used together to render a mesh.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
 `public void * `[`internal`](#structs_shader_program_1a2f2cc0c04aedb1497299bc2e3e79641c) | 
-`public GraphicsModule * `[`creator`](#structs_shader_program_1a4fea0cc5a2b5954e764cca58dd3bff26) | 
-`public void * `[`gfx_internal`](#structs_shader_program_1a4caa6973194be7b89269f52480e9400b) | 
+`public `[`GraphicsModule`](#struct_graphics_module)` * `[`creator`](#structs_shader_program_1a4fea0cc5a2b5954e764cca58dd3bff26) | 
 
 ## Members
 
 #### `public void * `[`internal`](#structs_shader_program_1a2f2cc0c04aedb1497299bc2e3e79641c) <a id="structs_shader_program_1a2f2cc0c04aedb1497299bc2e3e79641c"></a>
 
-#### `public GraphicsModule * `[`creator`](#structs_shader_program_1a4fea0cc5a2b5954e764cca58dd3bff26) <a id="structs_shader_program_1a4fea0cc5a2b5954e764cca58dd3bff26"></a>
-
-#### `public void * `[`gfx_internal`](#structs_shader_program_1a4caa6973194be7b89269f52480e9400b) <a id="structs_shader_program_1a4caa6973194be7b89269f52480e9400b"></a>
+#### `public `[`GraphicsModule`](#struct_graphics_module)` * `[`creator`](#structs_shader_program_1a4fea0cc5a2b5954e764cca58dd3bff26) <a id="structs_shader_program_1a4fea0cc5a2b5954e764cca58dd3bff26"></a>
 
 # struct `sText` <a id="structs_text"></a>
 
@@ -1332,6 +1649,10 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
 # struct `sTexture` <a id="structs_texture"></a>
 
+Texture structure.
+
+This structure represents a texture that can be used in a shader program. Implementation defined elsewhere. It is used to create and use textures in a shader program.
+
 ## Summary
 
  Members                        | Descriptions                                
@@ -1343,6 +1664,12 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 #### `public void * `[`internal`](#structs_texture_1abb580940243f1d7fe2b20c9274bf448d) <a id="structs_texture_1abb580940243f1d7fe2b20c9274bf448d"></a>
 
 # struct `sTextureDefinition` <a id="structs_texture_definition"></a>
+
+Texture definition structure.
+
+This structure defines a texture that can be used in a shader program. It contains the width, height, number of channels, and data of the texture. The data is a pointer to the raw texture data, which is an array of unsigned char values. This cannot be used directly, but is used to create a texture.
+
+This is an intermediate structure and should be used only to create a texture.
 
 ## Summary
 
@@ -1365,62 +1692,121 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 
 # struct `sUniformDefinition` <a id="structs_uniform_definition"></a>
 
+Uniform definition structure.
+
+This structure defines a uniform definition, which is a collection of uniform elements. It contains an array of uniform elements and a count of the number of elements.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public sUniformElement * `[`elements`](#structs_uniform_definition_1a33e57330bc33dd214b0624cd11b5624e) | 
+`public `[`sUniformElement`](#structs_uniform_element)` * `[`elements`](#structs_uniform_definition_1a33e57330bc33dd214b0624cd11b5624e) | 
 `public size_t `[`count`](#structs_uniform_definition_1a50de8f1a6258dd406203cc399143de09) | 
-`public inline  `[`sUniformDefinition`](#structs_uniform_definition_1af85f36e434e17dfe05d6fb3e21c1c8b8)`(std::initializer_list< sUniformElement > elements)` | 
-`public inline size_t `[`size`](#structs_uniform_definition_1a96ca02cbeb0e9a03c19c50596d61ee8d)`()` | 
-`public inline  `[`sUniformDefinition`](#structs_uniform_definition_1a3388507dbf49e85d3eaeba62419523fc)`()` | 
-`public inline  `[`sUniformDefinition`](#structs_uniform_definition_1accb3656a2915c8936434d67198148b3c)`(sUniformElement * elements,size_t count)` | 
+`public inline  `[`sUniformDefinition`](#structs_uniform_definition_1af85f36e434e17dfe05d6fb3e21c1c8b8)`(std::initializer_list< `[`sUniformElement`](#structs_uniform_element)` > elements)` | Construct a uniform definition from an initializer list of uniform elements.
+`public inline size_t `[`size`](#structs_uniform_definition_1a96ca02cbeb0e9a03c19c50596d61ee8d)`()` | Get the size (in bytes) of the uniform definition.
+`public inline  `[`sUniformDefinition`](#structs_uniform_definition_1a3388507dbf49e85d3eaeba62419523fc)`()` | Construct an empty uniform definition.
+`public inline  `[`sUniformDefinition`](#structs_uniform_definition_1accb3656a2915c8936434d67198148b3c)`(`[`sUniformElement`](#structs_uniform_element)` * elements,size_t count)` | Construct a uniform definition from an array of uniform elements.
 
 ## Members
 
-#### `public sUniformElement * `[`elements`](#structs_uniform_definition_1a33e57330bc33dd214b0624cd11b5624e) <a id="structs_uniform_definition_1a33e57330bc33dd214b0624cd11b5624e"></a>
+#### `public `[`sUniformElement`](#structs_uniform_element)` * `[`elements`](#structs_uniform_definition_1a33e57330bc33dd214b0624cd11b5624e) <a id="structs_uniform_definition_1a33e57330bc33dd214b0624cd11b5624e"></a>
 
 #### `public size_t `[`count`](#structs_uniform_definition_1a50de8f1a6258dd406203cc399143de09) <a id="structs_uniform_definition_1a50de8f1a6258dd406203cc399143de09"></a>
 
-#### `public inline  `[`sUniformDefinition`](#structs_uniform_definition_1af85f36e434e17dfe05d6fb3e21c1c8b8)`(std::initializer_list< sUniformElement > elements)` <a id="structs_uniform_definition_1af85f36e434e17dfe05d6fb3e21c1c8b8"></a>
+#### `public inline  `[`sUniformDefinition`](#structs_uniform_definition_1af85f36e434e17dfe05d6fb3e21c1c8b8)`(std::initializer_list< `[`sUniformElement`](#structs_uniform_element)` > elements)` <a id="structs_uniform_definition_1af85f36e434e17dfe05d6fb3e21c1c8b8"></a>
+
+Construct a uniform definition from an initializer list of uniform elements.
+
+#### Parameters
+* `elements` The initializer list of uniform elements.
 
 #### `public inline size_t `[`size`](#structs_uniform_definition_1a96ca02cbeb0e9a03c19c50596d61ee8d)`()` <a id="structs_uniform_definition_1a96ca02cbeb0e9a03c19c50596d61ee8d"></a>
 
+Get the size (in bytes) of the uniform definition.
+
+#### Returns
+The size of the uniform definition in bytes.
+
 #### `public inline  `[`sUniformDefinition`](#structs_uniform_definition_1a3388507dbf49e85d3eaeba62419523fc)`()` <a id="structs_uniform_definition_1a3388507dbf49e85d3eaeba62419523fc"></a>
 
-#### `public inline  `[`sUniformDefinition`](#structs_uniform_definition_1accb3656a2915c8936434d67198148b3c)`(sUniformElement * elements,size_t count)` <a id="structs_uniform_definition_1accb3656a2915c8936434d67198148b3c"></a>
+Construct an empty uniform definition.
+
+#### `public inline  `[`sUniformDefinition`](#structs_uniform_definition_1accb3656a2915c8936434d67198148b3c)`(`[`sUniformElement`](#structs_uniform_element)` * elements,size_t count)` <a id="structs_uniform_definition_1accb3656a2915c8936434d67198148b3c"></a>
+
+Construct a uniform definition from an array of uniform elements.
+
+#### Parameters
+* `elements` The array of uniform elements. 
+
+* `count` The number of uniform elements.
 
 # struct `sUniformElement` <a id="structs_uniform_element"></a>
+
+Uniform element structure.
+
+This structure defines a single uniform element in a shader program. It contains the shader type, name, type, and size of the uniform. The size is defined as countx * county, where countx is the number of components and county is the number of elements in the array.
+
+> Todo: Add support for arrays like vec3[] and mat4[]. 
+
+Test if uneven matrices work (e.g. mat3x4).
 
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public sShaderType `[`shaderType`](#structs_uniform_element_1a88c8dff962c30a58eefa880567a96a18) | 
+`public `[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` `[`shaderType`](#structs_uniform_element_1a88c8dff962c30a58eefa880567a96a18) | 
 `public const char * `[`name`](#structs_uniform_element_1acb9b1ff9b6db0a44da2a836393384e5a) | 
-`public sUniformType `[`type`](#structs_uniform_element_1a676b83f600fd9b52396f5536d500497a) | 
+`public `[`sUniformType`](#gfx_2module_8h_1ab36772a0596f81df1a2cbbd7d12aa809)` `[`type`](#structs_uniform_element_1a676b83f600fd9b52396f5536d500497a) | 
 `public size_t `[`countx`](#structs_uniform_element_1ac092d3338c1c1f61c0201f89ad7a252c) | 
 `public size_t `[`county`](#structs_uniform_element_1a8369bc212d7a8be69b4a702b61b63ee0) | 
-`public inline  `[`sUniformElement`](#structs_uniform_element_1a8bc333f83e5866e4270e7df1a66b0f07)`(sShaderType shaderType,const char * name,sUniformType type,size_t countx,size_t county)` | 
-`public inline  `[`sUniformElement`](#structs_uniform_element_1a3c097b87365c1a9dd7a44ef81f45f1de)`(sShaderType shaderType,const char * name,sUniformType type,size_t countx)` | 
+`public inline  `[`sUniformElement`](#structs_uniform_element_1a8bc333f83e5866e4270e7df1a66b0f07)`(`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` shaderType,const char * name,`[`sUniformType`](#gfx_2module_8h_1ab36772a0596f81df1a2cbbd7d12aa809)` type,size_t countx,size_t county)` | Construct a matrix uniform element.
+`public inline  `[`sUniformElement`](#structs_uniform_element_1a3c097b87365c1a9dd7a44ef81f45f1de)`(`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` shaderType,const char * name,`[`sUniformType`](#gfx_2module_8h_1ab36772a0596f81df1a2cbbd7d12aa809)` type,size_t countx)` | Construct a vector or scalar uniform element.
 
 ## Members
 
-#### `public sShaderType `[`shaderType`](#structs_uniform_element_1a88c8dff962c30a58eefa880567a96a18) <a id="structs_uniform_element_1a88c8dff962c30a58eefa880567a96a18"></a>
+#### `public `[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` `[`shaderType`](#structs_uniform_element_1a88c8dff962c30a58eefa880567a96a18) <a id="structs_uniform_element_1a88c8dff962c30a58eefa880567a96a18"></a>
 
 #### `public const char * `[`name`](#structs_uniform_element_1acb9b1ff9b6db0a44da2a836393384e5a) <a id="structs_uniform_element_1acb9b1ff9b6db0a44da2a836393384e5a"></a>
 
-#### `public sUniformType `[`type`](#structs_uniform_element_1a676b83f600fd9b52396f5536d500497a) <a id="structs_uniform_element_1a676b83f600fd9b52396f5536d500497a"></a>
+#### `public `[`sUniformType`](#gfx_2module_8h_1ab36772a0596f81df1a2cbbd7d12aa809)` `[`type`](#structs_uniform_element_1a676b83f600fd9b52396f5536d500497a) <a id="structs_uniform_element_1a676b83f600fd9b52396f5536d500497a"></a>
 
 #### `public size_t `[`countx`](#structs_uniform_element_1ac092d3338c1c1f61c0201f89ad7a252c) <a id="structs_uniform_element_1ac092d3338c1c1f61c0201f89ad7a252c"></a>
 
 #### `public size_t `[`county`](#structs_uniform_element_1a8369bc212d7a8be69b4a702b61b63ee0) <a id="structs_uniform_element_1a8369bc212d7a8be69b4a702b61b63ee0"></a>
 
-#### `public inline  `[`sUniformElement`](#structs_uniform_element_1a8bc333f83e5866e4270e7df1a66b0f07)`(sShaderType shaderType,const char * name,sUniformType type,size_t countx,size_t county)` <a id="structs_uniform_element_1a8bc333f83e5866e4270e7df1a66b0f07"></a>
+#### `public inline  `[`sUniformElement`](#structs_uniform_element_1a8bc333f83e5866e4270e7df1a66b0f07)`(`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` shaderType,const char * name,`[`sUniformType`](#gfx_2module_8h_1ab36772a0596f81df1a2cbbd7d12aa809)` type,size_t countx,size_t county)` <a id="structs_uniform_element_1a8bc333f83e5866e4270e7df1a66b0f07"></a>
 
-#### `public inline  `[`sUniformElement`](#structs_uniform_element_1a3c097b87365c1a9dd7a44ef81f45f1de)`(sShaderType shaderType,const char * name,sUniformType type,size_t countx)` <a id="structs_uniform_element_1a3c097b87365c1a9dd7a44ef81f45f1de"></a>
+Construct a matrix uniform element.
+
+#### Parameters
+* `shaderType` The shader that this uniform belongs to. 
+
+* `name` The name of the uniform in the shader. 
+
+* `type` The type of the uniform. 
+
+* `countx` The x size of the matrix (e.g. 4 for a mat4). 
+
+* `county` The y size of the matrix (e.g. 4 for a mat4).
+
+#### `public inline  `[`sUniformElement`](#structs_uniform_element_1a3c097b87365c1a9dd7a44ef81f45f1de)`(`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` shaderType,const char * name,`[`sUniformType`](#gfx_2module_8h_1ab36772a0596f81df1a2cbbd7d12aa809)` type,size_t countx)` <a id="structs_uniform_element_1a3c097b87365c1a9dd7a44ef81f45f1de"></a>
+
+Construct a vector or scalar uniform element.
+
+#### Parameters
+* `shaderType` The shader that this uniform belongs to. 
+
+* `name` The name of the uniform in the shader. 
+
+* `type` The type of the uniform. 
+
+* `countx` The size of the vector (e.g. 4 for a vec4).
 
 # struct `sUniforms` <a id="structs_uniforms"></a>
+
+Uniforms structure.
+
+This structure represents a collection of uniforms that can be used in a shader program. Implementation defined elsewhere. It is used to set and get uniforms in a shader program.
 
 ## Summary
 
@@ -1433,6 +1819,10 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 #### `public void * `[`internal`](#structs_uniforms_1aea8d6998a8d1a4a0f903132f0b70243f) <a id="structs_uniforms_1aea8d6998a8d1a4a0f903132f0b70243f"></a>
 
 # struct `sVertexDefinition` <a id="structs_vertex_definition"></a>
+
+A single abstract vertex definition.
+
+This structure defines the layout of a vertex in a vertex buffer. It contains an array of integers that represent the number of components for each attribute in the vertex, and a count of the number of attributes.
 
 ## Summary
 
@@ -2003,16 +2393,16 @@ These functions will do something different depending on the implementation sele
 `public inline `[`sWindow`](#structs_window)` * `[`loadWindow`](#struct_window_module_1afbb39fabdd17eabc5fc13c5f35b26a59)`(const char * name,int width,int height,bool vsync,bool resizable)` | Load a window with the specified name, width, height, and default flags.
 `public inline void `[`updateWindow`](#struct_window_module_1a332a23ed050d2f60c9aa706580ade3f3)`(`[`sWindow`](#structs_window)` * window)` | Update the window properties and state.
 `public inline void `[`destroyWindow`](#struct_window_module_1a7fa71ee2451bb4e8eddc3b419d539e17)`(`[`sWindow`](#structs_window)` * window)` | Destroy the specified window and free its resources.
-`public inline void `[`swapBuffers`](#struct_window_module_1ac31f4b6e4855b346168f5a65fcf918d4)`(`[`sWindow`](#structs_window)` * window)` | Swap the front and back buffers of the specified window.
-`public inline bool `[`shouldClose`](#struct_window_module_1a2cac6e239d47bb6bbd1b5265a1bb305b)`(`[`sWindow`](#structs_window)` * window)` | Check if the specified window should close.
-`public inline void `[`setShouldClose`](#struct_window_module_1a01521a8724a05a69b965878dfcd4ee1a)`(`[`sWindow`](#structs_window)` * window,bool value)` | Set the specified window to close or not.
-`public inline void * `[`getHandle`](#struct_window_module_1a24e434948bf2b4099bf7a20240c20c3e)`(`[`sWindow`](#structs_window)` * window)` | Get the handle of the specified window.
-`public inline bool `[`isKeyPressed`](#struct_window_module_1ab9eb0cc493f7d72c5e091b106e1a247f)`(`[`sWindow`](#structs_window)` * window,Key key)` | Check if a specific key is pressed in the specified window.
-`public inline bool `[`isMouseButtonPressed`](#struct_window_module_1a2184127a99441dce7fd7a800aaf6eb10)`(`[`sWindow`](#structs_window)` * window,int button)` | Check if a specific mouse button is pressed in the specified window.
-`public inline void `[`getMousePosition`](#struct_window_module_1aefd44986d630fb8c25640fdf2f1d4b31)`(`[`sWindow`](#structs_window)` * window,float * x,float * y)` | Get the current mouse position in the specified window.
-`public inline void `[`setMousePosition`](#struct_window_module_1a0b4d8fb8aa1342f1ebddd0b4b8f9e35f)`(`[`sWindow`](#structs_window)` * window,float x,float y)` | Set the mouse position in the specified window.
-`public inline void `[`setCursorMode`](#struct_window_module_1a1d6e0c627191dea66a56d0422bdff373)`(`[`sWindow`](#structs_window)` * window,`[`CursorMode`](#win_2module_8h_1a3bbf59221044115f117dc97bb8930648)` mode)` | Set the cursor mode for the specified window.
-`public inline void `[`setWindowTitle`](#struct_window_module_1a6e6bc6cecad01a7cad83ddf87b56af90)`(`[`sWindow`](#structs_window)` * window,const char * title)` | Set the title of the specified window.
+`public inline void `[`swapBuffers`](#struct_window_module_1aa40ef3b05241f7d5ea3a0cc870ee759e)`(`[`sWindow`](#structs_window)` window)` | Swap the front and back buffers of the specified window.
+`public inline bool `[`shouldClose`](#struct_window_module_1a2b7146e8692258106652425239321ad7)`(`[`sWindow`](#structs_window)` window)` | Check if the specified window should close.
+`public inline void `[`setShouldClose`](#struct_window_module_1a08ad70a8d266990be05e96d5ebe0598c)`(`[`sWindow`](#structs_window)` window,bool value)` | Set the specified window to close or not.
+`public inline void * `[`getHandle`](#struct_window_module_1af74f66ec626c21671d099438d3b20b8e)`(`[`sWindow`](#structs_window)` window)` | Get the handle of the specified window.
+`public inline bool `[`isKeyPressed`](#struct_window_module_1a4a91e784850f9b2ae05f6a9c501046f3)`(`[`sWindow`](#structs_window)` window,Key key)` | Check if a specific key is pressed in the specified window.
+`public inline bool `[`isMouseButtonPressed`](#struct_window_module_1acac8648642874b659af30157ae9827f8)`(`[`sWindow`](#structs_window)` window,int button)` | Check if a specific mouse button is pressed in the specified window.
+`public inline void `[`getMousePosition`](#struct_window_module_1a8dab3e5fdea2a88d1c0ec74605860a4e)`(`[`sWindow`](#structs_window)` window,float * x,float * y)` | Get the current mouse position in the specified window.
+`public inline void `[`setMousePosition`](#struct_window_module_1aa6d4f9973a482898067469b021c0e754)`(`[`sWindow`](#structs_window)` window,float x,float y)` | Set the mouse position in the specified window.
+`public inline void `[`setCursorMode`](#struct_window_module_1a80067a92ac8bbe1a14aba39a1e545ccf)`(`[`sWindow`](#structs_window)` window,`[`CursorMode`](#win_2module_8h_1a3bbf59221044115f117dc97bb8930648)` mode)` | Set the cursor mode for the specified window.
+`public inline void `[`setWindowTitle`](#struct_window_module_1ac1110dafa5d9c59fb5b9cd271d87063f)`(`[`sWindow`](#structs_window)` window,const char * title)` | Set the title of the specified window.
 `public inline double `[`getTime`](#struct_window_module_1a9efdb8131b23be2226b841d1969265a2)`(`[`sWindow`](#structs_window)` window)` | Get the time since the window was created.
 `public inline  explicit `[`WindowModule`](#struct_window_module_1a2427e19698191d79b01bde5e380533ff)`(const char * dynlib)` | Constructor for the [WindowModule](#struct_window_module) class.
 
@@ -2078,7 +2468,7 @@ This function destroys the specified window and frees any resources associated w
 
 This function should be called when the window is no longer needed to free up resources.
 
-#### `public inline void `[`swapBuffers`](#struct_window_module_1ac31f4b6e4855b346168f5a65fcf918d4)`(`[`sWindow`](#structs_window)` * window)` <a id="struct_window_module_1ac31f4b6e4855b346168f5a65fcf918d4"></a>
+#### `public inline void `[`swapBuffers`](#struct_window_module_1aa40ef3b05241f7d5ea3a0cc870ee759e)`(`[`sWindow`](#structs_window)` window)` <a id="struct_window_module_1aa40ef3b05241f7d5ea3a0cc870ee759e"></a>
 
 Swap the front and back buffers of the specified window.
 
@@ -2089,7 +2479,7 @@ This function swaps the front and back buffers of the specified window, displayi
 
 This function should be called after rendering to the window to display the content.
 
-#### `public inline bool `[`shouldClose`](#struct_window_module_1a2cac6e239d47bb6bbd1b5265a1bb305b)`(`[`sWindow`](#structs_window)` * window)` <a id="struct_window_module_1a2cac6e239d47bb6bbd1b5265a1bb305b"></a>
+#### `public inline bool `[`shouldClose`](#struct_window_module_1a2b7146e8692258106652425239321ad7)`(`[`sWindow`](#structs_window)` window)` <a id="struct_window_module_1a2b7146e8692258106652425239321ad7"></a>
 
 Check if the specified window should close.
 
@@ -2103,7 +2493,7 @@ true if the window should close, false otherwise.
 
 This function is typically used to determine if the window should be closed based on user input or other conditions.
 
-#### `public inline void `[`setShouldClose`](#struct_window_module_1a01521a8724a05a69b965878dfcd4ee1a)`(`[`sWindow`](#structs_window)` * window,bool value)` <a id="struct_window_module_1a01521a8724a05a69b965878dfcd4ee1a"></a>
+#### `public inline void `[`setShouldClose`](#struct_window_module_1a08ad70a8d266990be05e96d5ebe0598c)`(`[`sWindow`](#structs_window)` window,bool value)` <a id="struct_window_module_1a08ad70a8d266990be05e96d5ebe0598c"></a>
 
 Set the specified window to close or not.
 
@@ -2118,7 +2508,7 @@ This function is typically used to programmatically close the window based on us
 
 This function may not be supported on all platforms or windowing libraries.
 
-#### `public inline void * `[`getHandle`](#struct_window_module_1a24e434948bf2b4099bf7a20240c20c3e)`(`[`sWindow`](#structs_window)` * window)` <a id="struct_window_module_1a24e434948bf2b4099bf7a20240c20c3e"></a>
+#### `public inline void * `[`getHandle`](#struct_window_module_1af74f66ec626c21671d099438d3b20b8e)`(`[`sWindow`](#structs_window)` window)` <a id="struct_window_module_1af74f66ec626c21671d099438d3b20b8e"></a>
 
 Get the handle of the specified window.
 
@@ -2132,7 +2522,7 @@ A pointer to the handle of the window.
 
 Unlike the other functions, this one MUST be supported by all windowing libraries for the graphics module to work.
 
-#### `public inline bool `[`isKeyPressed`](#struct_window_module_1ab9eb0cc493f7d72c5e091b106e1a247f)`(`[`sWindow`](#structs_window)` * window,Key key)` <a id="struct_window_module_1ab9eb0cc493f7d72c5e091b106e1a247f"></a>
+#### `public inline bool `[`isKeyPressed`](#struct_window_module_1a4a91e784850f9b2ae05f6a9c501046f3)`(`[`sWindow`](#structs_window)` window,Key key)` <a id="struct_window_module_1a4a91e784850f9b2ae05f6a9c501046f3"></a>
 
 Check if a specific key is pressed in the specified window.
 
@@ -2150,7 +2540,7 @@ This should not be relied on for gameplay, as there will be an input module for 
 
 > Todo: Update this once the input module is implemented.
 
-#### `public inline bool `[`isMouseButtonPressed`](#struct_window_module_1a2184127a99441dce7fd7a800aaf6eb10)`(`[`sWindow`](#structs_window)` * window,int button)` <a id="struct_window_module_1a2184127a99441dce7fd7a800aaf6eb10"></a>
+#### `public inline bool `[`isMouseButtonPressed`](#struct_window_module_1acac8648642874b659af30157ae9827f8)`(`[`sWindow`](#structs_window)` window,int button)` <a id="struct_window_module_1acac8648642874b659af30157ae9827f8"></a>
 
 Check if a specific mouse button is pressed in the specified window.
 
@@ -2168,7 +2558,7 @@ This should not be relied on for gameplay, as there will be an input module for 
 
 > Todo: Update this once the input module is implemented.
 
-#### `public inline void `[`getMousePosition`](#struct_window_module_1aefd44986d630fb8c25640fdf2f1d4b31)`(`[`sWindow`](#structs_window)` * window,float * x,float * y)` <a id="struct_window_module_1aefd44986d630fb8c25640fdf2f1d4b31"></a>
+#### `public inline void `[`getMousePosition`](#struct_window_module_1a8dab3e5fdea2a88d1c0ec74605860a4e)`(`[`sWindow`](#structs_window)` window,float * x,float * y)` <a id="struct_window_module_1a8dab3e5fdea2a88d1c0ec74605860a4e"></a>
 
 Get the current mouse position in the specified window.
 
@@ -2187,7 +2577,7 @@ This should not be relied on for gameplay, as there will be an input module for 
 
 > Todo: Update this once the input module is implemented.
 
-#### `public inline void `[`setMousePosition`](#struct_window_module_1a0b4d8fb8aa1342f1ebddd0b4b8f9e35f)`(`[`sWindow`](#structs_window)` * window,float x,float y)` <a id="struct_window_module_1a0b4d8fb8aa1342f1ebddd0b4b8f9e35f"></a>
+#### `public inline void `[`setMousePosition`](#struct_window_module_1aa6d4f9973a482898067469b021c0e754)`(`[`sWindow`](#structs_window)` window,float x,float y)` <a id="struct_window_module_1aa6d4f9973a482898067469b021c0e754"></a>
 
 Set the mouse position in the specified window.
 
@@ -2206,7 +2596,7 @@ This should not be relied on for gameplay, as there will be an input module for 
 
 > Todo: Update this once the input module is implemented.
 
-#### `public inline void `[`setCursorMode`](#struct_window_module_1a1d6e0c627191dea66a56d0422bdff373)`(`[`sWindow`](#structs_window)` * window,`[`CursorMode`](#win_2module_8h_1a3bbf59221044115f117dc97bb8930648)` mode)` <a id="struct_window_module_1a1d6e0c627191dea66a56d0422bdff373"></a>
+#### `public inline void `[`setCursorMode`](#struct_window_module_1a80067a92ac8bbe1a14aba39a1e545ccf)`(`[`sWindow`](#structs_window)` window,`[`CursorMode`](#win_2module_8h_1a3bbf59221044115f117dc97bb8930648)` mode)` <a id="struct_window_module_1a80067a92ac8bbe1a14aba39a1e545ccf"></a>
 
 Set the cursor mode for the specified window.
 
@@ -2227,7 +2617,7 @@ This should not be relied on for gameplay, as there will be an input module for 
 
 **See also**: [CursorMode](#win_2module_8h_1a3bbf59221044115f117dc97bb8930648)
 
-#### `public inline void `[`setWindowTitle`](#struct_window_module_1a6e6bc6cecad01a7cad83ddf87b56af90)`(`[`sWindow`](#structs_window)` * window,const char * title)` <a id="struct_window_module_1a6e6bc6cecad01a7cad83ddf87b56af90"></a>
+#### `public inline void `[`setWindowTitle`](#struct_window_module_1ac1110dafa5d9c59fb5b9cd271d87063f)`(`[`sWindow`](#structs_window)` window,const char * title)` <a id="struct_window_module_1ac1110dafa5d9c59fb5b9cd271d87063f"></a>
 
 Set the title of the specified window.
 

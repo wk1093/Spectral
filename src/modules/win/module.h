@@ -157,7 +157,7 @@ public:
      * @param flags The window flags (e.g., vsync, resizable).
      * @return A pointer to the created window.
      */
-    sWindow* loadWindow(const char* name, int width, int height, sWindowFlags flags) {
+    inline sWindow* loadWindow(const char* name, int width, int height, sWindowFlags flags) {
         sWindow* w = internal_loadWindow(name, width, height, flags);
         w->creator = this;
         w->startTime = std::chrono::high_resolution_clock::now();
@@ -180,7 +180,7 @@ public:
      * @param resizable Whether the window is resizable (default: false).
      * @return A pointer to the created window.
      */
-    sWindow* loadWindow(const char* name, int width, int height, bool vsync=true, bool resizable=false) {
+    inline sWindow* loadWindow(const char* name, int width, int height, bool vsync=true, bool resizable=false) {
         sWindowFlags flags = {vsync, false};
         return loadWindow(name, width, height, flags);
     }
@@ -193,7 +193,7 @@ public:
      * @param window A pointer to the window to update.
      * @note This function should be called once per frame to ensure the window is updated correctly.
      */
-    void updateWindow(sWindow* window) {
+    inline void updateWindow(sWindow* window) {
         internal_updateWindow(window);
         double cur = getTime(*window);
         window->dt = cur - window->lastTime;
@@ -208,7 +208,7 @@ public:
      * @param window A pointer to the window to destroy.
      * @note This function should be called when the window is no longer needed to free up resources.
      */
-    void destroyWindow(sWindow* window) {
+    inline void destroyWindow(sWindow* window) {
         internal_destroyWindow(window);
     }
 
@@ -220,7 +220,7 @@ public:
      * @param window A pointer to the window to swap buffers for.
      * @note This function should be called after rendering to the window to display the content.
      */
-    void swapBuffers(sWindow window) {
+    inline void swapBuffers(sWindow window) {
         internal_swapBuffers(window);
     }
 
@@ -233,7 +233,7 @@ public:
      * @return true if the window should close, false otherwise.
      * @note This function is typically used to determine if the window should be closed based on user input or other conditions.
      */
-    bool shouldClose(sWindow window) {
+    inline bool shouldClose(sWindow window) {
         return internal_shouldClose(window);
     }
 
@@ -247,7 +247,7 @@ public:
      * @note This function is typically used to programmatically close the window based on user input or other conditions.
      * @note This function may not be supported on all platforms or windowing libraries.
      */
-    void setShouldClose(sWindow window, bool value) {
+    inline void setShouldClose(sWindow window, bool value) {
         internal_setShouldClose(window, value);
     }
 
@@ -260,7 +260,7 @@ public:
      * @return A pointer to the handle of the window.
      * @note Unlike the other functions, this one MUST be supported by all windowing libraries for the graphics module to work.
      */
-    void* getHandle(sWindow window) {
+    inline void* getHandle(sWindow window) {
         return internal_getHandle(window);
     }
 
@@ -275,7 +275,7 @@ public:
      * @note This should not be relied on for gameplay, as there will be an input module for that
      * @todo Update this once the input module is implemented.
      */
-    bool isKeyPressed(sWindow window, Key key) {
+    inline bool isKeyPressed(sWindow window, Key key) {
         return internal_isKeyPressed(window, key);
     }
 
@@ -290,7 +290,7 @@ public:
      * @note This should not be relied on for gameplay, as there will be an input module for that
      * @todo Update this once the input module is implemented.
      */
-    bool isMouseButtonPressed(sWindow window, int button) {
+    inline bool isMouseButtonPressed(sWindow window, int button) {
         return internal_isMouseButtonPressed(window, button);
     }
 
@@ -306,7 +306,7 @@ public:
      * @note This should not be relied on for gameplay, as there will be an input module for that
      * @todo Update this once the input module is implemented.
      */
-    void getMousePosition(sWindow window, float* x, float* y) {
+    inline void getMousePosition(sWindow window, float* x, float* y) {
         internal_getMousePosition(window, x, y);
     }
 
@@ -322,7 +322,7 @@ public:
      * @note This should not be relied on for gameplay, as there will be an input module for that
      * @todo Update this once the input module is implemented.
      */
-    void setMousePosition(sWindow window, float x, float y) {
+    inline void setMousePosition(sWindow window, float x, float y) {
         internal_setMousePosition(window, x, y);
     }
 
@@ -339,7 +339,7 @@ public:
      * @todo Update this once the input module is implemented.
      * @see #CursorMode
      */
-    void setCursorMode(sWindow window, CursorMode mode) {
+    inline void setCursorMode(sWindow window, CursorMode mode) {
         internal_setCursorMode(window, mode);
     }
 
@@ -353,7 +353,7 @@ public:
      * @note This may not be supported on all platforms or windowing libraries.
      * @note This is useful for displaying the current state of the application or game in the window title.
      */
-    void setWindowTitle(sWindow window, const char* title) {
+    inline void setWindowTitle(sWindow window, const char* title) {
         internal_setWindowTitle(window, title);
     }
 
@@ -366,7 +366,7 @@ public:
      * @return The time since the window was created in seconds.
      * @note This can be used for timing purposes, such as calculating the frame rate or elapsed time.
      */
-    double getTime(sWindow window) {
+    inline double getTime(sWindow window) {
         auto now = std::chrono::high_resolution_clock::now();
         return std::chrono::duration<double>(now - window.startTime).count();
     }
@@ -379,7 +379,7 @@ public:
      * @param dynlib The name of the dynamic library to load.
      * @note This constructor should be called before using any of the window module functions.
      */
-    explicit WindowModule(const char* dynlib) : Module(dynlib, "win") {
+    inline explicit WindowModule(const char* dynlib) : Module(dynlib, "win") {
         internal_loadWindow = (window::WindowLoader)lib.getSymbol("loadWindow");
         internal_destroyWindow = (window::WindowDestructor)lib.getSymbol("destroyWindow");
         internal_updateWindow = (window::WindowUpdate)lib.getSymbol("updateWindow");
