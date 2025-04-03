@@ -6,41 +6,18 @@
 `struct `[`AssetBuffer`](#struct_asset_buffer) | 
 `struct `[`AssetLoader`](#struct_asset_loader) | 
 `struct `[`AudioModule`](#struct_audio_module) | 
-`struct `[`sInternalFont::CharacterDef`](#structs_internal_font_1_1_character_def) | 
-`struct `[`Clay__Alignpointer`](#struct_clay_____alignpointer) | 
-`struct `[`Clay_BorderElementConfig`](#struct_clay___border_element_config) | 
-`struct `[`Clay_CustomElementConfig`](#struct_clay___custom_element_config) | 
-`struct `[`Clay_ImageElementConfig`](#struct_clay___image_element_config) | 
-`struct `[`Clay_RectangleElementConfig`](#struct_clay___rectangle_element_config) | 
-`struct `[`Clay_TextElementConfig`](#struct_clay___text_element_config) | 
-`struct `[`Cube`](#struct_cube) | 
 `struct `[`DynamicLibrary`](#struct_dynamic_library) | 
-`struct `[`DynamicScript`](#struct_dynamic_script) | 
 `struct `[`GameContext`](#struct_game_context) | 
 `struct `[`GraphicsModule`](#struct_graphics_module) | Graphics module class.
-`struct `[`mat4.__unnamed14__`](#structmat4_8____unnamed14____) | 
+`struct `[`mat4.__unnamed13__`](#structmat4_8____unnamed13____) | 
 `struct `[`Module`](#struct_module) | 
 `struct `[`sAudioClip`](#structs_audio_clip) | 
 `struct `[`sAudioSource`](#structs_audio_source) | 
 `struct `[`sCamera`](#structs_camera) | 
 `struct `[`Script`](#struct_script) | 
 `struct `[`ScriptLoaderModule`](#struct_script_loader_module) | 
-`struct `[`sD3D11_1Context`](#structs_d3_d11__1_context) | 
-`struct `[`sD3D11_1Context.scissor`](#structs_d3_d11__1_context_8scissor) | 
 `struct `[`sFont`](#structs_font) | 
-`struct `[`sFreeTypeContext`](#structs_free_type_context) | 
 `struct `[`ShaderModule`](#struct_shader_module) | [ShaderModule](#struct_shader_module) is a module that provides functionality for compiling and creating shaders.
-`struct `[`sInternalFont`](#structs_internal_font) | 
-`struct `[`sInternalMesh`](#structs_internal_mesh) | 
-`struct `[`sInternalRectUniforms`](#structs_internal_rect_uniforms) | 
-`struct `[`sInternalRectVertex`](#structs_internal_rect_vertex) | 
-`struct `[`sInternalRoundedRectUniforms`](#structs_internal_rounded_rect_uniforms) | 
-`struct `[`sInternalShader`](#structs_internal_shader) | 
-`struct `[`sInternalShaderProgram`](#structs_internal_shader_program) | 
-`struct `[`sInternalText`](#structs_internal_text) | 
-`struct `[`sInternalTexture`](#structs_internal_texture) | 
-`struct `[`sInternalUniforms`](#structs_internal_uniforms) | 
-`struct `[`sIUIGlobalState`](#structs_i_u_i_global_state) | 
 `struct `[`sMesh`](#structs_mesh) | Mesh structure.
 `struct `[`sModelTransform`](#structs_model_transform) | 
 `struct `[`sShader`](#structs_shader) | Shader structure.
@@ -66,15 +43,13 @@
 `struct `[`swWorld`](#structsw_world) | 
 `struct `[`TextAssetBuffer`](#struct_text_asset_buffer) | 
 `struct `[`TextModule`](#struct_text_module) | 
-`struct `[`TextUniforms`](#struct_text_uniforms) | 
-`struct `[`TextureModule`](#struct_texture_module) | 
-`struct `[`TextVertex`](#struct_text_vertex) | 
-`struct `[`vec2.__unnamed10__`](#structvec2_8____unnamed10____) | 
-`struct `[`vec2.__unnamed12__`](#structvec2_8____unnamed12____) | 
-`struct `[`vec3.__unnamed2__`](#structvec3_8____unnamed2____) | 
-`struct `[`vec3.__unnamed4__`](#structvec3_8____unnamed4____) | 
-`struct `[`vec4.__unnamed6__`](#structvec4_8____unnamed6____) | 
-`struct `[`vec4.__unnamed8__`](#structvec4_8____unnamed8____) | 
+`struct `[`TextureModule`](#struct_texture_module) | Texture loading module class.
+`struct `[`vec2.__unnamed11__`](#structvec2_8____unnamed11____) | 
+`struct `[`vec2.__unnamed9__`](#structvec2_8____unnamed9____) | 
+`struct `[`vec3.__unnamed1__`](#structvec3_8____unnamed1____) | 
+`struct `[`vec3.__unnamed3__`](#structvec3_8____unnamed3____) | 
+`struct `[`vec4.__unnamed5__`](#structvec4_8____unnamed5____) | 
+`struct `[`vec4.__unnamed7__`](#structvec4_8____unnamed7____) | 
 `struct `[`Vertex`](#struct_vertex) | 
 `struct `[`WindowModule`](#struct_window_module) | Window module class.
 `struct `[`WorldModule`](#struct_world_module) | 
@@ -218,162 +193,6 @@ struct AudioModule
 
 #### `public inline  explicit `[`AudioModule`](#struct_audio_module_1a73e7cc683655fab3fe6534718eff1bb9)`(const char * dylib)` <a id="struct_audio_module_1a73e7cc683655fab3fe6534718eff1bb9"></a>
 
-# struct `sInternalFont::CharacterDef` <a id="structs_internal_font_1_1_character_def"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public vec2 `[`offset`](#structs_internal_font_1_1_character_def_1a98851314e4d8c4f7f57ed592e106948d) | 
-`public vec2 `[`size`](#structs_internal_font_1_1_character_def_1a4a848f34cc6344f5e4e2f8e044ddab79) | 
-`public vec2 `[`bearing`](#structs_internal_font_1_1_character_def_1a720dd3588e87132594606e6670d5b8b7) | 
-`public double `[`advance`](#structs_internal_font_1_1_character_def_1a30a67d4f014c6108a1428651b67a301e) | 
-
-## Members
-
-#### `public vec2 `[`offset`](#structs_internal_font_1_1_character_def_1a98851314e4d8c4f7f57ed592e106948d) <a id="structs_internal_font_1_1_character_def_1a98851314e4d8c4f7f57ed592e106948d"></a>
-
-#### `public vec2 `[`size`](#structs_internal_font_1_1_character_def_1a4a848f34cc6344f5e4e2f8e044ddab79) <a id="structs_internal_font_1_1_character_def_1a4a848f34cc6344f5e4e2f8e044ddab79"></a>
-
-#### `public vec2 `[`bearing`](#structs_internal_font_1_1_character_def_1a720dd3588e87132594606e6670d5b8b7) <a id="structs_internal_font_1_1_character_def_1a720dd3588e87132594606e6670d5b8b7"></a>
-
-#### `public double `[`advance`](#structs_internal_font_1_1_character_def_1a30a67d4f014c6108a1428651b67a301e) <a id="structs_internal_font_1_1_character_def_1a30a67d4f014c6108a1428651b67a301e"></a>
-
-# struct `Clay__Alignpointer` <a id="struct_clay_____alignpointer"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public char `[`c`](#struct_clay_____alignpointer_1a1a0aaed18e685c1d403c7fcb9bbcba4e) | 
-`public void * `[`x`](#struct_clay_____alignpointer_1a3c7311b005787465a51dee730e140cdc) | 
-
-## Members
-
-#### `public char `[`c`](#struct_clay_____alignpointer_1a1a0aaed18e685c1d403c7fcb9bbcba4e) <a id="struct_clay_____alignpointer_1a1a0aaed18e685c1d403c7fcb9bbcba4e"></a>
-
-#### `public void * `[`x`](#struct_clay_____alignpointer_1a3c7311b005787465a51dee730e140cdc) <a id="struct_clay_____alignpointer_1a3c7311b005787465a51dee730e140cdc"></a>
-
-# struct `Clay_BorderElementConfig` <a id="struct_clay___border_element_config"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public Clay_Border `[`left`](#struct_clay___border_element_config_1a662ec56bd9841abed35544274e87f7e9) | 
-`public Clay_Border `[`right`](#struct_clay___border_element_config_1a33bcf4d3a33b07479d4ecd55946d589d) | 
-`public Clay_Border `[`top`](#struct_clay___border_element_config_1a1f396c317ce4b2cdd8c21daa9592d653) | 
-`public Clay_Border `[`bottom`](#struct_clay___border_element_config_1a45063fc60f8b3a06e6156bb89d7efb30) | 
-`public Clay_Border `[`betweenChildren`](#struct_clay___border_element_config_1a276ffd146093e042a19f5b4a0ace3a74) | 
-`public Clay_CornerRadius `[`cornerRadius`](#struct_clay___border_element_config_1a9875dc3728a5ac59f61ecc2faf7dd672) | 
-
-## Members
-
-#### `public Clay_Border `[`left`](#struct_clay___border_element_config_1a662ec56bd9841abed35544274e87f7e9) <a id="struct_clay___border_element_config_1a662ec56bd9841abed35544274e87f7e9"></a>
-
-#### `public Clay_Border `[`right`](#struct_clay___border_element_config_1a33bcf4d3a33b07479d4ecd55946d589d) <a id="struct_clay___border_element_config_1a33bcf4d3a33b07479d4ecd55946d589d"></a>
-
-#### `public Clay_Border `[`top`](#struct_clay___border_element_config_1a1f396c317ce4b2cdd8c21daa9592d653) <a id="struct_clay___border_element_config_1a1f396c317ce4b2cdd8c21daa9592d653"></a>
-
-#### `public Clay_Border `[`bottom`](#struct_clay___border_element_config_1a45063fc60f8b3a06e6156bb89d7efb30) <a id="struct_clay___border_element_config_1a45063fc60f8b3a06e6156bb89d7efb30"></a>
-
-#### `public Clay_Border `[`betweenChildren`](#struct_clay___border_element_config_1a276ffd146093e042a19f5b4a0ace3a74) <a id="struct_clay___border_element_config_1a276ffd146093e042a19f5b4a0ace3a74"></a>
-
-#### `public Clay_CornerRadius `[`cornerRadius`](#struct_clay___border_element_config_1a9875dc3728a5ac59f61ecc2faf7dd672) <a id="struct_clay___border_element_config_1a9875dc3728a5ac59f61ecc2faf7dd672"></a>
-
-# struct `Clay_CustomElementConfig` <a id="struct_clay___custom_element_config"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public void * `[`customData`](#struct_clay___custom_element_config_1afab3d415194e2fcc709ffcfd2a167e3b) | 
-
-## Members
-
-#### `public void * `[`customData`](#struct_clay___custom_element_config_1afab3d415194e2fcc709ffcfd2a167e3b) <a id="struct_clay___custom_element_config_1afab3d415194e2fcc709ffcfd2a167e3b"></a>
-
-# struct `Clay_ImageElementConfig` <a id="struct_clay___image_element_config"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public void * `[`imageData`](#struct_clay___image_element_config_1a3e61b2952ada6874297e47fe04911185) | 
-`public Clay_Dimensions `[`sourceDimensions`](#struct_clay___image_element_config_1ae94ba0623da5c59078093990e0f32a84) | 
-
-## Members
-
-#### `public void * `[`imageData`](#struct_clay___image_element_config_1a3e61b2952ada6874297e47fe04911185) <a id="struct_clay___image_element_config_1a3e61b2952ada6874297e47fe04911185"></a>
-
-#### `public Clay_Dimensions `[`sourceDimensions`](#struct_clay___image_element_config_1ae94ba0623da5c59078093990e0f32a84) <a id="struct_clay___image_element_config_1ae94ba0623da5c59078093990e0f32a84"></a>
-
-# struct `Clay_RectangleElementConfig` <a id="struct_clay___rectangle_element_config"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public Clay_Color `[`color`](#struct_clay___rectangle_element_config_1aea98b2042af9cd9ee42bc539b759aa16) | 
-`public Clay_CornerRadius `[`cornerRadius`](#struct_clay___rectangle_element_config_1a63a3352c095d867faf8cb2f6347112c4) | 
-
-## Members
-
-#### `public Clay_Color `[`color`](#struct_clay___rectangle_element_config_1aea98b2042af9cd9ee42bc539b759aa16) <a id="struct_clay___rectangle_element_config_1aea98b2042af9cd9ee42bc539b759aa16"></a>
-
-#### `public Clay_CornerRadius `[`cornerRadius`](#struct_clay___rectangle_element_config_1a63a3352c095d867faf8cb2f6347112c4) <a id="struct_clay___rectangle_element_config_1a63a3352c095d867faf8cb2f6347112c4"></a>
-
-# struct `Clay_TextElementConfig` <a id="struct_clay___text_element_config"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public Clay_Color `[`textColor`](#struct_clay___text_element_config_1a7bef787b3853bd8f797caaabb187e6ce) | 
-`public uint16_t `[`fontId`](#struct_clay___text_element_config_1a4eb5fd4daf74806dd1e2640fa228645d) | 
-`public uint16_t `[`fontSize`](#struct_clay___text_element_config_1a88fc6519ab72406bd87e89c1ca8bbd12) | 
-`public uint16_t `[`letterSpacing`](#struct_clay___text_element_config_1abf14294d15a3898f7d817c3c4b3c8456) | 
-`public uint16_t `[`lineHeight`](#struct_clay___text_element_config_1a9e93e2ac747f818d09b6c4064b544065) | 
-`public Clay_TextElementConfigWrapMode `[`wrapMode`](#struct_clay___text_element_config_1a8e8c32b4fdf6850f363599e5d62213ed) | 
-
-## Members
-
-#### `public Clay_Color `[`textColor`](#struct_clay___text_element_config_1a7bef787b3853bd8f797caaabb187e6ce) <a id="struct_clay___text_element_config_1a7bef787b3853bd8f797caaabb187e6ce"></a>
-
-#### `public uint16_t `[`fontId`](#struct_clay___text_element_config_1a4eb5fd4daf74806dd1e2640fa228645d) <a id="struct_clay___text_element_config_1a4eb5fd4daf74806dd1e2640fa228645d"></a>
-
-#### `public uint16_t `[`fontSize`](#struct_clay___text_element_config_1a88fc6519ab72406bd87e89c1ca8bbd12) <a id="struct_clay___text_element_config_1a88fc6519ab72406bd87e89c1ca8bbd12"></a>
-
-#### `public uint16_t `[`letterSpacing`](#struct_clay___text_element_config_1abf14294d15a3898f7d817c3c4b3c8456) <a id="struct_clay___text_element_config_1abf14294d15a3898f7d817c3c4b3c8456"></a>
-
-#### `public uint16_t `[`lineHeight`](#struct_clay___text_element_config_1a9e93e2ac747f818d09b6c4064b544065) <a id="struct_clay___text_element_config_1a9e93e2ac747f818d09b6c4064b544065"></a>
-
-#### `public Clay_TextElementConfigWrapMode `[`wrapMode`](#struct_clay___text_element_config_1a8e8c32b4fdf6850f363599e5d62213ed) <a id="struct_clay___text_element_config_1a8e8c32b4fdf6850f363599e5d62213ed"></a>
-
-# struct `Cube` <a id="struct_cube"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public `[`sMesh`](#structs_mesh)` `[`mesh`](#struct_cube_1a6c1dc294ff76af6fdd4d641a2b33965b) | 
-`public sModelTransform `[`transform`](#struct_cube_1a8a1cbec52faf8f795496db25cfda86e2) | 
-`public inline  `[`Cube`](#struct_cube_1a45ed3e8cf03d53a4437ba7b68641b792)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,`[`sShader`](#structs_shader)` shader)` | 
-`public inline  `[`Cube`](#struct_cube_1a12fffee5de1a903730181063e7306366)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,`[`sShader`](#structs_shader)` shader,vec3 pos)` | 
-`public inline void `[`draw`](#struct_cube_1aa45b4c6de8d3b2c6521f7c8577685da9)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm)` | 
-
-## Members
-
-#### `public `[`sMesh`](#structs_mesh)` `[`mesh`](#struct_cube_1a6c1dc294ff76af6fdd4d641a2b33965b) <a id="struct_cube_1a6c1dc294ff76af6fdd4d641a2b33965b"></a>
-
-#### `public sModelTransform `[`transform`](#struct_cube_1a8a1cbec52faf8f795496db25cfda86e2) <a id="struct_cube_1a8a1cbec52faf8f795496db25cfda86e2"></a>
-
-#### `public inline  `[`Cube`](#struct_cube_1a45ed3e8cf03d53a4437ba7b68641b792)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,`[`sShader`](#structs_shader)` shader)` <a id="struct_cube_1a45ed3e8cf03d53a4437ba7b68641b792"></a>
-
-#### `public inline  `[`Cube`](#struct_cube_1a12fffee5de1a903730181063e7306366)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,`[`sShader`](#structs_shader)` shader,vec3 pos)` <a id="struct_cube_1a12fffee5de1a903730181063e7306366"></a>
-
-#### `public inline void `[`draw`](#struct_cube_1aa45b4c6de8d3b2c6521f7c8577685da9)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm)` <a id="struct_cube_1aa45b4c6de8d3b2c6521f7c8577685da9"></a>
-
 # struct `DynamicLibrary` <a id="struct_dynamic_library"></a>
 
 ## Summary
@@ -407,18 +226,6 @@ struct AudioModule
 
 #### `public inline bool `[`valid`](#struct_dynamic_library_1ae708350e2f9a9c34ff6361ebdda4c72d)`()` <a id="struct_dynamic_library_1ae708350e2f9a9c34ff6361ebdda4c72d"></a>
 
-# struct `DynamicScript` <a id="struct_dynamic_script"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public void * `[`handle`](#struct_dynamic_script_1a9347c1a3681cfe9357acc0f74672228f) | 
-
-## Members
-
-#### `public void * `[`handle`](#struct_dynamic_script_1a9347c1a3681cfe9357acc0f74672228f) <a id="struct_dynamic_script_1a9347c1a3681cfe9357acc0f74672228f"></a>
-
 # struct `GameContext` <a id="struct_game_context"></a>
 
 ## Summary
@@ -428,7 +235,7 @@ struct AudioModule
 `public `[`WindowModule`](#struct_window_module)` `[`winm`](#struct_game_context_1adf7f1d5403d8c252c64e942e61cea40e) | 
 `public `[`GraphicsModule`](#struct_graphics_module)` `[`gfxm`](#struct_game_context_1a98856d42044a8ad116a14ff4b0691dde) | 
 `public `[`ShaderModule`](#struct_shader_module)` `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) | 
-`public TextureModule `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) | 
+`public `[`TextureModule`](#struct_texture_module)` `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) | 
 `public TextModule `[`textm`](#struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87) | 
 `public AssetLoader `[`assetm`](#struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4) | 
 
@@ -440,7 +247,7 @@ struct AudioModule
 
 #### `public `[`ShaderModule`](#struct_shader_module)` `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) <a id="struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c"></a>
 
-#### `public TextureModule `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) <a id="struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132"></a>
+#### `public `[`TextureModule`](#struct_texture_module)` `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) <a id="struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132"></a>
 
 #### `public TextModule `[`textm`](#struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87) <a id="struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87"></a>
 
@@ -461,29 +268,6 @@ This class represents the graphics module that is used to render graphics to the
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public graphics::SetClearColor `[`internal_setClearColor`](#struct_graphics_module_1a5d0aeb033c68ea792b766a1747429a11) | 
-`public graphics::Clear `[`internal_clear`](#struct_graphics_module_1ad57d9ccec2166fd408c946bf0da633be) | 
-`public graphics::Init `[`internal_init`](#struct_graphics_module_1a668f3c9f78a0ed82fd5eb83ab66be0bd) | 
-`public graphics::CreateMesh `[`internal_createMesh`](#struct_graphics_module_1a26c1d0c149e6190e3c754a03ca07e16a) | 
-`public graphics::DrawMesh `[`internal_drawMesh`](#struct_graphics_module_1abb3d1bf943838c36fe248e79961bd4c3) | 
-`public graphics::UseShaderProgram `[`internal_useShaderProgram`](#struct_graphics_module_1ab31c7a3574c3d5a43eae68a64713c72e) | 
-`public graphics::CreateShaderProgram `[`internal_createShaderProgram`](#struct_graphics_module_1a89830e249767eba190441aaa2f7a83f3) | 
-`public graphics::CreateShader `[`internal_createShader`](#struct_graphics_module_1a36fbb200db3fb5211a8eb621d15ae528) | 
-`public graphics::Present `[`internal_present`](#struct_graphics_module_1a14a027ed632040b54ddeee696b155532) | 
-`public graphics::GetShaderType `[`internal_getShaderType`](#struct_graphics_module_1ab1048236f83d7ea4814cfa0c52e15237) | 
-`public graphics::CreateUniforms `[`internal_createUniforms`](#struct_graphics_module_1a2d43630aeefc344255604c5e62cf0ec0) | 
-`public graphics::SetUniforms `[`internal_setUniforms`](#struct_graphics_module_1ad36b5c748a5ab398d8aa1d3e5d7ecf6e) | 
-`public graphics::CreateTexture `[`internal_createTexture`](#struct_graphics_module_1a92e280f06397e6cf4abfe035c03e3c01) | 
-`public graphics::UseTexture `[`internal_useTexture`](#struct_graphics_module_1aaf2cb447a663a329adbecdd65f2d6358) | 
-`public graphics::FreeTexture `[`internal_freeTexture`](#struct_graphics_module_1a789b5d0061f28da2427973e1d12e1df3) | 
-`public graphics::FreeShader `[`internal_freeShader`](#struct_graphics_module_1a3fc289cc7477f24d33c3bdbb9573eb7b) | 
-`public graphics::FreeShaderProgram `[`internal_freeShaderProgram`](#struct_graphics_module_1a440b03f6b63a736351978ef1c11408a6) | 
-`public graphics::FreeMesh `[`internal_freeMesh`](#struct_graphics_module_1a0a82429e31b837d664488b3e18404072) | 
-`public graphics::FreeUniforms `[`internal_freeUniforms`](#struct_graphics_module_1a9c384efb8ab65b0e3c7c8fcbc83e131c) | 
-`public graphics::Destroy `[`internal_destroy`](#struct_graphics_module_1a731f405b7b684051aa8e435902aef9c6) | 
-`public graphics::SetScissor `[`internal_setScissor`](#struct_graphics_module_1a169762508541ab3f19bb9e63ee61a69e) | 
-`public graphics::EnableScissor `[`internal_enableScissor`](#struct_graphics_module_1a7ae011d215a248275059f75f1394518c) | 
-`public graphics::DisableScissor `[`internal_disableScissor`](#struct_graphics_module_1abe09ca32da9de224f1f07fff6dbf1eeb) | 
 `public `[`sWindow`](#structs_window)` * `[`win`](#struct_graphics_module_1a64839384fd14c416875122e01dc37c28) | 
 `public inline void `[`init`](#struct_graphics_module_1a72054b7c7196a3d2e978a1656451b7ff)`(`[`sWindow`](#structs_window)` * win)` | Initialize the graphics module.
 `public inline void `[`setClearColor`](#struct_graphics_module_1a88a229195b716d94ab78293793d8d674)`(float r,float g,float b,float a)` | Set the clear color for the graphics module.
@@ -516,52 +300,6 @@ This class represents the graphics module that is used to render graphics to the
 `public inline  explicit `[`GraphicsModule`](#struct_graphics_module_1a4efb7bf742a8d87e5cc043716c310657)`(const char * dynlib)` | Construct a graphics module from a dynamic library.
 
 ## Members
-
-#### `public graphics::SetClearColor `[`internal_setClearColor`](#struct_graphics_module_1a5d0aeb033c68ea792b766a1747429a11) <a id="struct_graphics_module_1a5d0aeb033c68ea792b766a1747429a11"></a>
-
-#### `public graphics::Clear `[`internal_clear`](#struct_graphics_module_1ad57d9ccec2166fd408c946bf0da633be) <a id="struct_graphics_module_1ad57d9ccec2166fd408c946bf0da633be"></a>
-
-#### `public graphics::Init `[`internal_init`](#struct_graphics_module_1a668f3c9f78a0ed82fd5eb83ab66be0bd) <a id="struct_graphics_module_1a668f3c9f78a0ed82fd5eb83ab66be0bd"></a>
-
-#### `public graphics::CreateMesh `[`internal_createMesh`](#struct_graphics_module_1a26c1d0c149e6190e3c754a03ca07e16a) <a id="struct_graphics_module_1a26c1d0c149e6190e3c754a03ca07e16a"></a>
-
-#### `public graphics::DrawMesh `[`internal_drawMesh`](#struct_graphics_module_1abb3d1bf943838c36fe248e79961bd4c3) <a id="struct_graphics_module_1abb3d1bf943838c36fe248e79961bd4c3"></a>
-
-#### `public graphics::UseShaderProgram `[`internal_useShaderProgram`](#struct_graphics_module_1ab31c7a3574c3d5a43eae68a64713c72e) <a id="struct_graphics_module_1ab31c7a3574c3d5a43eae68a64713c72e"></a>
-
-#### `public graphics::CreateShaderProgram `[`internal_createShaderProgram`](#struct_graphics_module_1a89830e249767eba190441aaa2f7a83f3) <a id="struct_graphics_module_1a89830e249767eba190441aaa2f7a83f3"></a>
-
-#### `public graphics::CreateShader `[`internal_createShader`](#struct_graphics_module_1a36fbb200db3fb5211a8eb621d15ae528) <a id="struct_graphics_module_1a36fbb200db3fb5211a8eb621d15ae528"></a>
-
-#### `public graphics::Present `[`internal_present`](#struct_graphics_module_1a14a027ed632040b54ddeee696b155532) <a id="struct_graphics_module_1a14a027ed632040b54ddeee696b155532"></a>
-
-#### `public graphics::GetShaderType `[`internal_getShaderType`](#struct_graphics_module_1ab1048236f83d7ea4814cfa0c52e15237) <a id="struct_graphics_module_1ab1048236f83d7ea4814cfa0c52e15237"></a>
-
-#### `public graphics::CreateUniforms `[`internal_createUniforms`](#struct_graphics_module_1a2d43630aeefc344255604c5e62cf0ec0) <a id="struct_graphics_module_1a2d43630aeefc344255604c5e62cf0ec0"></a>
-
-#### `public graphics::SetUniforms `[`internal_setUniforms`](#struct_graphics_module_1ad36b5c748a5ab398d8aa1d3e5d7ecf6e) <a id="struct_graphics_module_1ad36b5c748a5ab398d8aa1d3e5d7ecf6e"></a>
-
-#### `public graphics::CreateTexture `[`internal_createTexture`](#struct_graphics_module_1a92e280f06397e6cf4abfe035c03e3c01) <a id="struct_graphics_module_1a92e280f06397e6cf4abfe035c03e3c01"></a>
-
-#### `public graphics::UseTexture `[`internal_useTexture`](#struct_graphics_module_1aaf2cb447a663a329adbecdd65f2d6358) <a id="struct_graphics_module_1aaf2cb447a663a329adbecdd65f2d6358"></a>
-
-#### `public graphics::FreeTexture `[`internal_freeTexture`](#struct_graphics_module_1a789b5d0061f28da2427973e1d12e1df3) <a id="struct_graphics_module_1a789b5d0061f28da2427973e1d12e1df3"></a>
-
-#### `public graphics::FreeShader `[`internal_freeShader`](#struct_graphics_module_1a3fc289cc7477f24d33c3bdbb9573eb7b) <a id="struct_graphics_module_1a3fc289cc7477f24d33c3bdbb9573eb7b"></a>
-
-#### `public graphics::FreeShaderProgram `[`internal_freeShaderProgram`](#struct_graphics_module_1a440b03f6b63a736351978ef1c11408a6) <a id="struct_graphics_module_1a440b03f6b63a736351978ef1c11408a6"></a>
-
-#### `public graphics::FreeMesh `[`internal_freeMesh`](#struct_graphics_module_1a0a82429e31b837d664488b3e18404072) <a id="struct_graphics_module_1a0a82429e31b837d664488b3e18404072"></a>
-
-#### `public graphics::FreeUniforms `[`internal_freeUniforms`](#struct_graphics_module_1a9c384efb8ab65b0e3c7c8fcbc83e131c) <a id="struct_graphics_module_1a9c384efb8ab65b0e3c7c8fcbc83e131c"></a>
-
-#### `public graphics::Destroy `[`internal_destroy`](#struct_graphics_module_1a731f405b7b684051aa8e435902aef9c6) <a id="struct_graphics_module_1a731f405b7b684051aa8e435902aef9c6"></a>
-
-#### `public graphics::SetScissor `[`internal_setScissor`](#struct_graphics_module_1a169762508541ab3f19bb9e63ee61a69e) <a id="struct_graphics_module_1a169762508541ab3f19bb9e63ee61a69e"></a>
-
-#### `public graphics::EnableScissor `[`internal_enableScissor`](#struct_graphics_module_1a7ae011d215a248275059f75f1394518c) <a id="struct_graphics_module_1a7ae011d215a248275059f75f1394518c"></a>
-
-#### `public graphics::DisableScissor `[`internal_disableScissor`](#struct_graphics_module_1abe09ca32da9de224f1f07fff6dbf1eeb) <a id="struct_graphics_module_1abe09ca32da9de224f1f07fff6dbf1eeb"></a>
 
 #### `public `[`sWindow`](#structs_window)` * `[`win`](#struct_graphics_module_1a64839384fd14c416875122e01dc37c28) <a id="struct_graphics_module_1a64839384fd14c416875122e01dc37c28"></a>
 
@@ -876,26 +614,26 @@ This function constructs a graphics module from the specified dynamic library. T
 #### Parameters
 * `dynlib` The implementation string to use for the graphics module.
 
-# struct `mat4.__unnamed14__` <a id="structmat4_8____unnamed14____"></a>
+# struct `mat4.__unnamed13__` <a id="structmat4_8____unnamed13____"></a>
 
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public vec4 `[`x`](#structmat4_8____unnamed14_____1a9dd4e461268c8034f5c8564e155c67a6) | 
-`public vec4 `[`y`](#structmat4_8____unnamed14_____1a415290769594460e2e485922904f345d) | 
-`public vec4 `[`z`](#structmat4_8____unnamed14_____1afbade9e36a3f36d3d676c1b808451dd7) | 
-`public vec4 `[`w`](#structmat4_8____unnamed14_____1af1290186a5d0b1ceab27f4e77c0c5d68) | 
+`public vec4 `[`x`](#structmat4_8____unnamed13_____1a9dd4e461268c8034f5c8564e155c67a6) | 
+`public vec4 `[`y`](#structmat4_8____unnamed13_____1a415290769594460e2e485922904f345d) | 
+`public vec4 `[`z`](#structmat4_8____unnamed13_____1afbade9e36a3f36d3d676c1b808451dd7) | 
+`public vec4 `[`w`](#structmat4_8____unnamed13_____1af1290186a5d0b1ceab27f4e77c0c5d68) | 
 
 ## Members
 
-#### `public vec4 `[`x`](#structmat4_8____unnamed14_____1a9dd4e461268c8034f5c8564e155c67a6) <a id="structmat4_8____unnamed14_____1a9dd4e461268c8034f5c8564e155c67a6"></a>
+#### `public vec4 `[`x`](#structmat4_8____unnamed13_____1a9dd4e461268c8034f5c8564e155c67a6) <a id="structmat4_8____unnamed13_____1a9dd4e461268c8034f5c8564e155c67a6"></a>
 
-#### `public vec4 `[`y`](#structmat4_8____unnamed14_____1a415290769594460e2e485922904f345d) <a id="structmat4_8____unnamed14_____1a415290769594460e2e485922904f345d"></a>
+#### `public vec4 `[`y`](#structmat4_8____unnamed13_____1a415290769594460e2e485922904f345d) <a id="structmat4_8____unnamed13_____1a415290769594460e2e485922904f345d"></a>
 
-#### `public vec4 `[`z`](#structmat4_8____unnamed14_____1afbade9e36a3f36d3d676c1b808451dd7) <a id="structmat4_8____unnamed14_____1afbade9e36a3f36d3d676c1b808451dd7"></a>
+#### `public vec4 `[`z`](#structmat4_8____unnamed13_____1afbade9e36a3f36d3d676c1b808451dd7) <a id="structmat4_8____unnamed13_____1afbade9e36a3f36d3d676c1b808451dd7"></a>
 
-#### `public vec4 `[`w`](#structmat4_8____unnamed14_____1af1290186a5d0b1ceab27f4e77c0c5d68) <a id="structmat4_8____unnamed14_____1af1290186a5d0b1ceab27f4e77c0c5d68"></a>
+#### `public vec4 `[`w`](#structmat4_8____unnamed13_____1af1290186a5d0b1ceab27f4e77c0c5d68) <a id="structmat4_8____unnamed13_____1af1290186a5d0b1ceab27f4e77c0c5d68"></a>
 
 # struct `Module` <a id="struct_module"></a>
 
@@ -1052,69 +790,6 @@ struct ScriptLoaderModule
 
 #### `public inline  explicit `[`ScriptLoaderModule`](#struct_script_loader_module_1a753f0382f59a621f3392d51daf6b0a99)`(const char * dynlib)` <a id="struct_script_loader_module_1a753f0382f59a621f3392d51daf6b0a99"></a>
 
-# struct `sD3D11_1Context` <a id="structs_d3_d11__1_context"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public HWND `[`hwnd`](#structs_d3_d11__1_context_1a58250850699bfc8ca6cd127e97a6f210) | 
-`public ID3D11Device1 * `[`device`](#structs_d3_d11__1_context_1a721ed7a06b415a17e5034842284a76e3) | 
-`public ID3D11DeviceContext1 * `[`deviceContext`](#structs_d3_d11__1_context_1a32436f85623a89e4d474f9b34e6bea75) | 
-`public IDXGISwapChain1 * `[`swapChain`](#structs_d3_d11__1_context_1a6ec91d07f21828147eb90e2e107e7673) | 
-`public ID3D11RenderTargetView * `[`frameBufferView`](#structs_d3_d11__1_context_1a2781d8857dd6ac2cf3c3515f6f49915c) | 
-`public ID3D11DepthStencilView * `[`depthStencilView`](#structs_d3_d11__1_context_1ae02fd48eecabad820bbe866a33c094e8) | 
-`public ID3D11RasterizerState * `[`rasterizerState`](#structs_d3_d11__1_context_1a4bfb6900b72fcaba61bd080485eb1dcf) | 
-`public ID3D11DepthStencilState * `[`depthStencilState`](#structs_d3_d11__1_context_1ab9abf974c1d4445f429b838ea345b450) | 
-`public ID3D11BlendState * `[`blendState`](#structs_d3_d11__1_context_1a922780aa4cdabd867890e4a68399cd9a) | 
-`public struct sD3D11_1Context `[`scissor`](#structs_d3_d11__1_context_1a928491548326772492a8063ee8e67599) | 
-`public `[`sWindow`](#structs_window)` * `[`win`](#structs_d3_d11__1_context_1abfe5e69ad28b50383514c18050043424) | 
-
-## Members
-
-#### `public HWND `[`hwnd`](#structs_d3_d11__1_context_1a58250850699bfc8ca6cd127e97a6f210) <a id="structs_d3_d11__1_context_1a58250850699bfc8ca6cd127e97a6f210"></a>
-
-#### `public ID3D11Device1 * `[`device`](#structs_d3_d11__1_context_1a721ed7a06b415a17e5034842284a76e3) <a id="structs_d3_d11__1_context_1a721ed7a06b415a17e5034842284a76e3"></a>
-
-#### `public ID3D11DeviceContext1 * `[`deviceContext`](#structs_d3_d11__1_context_1a32436f85623a89e4d474f9b34e6bea75) <a id="structs_d3_d11__1_context_1a32436f85623a89e4d474f9b34e6bea75"></a>
-
-#### `public IDXGISwapChain1 * `[`swapChain`](#structs_d3_d11__1_context_1a6ec91d07f21828147eb90e2e107e7673) <a id="structs_d3_d11__1_context_1a6ec91d07f21828147eb90e2e107e7673"></a>
-
-#### `public ID3D11RenderTargetView * `[`frameBufferView`](#structs_d3_d11__1_context_1a2781d8857dd6ac2cf3c3515f6f49915c) <a id="structs_d3_d11__1_context_1a2781d8857dd6ac2cf3c3515f6f49915c"></a>
-
-#### `public ID3D11DepthStencilView * `[`depthStencilView`](#structs_d3_d11__1_context_1ae02fd48eecabad820bbe866a33c094e8) <a id="structs_d3_d11__1_context_1ae02fd48eecabad820bbe866a33c094e8"></a>
-
-#### `public ID3D11RasterizerState * `[`rasterizerState`](#structs_d3_d11__1_context_1a4bfb6900b72fcaba61bd080485eb1dcf) <a id="structs_d3_d11__1_context_1a4bfb6900b72fcaba61bd080485eb1dcf"></a>
-
-#### `public ID3D11DepthStencilState * `[`depthStencilState`](#structs_d3_d11__1_context_1ab9abf974c1d4445f429b838ea345b450) <a id="structs_d3_d11__1_context_1ab9abf974c1d4445f429b838ea345b450"></a>
-
-#### `public ID3D11BlendState * `[`blendState`](#structs_d3_d11__1_context_1a922780aa4cdabd867890e4a68399cd9a) <a id="structs_d3_d11__1_context_1a922780aa4cdabd867890e4a68399cd9a"></a>
-
-#### `public struct sD3D11_1Context `[`scissor`](#structs_d3_d11__1_context_1a928491548326772492a8063ee8e67599) <a id="structs_d3_d11__1_context_1a928491548326772492a8063ee8e67599"></a>
-
-#### `public `[`sWindow`](#structs_window)` * `[`win`](#structs_d3_d11__1_context_1abfe5e69ad28b50383514c18050043424) <a id="structs_d3_d11__1_context_1abfe5e69ad28b50383514c18050043424"></a>
-
-# struct `sD3D11_1Context.scissor` <a id="structs_d3_d11__1_context_8scissor"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public int `[`x`](#structs_d3_d11__1_context_8scissor_1a9dd4e461268c8034f5c8564e155c67a6) | 
-`public int `[`y`](#structs_d3_d11__1_context_8scissor_1a415290769594460e2e485922904f345d) | 
-`public int `[`width`](#structs_d3_d11__1_context_8scissor_1aeaae26a6fb20ed3ef54fb23bfa0b1fcc) | 
-`public int `[`height`](#structs_d3_d11__1_context_8scissor_1ab435e227d5dd201e1768b2bcb2e0aa81) | 
-
-## Members
-
-#### `public int `[`x`](#structs_d3_d11__1_context_8scissor_1a9dd4e461268c8034f5c8564e155c67a6) <a id="structs_d3_d11__1_context_8scissor_1a9dd4e461268c8034f5c8564e155c67a6"></a>
-
-#### `public int `[`y`](#structs_d3_d11__1_context_8scissor_1a415290769594460e2e485922904f345d) <a id="structs_d3_d11__1_context_8scissor_1a415290769594460e2e485922904f345d"></a>
-
-#### `public int `[`width`](#structs_d3_d11__1_context_8scissor_1aeaae26a6fb20ed3ef54fb23bfa0b1fcc) <a id="structs_d3_d11__1_context_8scissor_1aeaae26a6fb20ed3ef54fb23bfa0b1fcc"></a>
-
-#### `public int `[`height`](#structs_d3_d11__1_context_8scissor_1ab435e227d5dd201e1768b2bcb2e0aa81) <a id="structs_d3_d11__1_context_8scissor_1ab435e227d5dd201e1768b2bcb2e0aa81"></a>
-
 # struct `sFont` <a id="structs_font"></a>
 
 ## Summary
@@ -1129,27 +804,6 @@ struct ScriptLoaderModule
 #### `public void * `[`internal`](#structs_font_1a60be07a314f3c87856079a3922836f32) <a id="structs_font_1a60be07a314f3c87856079a3922836f32"></a>
 
 #### `public int `[`size`](#structs_font_1a3c7c805f5b49974ac4446a76c20449b6) <a id="structs_font_1a3c7c805f5b49974ac4446a76c20449b6"></a>
-
-# struct `sFreeTypeContext` <a id="structs_free_type_context"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public FT_Library `[`ft`](#structs_free_type_context_1abfbf78e89226a529cf63d1944f666a0b) | 
-`public `[`GraphicsModule`](#struct_graphics_module)` * `[`gfxm`](#structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380) | 
-`public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3) | 
-`public AssetLoader * `[`assetm`](#structs_free_type_context_1a14e9ff02e52ed0041ed631f5c77ac794) | 
-
-## Members
-
-#### `public FT_Library `[`ft`](#structs_free_type_context_1abfbf78e89226a529cf63d1944f666a0b) <a id="structs_free_type_context_1abfbf78e89226a529cf63d1944f666a0b"></a>
-
-#### `public `[`GraphicsModule`](#struct_graphics_module)` * `[`gfxm`](#structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380) <a id="structs_free_type_context_1a5644ebf614b6ad3a3b549c7b5398e380"></a>
-
-#### `public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3) <a id="structs_free_type_context_1adee3504d814bcde71a27da61dbdb2bc3"></a>
-
-#### `public AssetLoader * `[`assetm`](#structs_free_type_context_1a14e9ff02e52ed0041ed631f5c77ac794) <a id="structs_free_type_context_1a14e9ff02e52ed0041ed631f5c77ac794"></a>
 
 # struct `ShaderModule` <a id="struct_shader_module"></a>
 
@@ -1232,321 +886,6 @@ The [ShaderModule](#struct_shader_module) is a dynamic library that provides fun
 **See also**: [GraphicsModule::getShaderType](#struct_graphics_module_1abdb3a71f5aa4c1baa783a4d8cf57a9ed)
 
 > Todo: update this once the graphics module has docs
-
-# struct `sInternalFont` <a id="structs_internal_font"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`vertDef`](#structs_internal_font_1a6a672e43bca539dfa2f9ef1b8eab0e24) | 
-`public `[`sShaderProgram`](#structs_shader_program)` `[`shader`](#structs_internal_font_1a64159f9203cc0ef7dba30b34cebf3213) | 
-`public `[`sShader`](#structs_shader)` `[`vertexShader`](#structs_internal_font_1ae1ad6451a71b31112905ad64fb383543) | 
-`public `[`sUniforms`](#structs_uniforms)` `[`uniforms`](#structs_internal_font_1aa329efa91ed160c3b5465c4da424bfd6) | 
-`public `[`sTexture`](#structs_texture)` `[`atlas`](#structs_internal_font_1a1a22c5fa7bdc92300c3288a0948f7e35) | 
-`public struct sInternalFont::CharacterDef `[`characters`](#structs_internal_font_1a014584487cb5ae4a04f2736b4ed20316) | 
-`public int `[`atlasWidth`](#structs_internal_font_1a8ac09d902788eed35ce1d05f12bdcbe8) | 
-`public int `[`atlasHeight`](#structs_internal_font_1a1ce95acf2a7366b1fcb496fe7ca6f2af) | 
-`public float `[`scale`](#structs_internal_font_1a2b1f6cb14d013102ca19160d135b07a6) | 
-
-## Members
-
-#### `public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`vertDef`](#structs_internal_font_1a6a672e43bca539dfa2f9ef1b8eab0e24) <a id="structs_internal_font_1a6a672e43bca539dfa2f9ef1b8eab0e24"></a>
-
-#### `public `[`sShaderProgram`](#structs_shader_program)` `[`shader`](#structs_internal_font_1a64159f9203cc0ef7dba30b34cebf3213) <a id="structs_internal_font_1a64159f9203cc0ef7dba30b34cebf3213"></a>
-
-#### `public `[`sShader`](#structs_shader)` `[`vertexShader`](#structs_internal_font_1ae1ad6451a71b31112905ad64fb383543) <a id="structs_internal_font_1ae1ad6451a71b31112905ad64fb383543"></a>
-
-#### `public `[`sUniforms`](#structs_uniforms)` `[`uniforms`](#structs_internal_font_1aa329efa91ed160c3b5465c4da424bfd6) <a id="structs_internal_font_1aa329efa91ed160c3b5465c4da424bfd6"></a>
-
-#### `public `[`sTexture`](#structs_texture)` `[`atlas`](#structs_internal_font_1a1a22c5fa7bdc92300c3288a0948f7e35) <a id="structs_internal_font_1a1a22c5fa7bdc92300c3288a0948f7e35"></a>
-
-#### `public struct sInternalFont::CharacterDef `[`characters`](#structs_internal_font_1a014584487cb5ae4a04f2736b4ed20316) <a id="structs_internal_font_1a014584487cb5ae4a04f2736b4ed20316"></a>
-
-#### `public int `[`atlasWidth`](#structs_internal_font_1a8ac09d902788eed35ce1d05f12bdcbe8) <a id="structs_internal_font_1a8ac09d902788eed35ce1d05f12bdcbe8"></a>
-
-#### `public int `[`atlasHeight`](#structs_internal_font_1a1ce95acf2a7366b1fcb496fe7ca6f2af) <a id="structs_internal_font_1a1ce95acf2a7366b1fcb496fe7ca6f2af"></a>
-
-#### `public float `[`scale`](#structs_internal_font_1a2b1f6cb14d013102ca19160d135b07a6) <a id="structs_internal_font_1a2b1f6cb14d013102ca19160d135b07a6"></a>
-
-# struct `sInternalMesh` <a id="structs_internal_mesh"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public ID3D11Buffer * `[`vertexBuffer`](#structs_internal_mesh_1aa5425e3c130a0501c373cc01487f42e5) | 
-`public ID3D11Buffer * `[`indexBuffer`](#structs_internal_mesh_1adc83480c7ab50c6213b881434fd0eaa5) | 
-`public UINT `[`stride`](#structs_internal_mesh_1a3b157ce585dd0f981798ea26c9caa2c3) | 
-`public UINT `[`offset`](#structs_internal_mesh_1a1bbdd1862a16dfc92e68730a034af01f) | 
-`public size_t `[`numIndices`](#structs_internal_mesh_1a9171ea2dffdef4281e1c8b267d9c5c0c) | 
-`public unsigned int `[`vao`](#structs_internal_mesh_1aaf673e2295236080ceea3e3c8b784410) | 
-`public unsigned int `[`vbo`](#structs_internal_mesh_1ae61f5d2bd7ddca7c23ba0dbbae5bc5f1) | 
-`public unsigned int `[`ebo`](#structs_internal_mesh_1a424664f4558d16f1ac4deed69199620a) | 
-`public size_t `[`indexCount`](#structs_internal_mesh_1a94ce3e8bca26b14917708183b0a8236f) | 
-
-## Members
-
-#### `public ID3D11Buffer * `[`vertexBuffer`](#structs_internal_mesh_1aa5425e3c130a0501c373cc01487f42e5) <a id="structs_internal_mesh_1aa5425e3c130a0501c373cc01487f42e5"></a>
-
-#### `public ID3D11Buffer * `[`indexBuffer`](#structs_internal_mesh_1adc83480c7ab50c6213b881434fd0eaa5) <a id="structs_internal_mesh_1adc83480c7ab50c6213b881434fd0eaa5"></a>
-
-#### `public UINT `[`stride`](#structs_internal_mesh_1a3b157ce585dd0f981798ea26c9caa2c3) <a id="structs_internal_mesh_1a3b157ce585dd0f981798ea26c9caa2c3"></a>
-
-#### `public UINT `[`offset`](#structs_internal_mesh_1a1bbdd1862a16dfc92e68730a034af01f) <a id="structs_internal_mesh_1a1bbdd1862a16dfc92e68730a034af01f"></a>
-
-#### `public size_t `[`numIndices`](#structs_internal_mesh_1a9171ea2dffdef4281e1c8b267d9c5c0c) <a id="structs_internal_mesh_1a9171ea2dffdef4281e1c8b267d9c5c0c"></a>
-
-#### `public unsigned int `[`vao`](#structs_internal_mesh_1aaf673e2295236080ceea3e3c8b784410) <a id="structs_internal_mesh_1aaf673e2295236080ceea3e3c8b784410"></a>
-
-#### `public unsigned int `[`vbo`](#structs_internal_mesh_1ae61f5d2bd7ddca7c23ba0dbbae5bc5f1) <a id="structs_internal_mesh_1ae61f5d2bd7ddca7c23ba0dbbae5bc5f1"></a>
-
-#### `public unsigned int `[`ebo`](#structs_internal_mesh_1a424664f4558d16f1ac4deed69199620a) <a id="structs_internal_mesh_1a424664f4558d16f1ac4deed69199620a"></a>
-
-#### `public size_t `[`indexCount`](#structs_internal_mesh_1a94ce3e8bca26b14917708183b0a8236f) <a id="structs_internal_mesh_1a94ce3e8bca26b14917708183b0a8236f"></a>
-
-# struct `sInternalRectUniforms` <a id="structs_internal_rect_uniforms"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public vec4 `[`color`](#structs_internal_rect_uniforms_1aa16682ce490f8fd78a8decdc00653dd0) | 
-`public mat4 `[`proj`](#structs_internal_rect_uniforms_1af13947e452ce2b3bbf0c74922680f715) | 
-`public mat4 `[`view`](#structs_internal_rect_uniforms_1a43a5bb5ea0d126e2cfd8c23680d83734) | 
-`public mat4 `[`model`](#structs_internal_rect_uniforms_1abf808018fd51d9e562c5cb7de8b88aad) | 
-`public float `[`z`](#structs_internal_rect_uniforms_1a3b27348f88ae6d5df3e6ba1fb9d397d7) | 
-
-## Members
-
-#### `public vec4 `[`color`](#structs_internal_rect_uniforms_1aa16682ce490f8fd78a8decdc00653dd0) <a id="structs_internal_rect_uniforms_1aa16682ce490f8fd78a8decdc00653dd0"></a>
-
-#### `public mat4 `[`proj`](#structs_internal_rect_uniforms_1af13947e452ce2b3bbf0c74922680f715) <a id="structs_internal_rect_uniforms_1af13947e452ce2b3bbf0c74922680f715"></a>
-
-#### `public mat4 `[`view`](#structs_internal_rect_uniforms_1a43a5bb5ea0d126e2cfd8c23680d83734) <a id="structs_internal_rect_uniforms_1a43a5bb5ea0d126e2cfd8c23680d83734"></a>
-
-#### `public mat4 `[`model`](#structs_internal_rect_uniforms_1abf808018fd51d9e562c5cb7de8b88aad) <a id="structs_internal_rect_uniforms_1abf808018fd51d9e562c5cb7de8b88aad"></a>
-
-#### `public float `[`z`](#structs_internal_rect_uniforms_1a3b27348f88ae6d5df3e6ba1fb9d397d7) <a id="structs_internal_rect_uniforms_1a3b27348f88ae6d5df3e6ba1fb9d397d7"></a>
-
-# struct `sInternalRectVertex` <a id="structs_internal_rect_vertex"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public vec2 `[`pos`](#structs_internal_rect_vertex_1a91e1fc6736c24e382c3a2fd8f3ce9992) | 
-
-## Members
-
-#### `public vec2 `[`pos`](#structs_internal_rect_vertex_1a91e1fc6736c24e382c3a2fd8f3ce9992) <a id="structs_internal_rect_vertex_1a91e1fc6736c24e382c3a2fd8f3ce9992"></a>
-
-# struct `sInternalRoundedRectUniforms` <a id="structs_internal_rounded_rect_uniforms"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public vec4 `[`color`](#structs_internal_rounded_rect_uniforms_1ad69225f298c6056e82a208c4fa6264a2) | 
-`public vec2 `[`topleft`](#structs_internal_rounded_rect_uniforms_1afea8b4193e10fb2ac571b9c0d34fac62) | 
-`public vec2 `[`widheight`](#structs_internal_rounded_rect_uniforms_1abc1fc1c3034d60596bdd7eb557e6f921) | 
-`public float `[`radius`](#structs_internal_rounded_rect_uniforms_1ad1cce932ca99a77f1691207a0b7fe164) | 
-`public mat4 `[`proj`](#structs_internal_rounded_rect_uniforms_1a12a40bb1b279152203997763d03d886c) | 
-`public mat4 `[`view`](#structs_internal_rounded_rect_uniforms_1a09879cdcdb0c313f3b91ae3c6bcaabba) | 
-`public mat4 `[`model`](#structs_internal_rounded_rect_uniforms_1af4a98ee9c41b8de065f51aeb4090ed71) | 
-`public float `[`z`](#structs_internal_rounded_rect_uniforms_1a2b2f97d78d07421b3cd6b094684e2392) | 
-
-## Members
-
-#### `public vec4 `[`color`](#structs_internal_rounded_rect_uniforms_1ad69225f298c6056e82a208c4fa6264a2) <a id="structs_internal_rounded_rect_uniforms_1ad69225f298c6056e82a208c4fa6264a2"></a>
-
-#### `public vec2 `[`topleft`](#structs_internal_rounded_rect_uniforms_1afea8b4193e10fb2ac571b9c0d34fac62) <a id="structs_internal_rounded_rect_uniforms_1afea8b4193e10fb2ac571b9c0d34fac62"></a>
-
-#### `public vec2 `[`widheight`](#structs_internal_rounded_rect_uniforms_1abc1fc1c3034d60596bdd7eb557e6f921) <a id="structs_internal_rounded_rect_uniforms_1abc1fc1c3034d60596bdd7eb557e6f921"></a>
-
-#### `public float `[`radius`](#structs_internal_rounded_rect_uniforms_1ad1cce932ca99a77f1691207a0b7fe164) <a id="structs_internal_rounded_rect_uniforms_1ad1cce932ca99a77f1691207a0b7fe164"></a>
-
-#### `public mat4 `[`proj`](#structs_internal_rounded_rect_uniforms_1a12a40bb1b279152203997763d03d886c) <a id="structs_internal_rounded_rect_uniforms_1a12a40bb1b279152203997763d03d886c"></a>
-
-#### `public mat4 `[`view`](#structs_internal_rounded_rect_uniforms_1a09879cdcdb0c313f3b91ae3c6bcaabba) <a id="structs_internal_rounded_rect_uniforms_1a09879cdcdb0c313f3b91ae3c6bcaabba"></a>
-
-#### `public mat4 `[`model`](#structs_internal_rounded_rect_uniforms_1af4a98ee9c41b8de065f51aeb4090ed71) <a id="structs_internal_rounded_rect_uniforms_1af4a98ee9c41b8de065f51aeb4090ed71"></a>
-
-#### `public float `[`z`](#structs_internal_rounded_rect_uniforms_1a2b2f97d78d07421b3cd6b094684e2392) <a id="structs_internal_rounded_rect_uniforms_1a2b2f97d78d07421b3cd6b094684e2392"></a>
-
-# struct `sInternalShader` <a id="structs_internal_shader"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public enum `[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` `[`type`](#structs_internal_shader_1ad27bdd546a5f9c95578c1b448f1fca18) | 
-`public ID3D11VertexShader * `[`vertexShader`](#structs_internal_shader_1ae3cda846abe6232a6d6cb1cd54daa214) | 
-`public ID3D11PixelShader * `[`pixelShader`](#structs_internal_shader_1a962487d41144cd900b3dd868d4be2a2e) | 
-`public ID3D11GeometryShader * `[`geometryShader`](#structs_internal_shader_1a3363b495ee6a6dc32490cb28df03a495) | 
-`public ID3DBlob * `[`shaderBlob`](#structs_internal_shader_1a14d840178e8076e2f8041a95da1df629) | 
-`public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`vertDef`](#structs_internal_shader_1ac1079555dfd6932a49979ee6bf8e8cc2) | 
-`public unsigned int `[`shader`](#structs_internal_shader_1a2cbdd9d316068a354c7107b4b27a5313) | 
-
-## Members
-
-#### `public enum `[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` `[`type`](#structs_internal_shader_1ad27bdd546a5f9c95578c1b448f1fca18) <a id="structs_internal_shader_1ad27bdd546a5f9c95578c1b448f1fca18"></a>
-
-#### `public ID3D11VertexShader * `[`vertexShader`](#structs_internal_shader_1ae3cda846abe6232a6d6cb1cd54daa214) <a id="structs_internal_shader_1ae3cda846abe6232a6d6cb1cd54daa214"></a>
-
-#### `public ID3D11PixelShader * `[`pixelShader`](#structs_internal_shader_1a962487d41144cd900b3dd868d4be2a2e) <a id="structs_internal_shader_1a962487d41144cd900b3dd868d4be2a2e"></a>
-
-#### `public ID3D11GeometryShader * `[`geometryShader`](#structs_internal_shader_1a3363b495ee6a6dc32490cb28df03a495) <a id="structs_internal_shader_1a3363b495ee6a6dc32490cb28df03a495"></a>
-
-#### `public ID3DBlob * `[`shaderBlob`](#structs_internal_shader_1a14d840178e8076e2f8041a95da1df629) <a id="structs_internal_shader_1a14d840178e8076e2f8041a95da1df629"></a>
-
-#### `public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`vertDef`](#structs_internal_shader_1ac1079555dfd6932a49979ee6bf8e8cc2) <a id="structs_internal_shader_1ac1079555dfd6932a49979ee6bf8e8cc2"></a>
-
-#### `public unsigned int `[`shader`](#structs_internal_shader_1a2cbdd9d316068a354c7107b4b27a5313) <a id="structs_internal_shader_1a2cbdd9d316068a354c7107b4b27a5313"></a>
-
-# struct `sInternalShaderProgram` <a id="structs_internal_shader_program"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public sInternalShader `[`vertexShader`](#structs_internal_shader_program_1ae6ab4ed01f121632b839cab51c75ff9e) | 
-`public sInternalShader `[`fragmentShader`](#structs_internal_shader_program_1ab92dc8694334f3df56085cdbae1ef368) | 
-`public ID3D11InputLayout * `[`inputLayout`](#structs_internal_shader_program_1a95bd3b0033dff10008d05983cd2fb493) | 
-`public size_t `[`textureCount`](#structs_internal_shader_program_1a34e655459915a687b40fb240e3a86939) | 
-`public unsigned int `[`program`](#structs_internal_shader_program_1aba3a309f713cf34c26033932c2d35ec5) | 
-`public int `[`texcount`](#structs_internal_shader_program_1abebdfbf5817aeeabc098376425bfd5bb) | 
-
-## Members
-
-#### `public sInternalShader `[`vertexShader`](#structs_internal_shader_program_1ae6ab4ed01f121632b839cab51c75ff9e) <a id="structs_internal_shader_program_1ae6ab4ed01f121632b839cab51c75ff9e"></a>
-
-#### `public sInternalShader `[`fragmentShader`](#structs_internal_shader_program_1ab92dc8694334f3df56085cdbae1ef368) <a id="structs_internal_shader_program_1ab92dc8694334f3df56085cdbae1ef368"></a>
-
-#### `public ID3D11InputLayout * `[`inputLayout`](#structs_internal_shader_program_1a95bd3b0033dff10008d05983cd2fb493) <a id="structs_internal_shader_program_1a95bd3b0033dff10008d05983cd2fb493"></a>
-
-#### `public size_t `[`textureCount`](#structs_internal_shader_program_1a34e655459915a687b40fb240e3a86939) <a id="structs_internal_shader_program_1a34e655459915a687b40fb240e3a86939"></a>
-
-#### `public unsigned int `[`program`](#structs_internal_shader_program_1aba3a309f713cf34c26033932c2d35ec5) <a id="structs_internal_shader_program_1aba3a309f713cf34c26033932c2d35ec5"></a>
-
-#### `public int `[`texcount`](#structs_internal_shader_program_1abebdfbf5817aeeabc098376425bfd5bb) <a id="structs_internal_shader_program_1abebdfbf5817aeeabc098376425bfd5bb"></a>
-
-# struct `sInternalText` <a id="structs_internal_text"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public sInternalFont * `[`font`](#structs_internal_text_1a30f08256a70f12fb79e50727822075c5) | 
-`public char * `[`text`](#structs_internal_text_1a5f09647027800778b878d24eba5c5c66) | 
-`public TextUniforms `[`uniforms`](#structs_internal_text_1a960991b91785e0846c775404d855f376) | 
-`public size_t `[`vertexCount`](#structs_internal_text_1a3828440d55e7a8ff261d31f99a794309) | 
-`public TextVertex * `[`vertices`](#structs_internal_text_1a1da855422acca6d46cabb2b0cb11a9f5) | 
-`public `[`sMesh`](#structs_mesh)` `[`mesh`](#structs_internal_text_1a6d213238c02fce9804860fd1b8b01e50) | 
-
-## Members
-
-#### `public sInternalFont * `[`font`](#structs_internal_text_1a30f08256a70f12fb79e50727822075c5) <a id="structs_internal_text_1a30f08256a70f12fb79e50727822075c5"></a>
-
-#### `public char * `[`text`](#structs_internal_text_1a5f09647027800778b878d24eba5c5c66) <a id="structs_internal_text_1a5f09647027800778b878d24eba5c5c66"></a>
-
-#### `public TextUniforms `[`uniforms`](#structs_internal_text_1a960991b91785e0846c775404d855f376) <a id="structs_internal_text_1a960991b91785e0846c775404d855f376"></a>
-
-#### `public size_t `[`vertexCount`](#structs_internal_text_1a3828440d55e7a8ff261d31f99a794309) <a id="structs_internal_text_1a3828440d55e7a8ff261d31f99a794309"></a>
-
-#### `public TextVertex * `[`vertices`](#structs_internal_text_1a1da855422acca6d46cabb2b0cb11a9f5) <a id="structs_internal_text_1a1da855422acca6d46cabb2b0cb11a9f5"></a>
-
-#### `public `[`sMesh`](#structs_mesh)` `[`mesh`](#structs_internal_text_1a6d213238c02fce9804860fd1b8b01e50) <a id="structs_internal_text_1a6d213238c02fce9804860fd1b8b01e50"></a>
-
-# struct `sInternalTexture` <a id="structs_internal_texture"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public ID3D11SamplerState * `[`sampler`](#structs_internal_texture_1a105652fe393580cca82bb3055b47ca17) | 
-`public unsigned int `[`texture`](#structs_internal_texture_1a746029fb0744f150cb753c0811d35dee) | 
-
-## Members
-
-#### `public ID3D11SamplerState * `[`sampler`](#structs_internal_texture_1a105652fe393580cca82bb3055b47ca17) <a id="structs_internal_texture_1a105652fe393580cca82bb3055b47ca17"></a>
-
-#### `public unsigned int `[`texture`](#structs_internal_texture_1a746029fb0744f150cb753c0811d35dee) <a id="structs_internal_texture_1a746029fb0744f150cb753c0811d35dee"></a>
-
-# struct `sInternalUniforms` <a id="structs_internal_uniforms"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public `[`sUniformDefinition`](#structs_uniform_definition)` `[`fragmentPart`](#structs_internal_uniforms_1a814f32c0e21d01a4182ec3df7daa095f) | 
-`public `[`sUniformDefinition`](#structs_uniform_definition)` `[`vertexPart`](#structs_internal_uniforms_1ac7fd7a5670bd40ca2ea3b330b34f634e) | 
-`public `[`sShaderProgram`](#structs_shader_program)` `[`program`](#structs_internal_uniforms_1a7a5cd43afc7d2a716d1cf23d30fbc304) | 
-`public ID3D11Buffer * `[`fragmentBuffer`](#structs_internal_uniforms_1a2a3eff650c882d626e457ca4a493bf56) | 
-`public ID3D11Buffer * `[`vertexBuffer`](#structs_internal_uniforms_1a876756a742c79eccef8bfd5e7725a679) | 
-`public `[`sUniformDefinition`](#structs_uniform_definition)` `[`def`](#structs_internal_uniforms_1ae005c018e70cd3a63ba34a760ef72962) | 
-`public int * `[`locations`](#structs_internal_uniforms_1a0f02ac581586af29d7ee44ca2b1fed06) | 
-
-## Members
-
-#### `public `[`sUniformDefinition`](#structs_uniform_definition)` `[`fragmentPart`](#structs_internal_uniforms_1a814f32c0e21d01a4182ec3df7daa095f) <a id="structs_internal_uniforms_1a814f32c0e21d01a4182ec3df7daa095f"></a>
-
-#### `public `[`sUniformDefinition`](#structs_uniform_definition)` `[`vertexPart`](#structs_internal_uniforms_1ac7fd7a5670bd40ca2ea3b330b34f634e) <a id="structs_internal_uniforms_1ac7fd7a5670bd40ca2ea3b330b34f634e"></a>
-
-#### `public `[`sShaderProgram`](#structs_shader_program)` `[`program`](#structs_internal_uniforms_1a7a5cd43afc7d2a716d1cf23d30fbc304) <a id="structs_internal_uniforms_1a7a5cd43afc7d2a716d1cf23d30fbc304"></a>
-
-#### `public ID3D11Buffer * `[`fragmentBuffer`](#structs_internal_uniforms_1a2a3eff650c882d626e457ca4a493bf56) <a id="structs_internal_uniforms_1a2a3eff650c882d626e457ca4a493bf56"></a>
-
-#### `public ID3D11Buffer * `[`vertexBuffer`](#structs_internal_uniforms_1a876756a742c79eccef8bfd5e7725a679) <a id="structs_internal_uniforms_1a876756a742c79eccef8bfd5e7725a679"></a>
-
-#### `public `[`sUniformDefinition`](#structs_uniform_definition)` `[`def`](#structs_internal_uniforms_1ae005c018e70cd3a63ba34a760ef72962) <a id="structs_internal_uniforms_1ae005c018e70cd3a63ba34a760ef72962"></a>
-
-#### `public int * `[`locations`](#structs_internal_uniforms_1a0f02ac581586af29d7ee44ca2b1fed06) <a id="structs_internal_uniforms_1a0f02ac581586af29d7ee44ca2b1fed06"></a>
-
-# struct `sIUIGlobalState` <a id="structs_i_u_i_global_state"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public `[`WindowModule`](#struct_window_module)` * `[`winm`](#structs_i_u_i_global_state_1ae701579167a3b125ad16a562a097326b) | 
-`public `[`GraphicsModule`](#struct_graphics_module)` * `[`gfxm`](#structs_i_u_i_global_state_1a33895b03ee8de07c99487dd193862ae8) | 
-`public TextModule * `[`textm`](#structs_i_u_i_global_state_1a709550ce99b4622905bead54c5874e67) | 
-`public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034) | 
-`public `[`sShaderProgram`](#structs_shader_program)` `[`rect_shader`](#structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e) | 
-`public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`rect_vert_def`](#structs_i_u_i_global_state_1afc973fcfc990a1a5d1b81e6fd86cf215) | 
-`public `[`sMesh`](#structs_mesh)` `[`rect_mesh`](#structs_i_u_i_global_state_1a6a12ae7165329fe65b5255d371f263b0) | 
-`public `[`sUniforms`](#structs_uniforms)` `[`rect_uniforms`](#structs_i_u_i_global_state_1a1d4a7c3035a6809e70196f02bd18d8b4) | 
-`public `[`sShaderProgram`](#structs_shader_program)` `[`rounded_rect_shader`](#structs_i_u_i_global_state_1a56ec2f4e71a3a6014688528a7f138216) | 
-`public `[`sUniforms`](#structs_uniforms)` `[`rounded_rect_uniforms`](#structs_i_u_i_global_state_1af0f4e55264177d2b17af7462b4fac2c3) | 
-`public `[`sWindow`](#structs_window)` * `[`win`](#structs_i_u_i_global_state_1aba037195a38a12e07f097ec784590bd9) | 
-`public sFont * `[`fonts`](#structs_i_u_i_global_state_1a26062df2397f0afb6720b4beff1e8fb4) | 
-
-## Members
-
-#### `public `[`WindowModule`](#struct_window_module)` * `[`winm`](#structs_i_u_i_global_state_1ae701579167a3b125ad16a562a097326b) <a id="structs_i_u_i_global_state_1ae701579167a3b125ad16a562a097326b"></a>
-
-#### `public `[`GraphicsModule`](#struct_graphics_module)` * `[`gfxm`](#structs_i_u_i_global_state_1a33895b03ee8de07c99487dd193862ae8) <a id="structs_i_u_i_global_state_1a33895b03ee8de07c99487dd193862ae8"></a>
-
-#### `public TextModule * `[`textm`](#structs_i_u_i_global_state_1a709550ce99b4622905bead54c5874e67) <a id="structs_i_u_i_global_state_1a709550ce99b4622905bead54c5874e67"></a>
-
-#### `public `[`ShaderModule`](#struct_shader_module)` * `[`shdr`](#structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034) <a id="structs_i_u_i_global_state_1abb17bd1d69089cf3e19e4bea20cff034"></a>
-
-#### `public `[`sShaderProgram`](#structs_shader_program)` `[`rect_shader`](#structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e) <a id="structs_i_u_i_global_state_1a77252336f113946189673a76c4f9676e"></a>
-
-#### `public `[`sVertexDefinition`](#structs_vertex_definition)` * `[`rect_vert_def`](#structs_i_u_i_global_state_1afc973fcfc990a1a5d1b81e6fd86cf215) <a id="structs_i_u_i_global_state_1afc973fcfc990a1a5d1b81e6fd86cf215"></a>
-
-#### `public `[`sMesh`](#structs_mesh)` `[`rect_mesh`](#structs_i_u_i_global_state_1a6a12ae7165329fe65b5255d371f263b0) <a id="structs_i_u_i_global_state_1a6a12ae7165329fe65b5255d371f263b0"></a>
-
-#### `public `[`sUniforms`](#structs_uniforms)` `[`rect_uniforms`](#structs_i_u_i_global_state_1a1d4a7c3035a6809e70196f02bd18d8b4) <a id="structs_i_u_i_global_state_1a1d4a7c3035a6809e70196f02bd18d8b4"></a>
-
-#### `public `[`sShaderProgram`](#structs_shader_program)` `[`rounded_rect_shader`](#structs_i_u_i_global_state_1a56ec2f4e71a3a6014688528a7f138216) <a id="structs_i_u_i_global_state_1a56ec2f4e71a3a6014688528a7f138216"></a>
-
-#### `public `[`sUniforms`](#structs_uniforms)` `[`rounded_rect_uniforms`](#structs_i_u_i_global_state_1af0f4e55264177d2b17af7462b4fac2c3) <a id="structs_i_u_i_global_state_1af0f4e55264177d2b17af7462b4fac2c3"></a>
-
-#### `public `[`sWindow`](#structs_window)` * `[`win`](#structs_i_u_i_global_state_1aba037195a38a12e07f097ec784590bd9) <a id="structs_i_u_i_global_state_1aba037195a38a12e07f097ec784590bd9"></a>
-
-#### `public sFont * `[`fonts`](#structs_i_u_i_global_state_1a26062df2397f0afb6720b4beff1e8fb4) <a id="structs_i_u_i_global_state_1a26062df2397f0afb6720b4beff1e8fb4"></a>
 
 # struct `sMesh` <a id="structs_mesh"></a>
 
@@ -2179,30 +1518,6 @@ struct TextModule
 
 #### `public inline  `[`TextModule`](#struct_text_module_1a692bd0c26d18e518f91aee8e32e3a337)`(const char * path)` <a id="struct_text_module_1a692bd0c26d18e518f91aee8e32e3a337"></a>
 
-# struct `TextUniforms` <a id="struct_text_uniforms"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public vec3 `[`color`](#struct_text_uniforms_1a5641b0d1253a43a1272d64de0393ff53) | 
-`public mat4 `[`proj`](#struct_text_uniforms_1a518bfed6f335b862d74cf624bd38b926) | 
-`public mat4 `[`view`](#struct_text_uniforms_1a634a41955bc07401db6b0976c3b06a85) | 
-`public mat4 `[`model`](#struct_text_uniforms_1a7494b4d66aa034bdfba35d24096cd649) | 
-`public float `[`z`](#struct_text_uniforms_1ac9264f5baa551719bda7a6362be6678a) | 
-
-## Members
-
-#### `public vec3 `[`color`](#struct_text_uniforms_1a5641b0d1253a43a1272d64de0393ff53) <a id="struct_text_uniforms_1a5641b0d1253a43a1272d64de0393ff53"></a>
-
-#### `public mat4 `[`proj`](#struct_text_uniforms_1a518bfed6f335b862d74cf624bd38b926) <a id="struct_text_uniforms_1a518bfed6f335b862d74cf624bd38b926"></a>
-
-#### `public mat4 `[`view`](#struct_text_uniforms_1a634a41955bc07401db6b0976c3b06a85) <a id="struct_text_uniforms_1a634a41955bc07401db6b0976c3b06a85"></a>
-
-#### `public mat4 `[`model`](#struct_text_uniforms_1a7494b4d66aa034bdfba35d24096cd649) <a id="struct_text_uniforms_1a7494b4d66aa034bdfba35d24096cd649"></a>
-
-#### `public float `[`z`](#struct_text_uniforms_1ac9264f5baa551719bda7a6362be6678a) <a id="struct_text_uniforms_1ac9264f5baa551719bda7a6362be6678a"></a>
-
 # struct `TextureModule` <a id="struct_texture_module"></a>
 
 ```
@@ -2210,147 +1525,174 @@ struct TextureModule
   : public Module
 ```  
 
+Texture loading module class.
+
+This class represents the texture loading module and provides methods for loading and freeing textures. It is responsible for loading the texture loading library and providing access to its functions.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public texload::LoadTexture `[`loadTexture`](#struct_texture_module_1a8e1cd96bb02c67dd10b20f646ba457dd) | 
-`public texload::FreeTexture `[`freeTexture`](#struct_texture_module_1aabf165fe394f7897f02819f62493117b) | 
-`public texload::LoadTextureFromBuffer `[`loadTextureFromBuffer`](#struct_texture_module_1a91c7cc9ffc96429bec0a861c89479631) | 
-`public inline  `[`TextureModule`](#struct_texture_module_1aa3cc7def4aca8b67aac66385234682d0)`(const char * path)` | 
+`public inline `[`sTextureDefinition`](#structs_texture_definition)` `[`loadTexture`](#struct_texture_module_1ac9a761eaf80efd9ed35ec08dda8bb3c3)`(const char * filepath)` | Loads a texture from a file path.
+`public inline void `[`freeTexture`](#struct_texture_module_1a2e017f0716ef1c6f5587457df89e186b)`(`[`sTextureDefinition`](#structs_texture_definition)` texture)` | Frees a texture definition.
+`public inline `[`sTextureDefinition`](#structs_texture_definition)` `[`loadTextureFromBuffer`](#struct_texture_module_1acb8b5c1eecedd84e01f8032492fad92e)`(const uint8_t * buffer,size_t size)` | Loads a texture from a buffer.
+`public inline  `[`TextureModule`](#struct_texture_module_1aa3cc7def4aca8b67aac66385234682d0)`(const char * path)` | Constructor for the [TextureModule](#struct_texture_module) class.
 
 ## Members
 
-#### `public texload::LoadTexture `[`loadTexture`](#struct_texture_module_1a8e1cd96bb02c67dd10b20f646ba457dd) <a id="struct_texture_module_1a8e1cd96bb02c67dd10b20f646ba457dd"></a>
+#### `public inline `[`sTextureDefinition`](#structs_texture_definition)` `[`loadTexture`](#struct_texture_module_1ac9a761eaf80efd9ed35ec08dda8bb3c3)`(const char * filepath)` <a id="struct_texture_module_1ac9a761eaf80efd9ed35ec08dda8bb3c3"></a>
 
-#### `public texload::FreeTexture `[`freeTexture`](#struct_texture_module_1aabf165fe394f7897f02819f62493117b) <a id="struct_texture_module_1aabf165fe394f7897f02819f62493117b"></a>
+Loads a texture from a file path.
 
-#### `public texload::LoadTextureFromBuffer `[`loadTextureFromBuffer`](#struct_texture_module_1a91c7cc9ffc96429bec0a861c89479631) <a id="struct_texture_module_1a91c7cc9ffc96429bec0a861c89479631"></a>
+This function loads a texture from the specified file path and returns a texture definition.
+
+#### Parameters
+* `filepath` The path to the texture to load 
+
+#### Returns
+A texture definition containing the loaded texture data.
+
+#### `public inline void `[`freeTexture`](#struct_texture_module_1a2e017f0716ef1c6f5587457df89e186b)`(`[`sTextureDefinition`](#structs_texture_definition)` texture)` <a id="struct_texture_module_1a2e017f0716ef1c6f5587457df89e186b"></a>
+
+Frees a texture definition.
+
+This function frees the specified texture definition. This should be called when the texture is no longer needed to free the resources used by the texture.
+
+#### Parameters
+* `texture` The texture definition to free. 
+
+This function should be called when the texture is no longer needed to free up resources.
+
+#### `public inline `[`sTextureDefinition`](#structs_texture_definition)` `[`loadTextureFromBuffer`](#struct_texture_module_1acb8b5c1eecedd84e01f8032492fad92e)`(const uint8_t * buffer,size_t size)` <a id="struct_texture_module_1acb8b5c1eecedd84e01f8032492fad92e"></a>
+
+Loads a texture from a buffer.
+
+This function loads a texture from the specified buffer and size, and returns a texture definition.
+
+#### Parameters
+* `buffer` The byte buffer containing the texture data. 
+
+* `size` The size of the byte buffer. 
+
+#### Returns
+A texture definition containing the loaded texture data.
 
 #### `public inline  `[`TextureModule`](#struct_texture_module_1aa3cc7def4aca8b67aac66385234682d0)`(const char * path)` <a id="struct_texture_module_1aa3cc7def4aca8b67aac66385234682d0"></a>
 
-# struct `TextVertex` <a id="struct_text_vertex"></a>
+Constructor for the [TextureModule](#struct_texture_module) class.
+
+This constructor loads the texture loading library and initializes the function pointers.
+
+#### Parameters
+* `path` The name/id of the implementation to load (ex: "stb").
+
+# struct `vec2.__unnamed11__` <a id="structvec2_8____unnamed11____"></a>
 
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public vec2 `[`pos`](#struct_text_vertex_1ad214bb772f6d73d24f2c23645df9f03e) | 
-`public vec2 `[`uv`](#struct_text_vertex_1a90bad3d93c33ea2d28f58cc445f3b687) | 
+`public float `[`u`](#structvec2_8____unnamed11_____1a7b774effe4a349c6dd82ad4f4f21d34c) | 
+`public float `[`v`](#structvec2_8____unnamed11_____1a9e3669d19b675bd57058fd4664205d2a) | 
 
 ## Members
 
-#### `public vec2 `[`pos`](#struct_text_vertex_1ad214bb772f6d73d24f2c23645df9f03e) <a id="struct_text_vertex_1ad214bb772f6d73d24f2c23645df9f03e"></a>
+#### `public float `[`u`](#structvec2_8____unnamed11_____1a7b774effe4a349c6dd82ad4f4f21d34c) <a id="structvec2_8____unnamed11_____1a7b774effe4a349c6dd82ad4f4f21d34c"></a>
 
-#### `public vec2 `[`uv`](#struct_text_vertex_1a90bad3d93c33ea2d28f58cc445f3b687) <a id="struct_text_vertex_1a90bad3d93c33ea2d28f58cc445f3b687"></a>
+#### `public float `[`v`](#structvec2_8____unnamed11_____1a9e3669d19b675bd57058fd4664205d2a) <a id="structvec2_8____unnamed11_____1a9e3669d19b675bd57058fd4664205d2a"></a>
 
-# struct `vec2.__unnamed10__` <a id="structvec2_8____unnamed10____"></a>
+# struct `vec2.__unnamed9__` <a id="structvec2_8____unnamed9____"></a>
 
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public float `[`x`](#structvec2_8____unnamed10_____1a9dd4e461268c8034f5c8564e155c67a6) | 
-`public float `[`y`](#structvec2_8____unnamed10_____1a415290769594460e2e485922904f345d) | 
+`public float `[`x`](#structvec2_8____unnamed9_____1a9dd4e461268c8034f5c8564e155c67a6) | 
+`public float `[`y`](#structvec2_8____unnamed9_____1a415290769594460e2e485922904f345d) | 
 
 ## Members
 
-#### `public float `[`x`](#structvec2_8____unnamed10_____1a9dd4e461268c8034f5c8564e155c67a6) <a id="structvec2_8____unnamed10_____1a9dd4e461268c8034f5c8564e155c67a6"></a>
+#### `public float `[`x`](#structvec2_8____unnamed9_____1a9dd4e461268c8034f5c8564e155c67a6) <a id="structvec2_8____unnamed9_____1a9dd4e461268c8034f5c8564e155c67a6"></a>
 
-#### `public float `[`y`](#structvec2_8____unnamed10_____1a415290769594460e2e485922904f345d) <a id="structvec2_8____unnamed10_____1a415290769594460e2e485922904f345d"></a>
+#### `public float `[`y`](#structvec2_8____unnamed9_____1a415290769594460e2e485922904f345d) <a id="structvec2_8____unnamed9_____1a415290769594460e2e485922904f345d"></a>
 
-# struct `vec2.__unnamed12__` <a id="structvec2_8____unnamed12____"></a>
+# struct `vec3.__unnamed1__` <a id="structvec3_8____unnamed1____"></a>
 
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public float `[`u`](#structvec2_8____unnamed12_____1a7b774effe4a349c6dd82ad4f4f21d34c) | 
-`public float `[`v`](#structvec2_8____unnamed12_____1a9e3669d19b675bd57058fd4664205d2a) | 
+`public float `[`x`](#structvec3_8____unnamed1_____1a9dd4e461268c8034f5c8564e155c67a6) | 
+`public float `[`y`](#structvec3_8____unnamed1_____1a415290769594460e2e485922904f345d) | 
+`public float `[`z`](#structvec3_8____unnamed1_____1afbade9e36a3f36d3d676c1b808451dd7) | 
 
 ## Members
 
-#### `public float `[`u`](#structvec2_8____unnamed12_____1a7b774effe4a349c6dd82ad4f4f21d34c) <a id="structvec2_8____unnamed12_____1a7b774effe4a349c6dd82ad4f4f21d34c"></a>
+#### `public float `[`x`](#structvec3_8____unnamed1_____1a9dd4e461268c8034f5c8564e155c67a6) <a id="structvec3_8____unnamed1_____1a9dd4e461268c8034f5c8564e155c67a6"></a>
 
-#### `public float `[`v`](#structvec2_8____unnamed12_____1a9e3669d19b675bd57058fd4664205d2a) <a id="structvec2_8____unnamed12_____1a9e3669d19b675bd57058fd4664205d2a"></a>
+#### `public float `[`y`](#structvec3_8____unnamed1_____1a415290769594460e2e485922904f345d) <a id="structvec3_8____unnamed1_____1a415290769594460e2e485922904f345d"></a>
 
-# struct `vec3.__unnamed2__` <a id="structvec3_8____unnamed2____"></a>
+#### `public float `[`z`](#structvec3_8____unnamed1_____1afbade9e36a3f36d3d676c1b808451dd7) <a id="structvec3_8____unnamed1_____1afbade9e36a3f36d3d676c1b808451dd7"></a>
+
+# struct `vec3.__unnamed3__` <a id="structvec3_8____unnamed3____"></a>
 
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public float `[`x`](#structvec3_8____unnamed2_____1a9dd4e461268c8034f5c8564e155c67a6) | 
-`public float `[`y`](#structvec3_8____unnamed2_____1a415290769594460e2e485922904f345d) | 
-`public float `[`z`](#structvec3_8____unnamed2_____1afbade9e36a3f36d3d676c1b808451dd7) | 
+`public float `[`r`](#structvec3_8____unnamed3_____1a4b43b0aee35624cd95b910189b3dc231) | 
+`public float `[`g`](#structvec3_8____unnamed3_____1ab2f5ff47436671b6e533d8dc3614845d) | 
+`public float `[`b`](#structvec3_8____unnamed3_____1a92eb5ffee6ae2fec3ad71c777531578f) | 
 
 ## Members
 
-#### `public float `[`x`](#structvec3_8____unnamed2_____1a9dd4e461268c8034f5c8564e155c67a6) <a id="structvec3_8____unnamed2_____1a9dd4e461268c8034f5c8564e155c67a6"></a>
+#### `public float `[`r`](#structvec3_8____unnamed3_____1a4b43b0aee35624cd95b910189b3dc231) <a id="structvec3_8____unnamed3_____1a4b43b0aee35624cd95b910189b3dc231"></a>
 
-#### `public float `[`y`](#structvec3_8____unnamed2_____1a415290769594460e2e485922904f345d) <a id="structvec3_8____unnamed2_____1a415290769594460e2e485922904f345d"></a>
+#### `public float `[`g`](#structvec3_8____unnamed3_____1ab2f5ff47436671b6e533d8dc3614845d) <a id="structvec3_8____unnamed3_____1ab2f5ff47436671b6e533d8dc3614845d"></a>
 
-#### `public float `[`z`](#structvec3_8____unnamed2_____1afbade9e36a3f36d3d676c1b808451dd7) <a id="structvec3_8____unnamed2_____1afbade9e36a3f36d3d676c1b808451dd7"></a>
+#### `public float `[`b`](#structvec3_8____unnamed3_____1a92eb5ffee6ae2fec3ad71c777531578f) <a id="structvec3_8____unnamed3_____1a92eb5ffee6ae2fec3ad71c777531578f"></a>
 
-# struct `vec3.__unnamed4__` <a id="structvec3_8____unnamed4____"></a>
+# struct `vec4.__unnamed5__` <a id="structvec4_8____unnamed5____"></a>
 
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public float `[`r`](#structvec3_8____unnamed4_____1a4b43b0aee35624cd95b910189b3dc231) | 
-`public float `[`g`](#structvec3_8____unnamed4_____1ab2f5ff47436671b6e533d8dc3614845d) | 
-`public float `[`b`](#structvec3_8____unnamed4_____1a92eb5ffee6ae2fec3ad71c777531578f) | 
+`public float `[`x`](#structvec4_8____unnamed5_____1a9dd4e461268c8034f5c8564e155c67a6) | 
+`public float `[`y`](#structvec4_8____unnamed5_____1a415290769594460e2e485922904f345d) | 
+`public float `[`z`](#structvec4_8____unnamed5_____1afbade9e36a3f36d3d676c1b808451dd7) | 
+`public float `[`w`](#structvec4_8____unnamed5_____1af1290186a5d0b1ceab27f4e77c0c5d68) | 
 
 ## Members
 
-#### `public float `[`r`](#structvec3_8____unnamed4_____1a4b43b0aee35624cd95b910189b3dc231) <a id="structvec3_8____unnamed4_____1a4b43b0aee35624cd95b910189b3dc231"></a>
+#### `public float `[`x`](#structvec4_8____unnamed5_____1a9dd4e461268c8034f5c8564e155c67a6) <a id="structvec4_8____unnamed5_____1a9dd4e461268c8034f5c8564e155c67a6"></a>
 
-#### `public float `[`g`](#structvec3_8____unnamed4_____1ab2f5ff47436671b6e533d8dc3614845d) <a id="structvec3_8____unnamed4_____1ab2f5ff47436671b6e533d8dc3614845d"></a>
+#### `public float `[`y`](#structvec4_8____unnamed5_____1a415290769594460e2e485922904f345d) <a id="structvec4_8____unnamed5_____1a415290769594460e2e485922904f345d"></a>
 
-#### `public float `[`b`](#structvec3_8____unnamed4_____1a92eb5ffee6ae2fec3ad71c777531578f) <a id="structvec3_8____unnamed4_____1a92eb5ffee6ae2fec3ad71c777531578f"></a>
+#### `public float `[`z`](#structvec4_8____unnamed5_____1afbade9e36a3f36d3d676c1b808451dd7) <a id="structvec4_8____unnamed5_____1afbade9e36a3f36d3d676c1b808451dd7"></a>
 
-# struct `vec4.__unnamed6__` <a id="structvec4_8____unnamed6____"></a>
+#### `public float `[`w`](#structvec4_8____unnamed5_____1af1290186a5d0b1ceab27f4e77c0c5d68) <a id="structvec4_8____unnamed5_____1af1290186a5d0b1ceab27f4e77c0c5d68"></a>
+
+# struct `vec4.__unnamed7__` <a id="structvec4_8____unnamed7____"></a>
 
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public float `[`x`](#structvec4_8____unnamed6_____1a9dd4e461268c8034f5c8564e155c67a6) | 
-`public float `[`y`](#structvec4_8____unnamed6_____1a415290769594460e2e485922904f345d) | 
-`public float `[`z`](#structvec4_8____unnamed6_____1afbade9e36a3f36d3d676c1b808451dd7) | 
-`public float `[`w`](#structvec4_8____unnamed6_____1af1290186a5d0b1ceab27f4e77c0c5d68) | 
+`public float `[`r`](#structvec4_8____unnamed7_____1a4b43b0aee35624cd95b910189b3dc231) | 
+`public float `[`g`](#structvec4_8____unnamed7_____1ab2f5ff47436671b6e533d8dc3614845d) | 
+`public float `[`b`](#structvec4_8____unnamed7_____1a92eb5ffee6ae2fec3ad71c777531578f) | 
+`public float `[`a`](#structvec4_8____unnamed7_____1a0cc175b9c0f1b6a831c399e269772661) | 
 
 ## Members
 
-#### `public float `[`x`](#structvec4_8____unnamed6_____1a9dd4e461268c8034f5c8564e155c67a6) <a id="structvec4_8____unnamed6_____1a9dd4e461268c8034f5c8564e155c67a6"></a>
+#### `public float `[`r`](#structvec4_8____unnamed7_____1a4b43b0aee35624cd95b910189b3dc231) <a id="structvec4_8____unnamed7_____1a4b43b0aee35624cd95b910189b3dc231"></a>
 
-#### `public float `[`y`](#structvec4_8____unnamed6_____1a415290769594460e2e485922904f345d) <a id="structvec4_8____unnamed6_____1a415290769594460e2e485922904f345d"></a>
+#### `public float `[`g`](#structvec4_8____unnamed7_____1ab2f5ff47436671b6e533d8dc3614845d) <a id="structvec4_8____unnamed7_____1ab2f5ff47436671b6e533d8dc3614845d"></a>
 
-#### `public float `[`z`](#structvec4_8____unnamed6_____1afbade9e36a3f36d3d676c1b808451dd7) <a id="structvec4_8____unnamed6_____1afbade9e36a3f36d3d676c1b808451dd7"></a>
+#### `public float `[`b`](#structvec4_8____unnamed7_____1a92eb5ffee6ae2fec3ad71c777531578f) <a id="structvec4_8____unnamed7_____1a92eb5ffee6ae2fec3ad71c777531578f"></a>
 
-#### `public float `[`w`](#structvec4_8____unnamed6_____1af1290186a5d0b1ceab27f4e77c0c5d68) <a id="structvec4_8____unnamed6_____1af1290186a5d0b1ceab27f4e77c0c5d68"></a>
-
-# struct `vec4.__unnamed8__` <a id="structvec4_8____unnamed8____"></a>
-
-## Summary
-
- Members                        | Descriptions                                
---------------------------------|---------------------------------------------
-`public float `[`r`](#structvec4_8____unnamed8_____1a4b43b0aee35624cd95b910189b3dc231) | 
-`public float `[`g`](#structvec4_8____unnamed8_____1ab2f5ff47436671b6e533d8dc3614845d) | 
-`public float `[`b`](#structvec4_8____unnamed8_____1a92eb5ffee6ae2fec3ad71c777531578f) | 
-`public float `[`a`](#structvec4_8____unnamed8_____1a0cc175b9c0f1b6a831c399e269772661) | 
-
-## Members
-
-#### `public float `[`r`](#structvec4_8____unnamed8_____1a4b43b0aee35624cd95b910189b3dc231) <a id="structvec4_8____unnamed8_____1a4b43b0aee35624cd95b910189b3dc231"></a>
-
-#### `public float `[`g`](#structvec4_8____unnamed8_____1ab2f5ff47436671b6e533d8dc3614845d) <a id="structvec4_8____unnamed8_____1ab2f5ff47436671b6e533d8dc3614845d"></a>
-
-#### `public float `[`b`](#structvec4_8____unnamed8_____1a92eb5ffee6ae2fec3ad71c777531578f) <a id="structvec4_8____unnamed8_____1a92eb5ffee6ae2fec3ad71c777531578f"></a>
-
-#### `public float `[`a`](#structvec4_8____unnamed8_____1a0cc175b9c0f1b6a831c399e269772661) <a id="structvec4_8____unnamed8_____1a0cc175b9c0f1b6a831c399e269772661"></a>
+#### `public float `[`a`](#structvec4_8____unnamed7_____1a0cc175b9c0f1b6a831c399e269772661) <a id="structvec4_8____unnamed7_____1a0cc175b9c0f1b6a831c399e269772661"></a>
 
 # struct `Vertex` <a id="struct_vertex"></a>
 

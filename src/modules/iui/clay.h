@@ -1,3 +1,6 @@
+// tell doxygen to ignore this file
+/// @cond DOXYGEN_OMIT
+
 // VERSION: 0.12
 
 /*
@@ -4139,3 +4142,5 @@ freely, subject to the following restrictions:
     3. This notice may not be removed or altered from any source
     distribution.
 */
+
+/// @endcond

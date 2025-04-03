@@ -267,6 +267,7 @@ struct sTexture {
     void* internal;
 };
 
+/// @cond DOXYGEN_OMIT
 namespace graphics {
     typedef void (*SetClearColor)(float r, float g, float b, float a);
     typedef void (*Clear)();
@@ -292,6 +293,7 @@ namespace graphics {
     typedef void (*EnableScissor)();
     typedef void (*DisableScissor)();
 }
+/// @endcond
 
 /**
  * @brief Graphics module class.
@@ -300,6 +302,7 @@ namespace graphics {
  * It is used to initialize the graphics module and create graphics objects.
  */
 struct GraphicsModule : Module {
+private:
     graphics::SetClearColor internal_setClearColor;
     graphics::Clear internal_clear;
     graphics::Init internal_init;
@@ -323,6 +326,7 @@ struct GraphicsModule : Module {
     graphics::SetScissor internal_setScissor;
     graphics::EnableScissor internal_enableScissor;
     graphics::DisableScissor internal_disableScissor;
+public:
 
     sWindow* win;
 
