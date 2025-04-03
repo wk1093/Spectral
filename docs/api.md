@@ -13,13 +13,13 @@
 `struct `[`Module`](#struct_module) | 
 `struct `[`sAudioClip`](#structs_audio_clip) | 
 `struct `[`sAudioSource`](#structs_audio_source) | 
-`struct `[`sCamera`](#structs_camera) | 
+`struct `[`sCamera`](#structs_camera) | Camera structure.
 `struct `[`Script`](#struct_script) | 
 `struct `[`ScriptLoaderModule`](#struct_script_loader_module) | 
 `struct `[`sFont`](#structs_font) | 
 `struct `[`ShaderModule`](#struct_shader_module) | [ShaderModule](#struct_shader_module) is a module that provides functionality for compiling and creating shaders.
 `struct `[`sMesh`](#structs_mesh) | Mesh structure.
-`struct `[`sModelTransform`](#structs_model_transform) | 
+`struct `[`sModelTransform`](#structs_model_transform) | Model transformation structure.
 `struct `[`sShader`](#structs_shader) | Shader structure.
 `struct `[`sShaderProgram`](#structs_shader_program) | Shader program structure.
 `struct `[`sText`](#structs_text) | 
@@ -53,10 +53,10 @@
 `struct `[`Vertex`](#struct_vertex) | 
 `struct `[`WindowModule`](#struct_window_module) | Window module class.
 `struct `[`WorldModule`](#struct_world_module) | 
-`union `[`mat4`](#unionmat4) | 
-`union `[`vec2`](#unionvec2) | 
-`union `[`vec3`](#unionvec3) | 
-`union `[`vec4`](#unionvec4) | 
+`union `[`mat4`](#unionmat4) | 4x4 matrix structure.
+`union `[`vec2`](#unionvec2) | 2D vector structure.
+`union `[`vec3`](#unionvec3) | 3D vector structure.
+`union `[`vec4`](#unionvec4) | 4D vector structure.
 
 # class `Game` <a id="class_game"></a>
 
@@ -620,20 +620,20 @@ This function constructs a graphics module from the specified dynamic library. T
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public vec4 `[`x`](#structmat4_8____unnamed13_____1a9dd4e461268c8034f5c8564e155c67a6) | 
-`public vec4 `[`y`](#structmat4_8____unnamed13_____1a415290769594460e2e485922904f345d) | 
-`public vec4 `[`z`](#structmat4_8____unnamed13_____1afbade9e36a3f36d3d676c1b808451dd7) | 
-`public vec4 `[`w`](#structmat4_8____unnamed13_____1af1290186a5d0b1ceab27f4e77c0c5d68) | 
+`public `[`vec4`](#unionvec4)` `[`x`](#structmat4_8____unnamed13_____1a9dd4e461268c8034f5c8564e155c67a6) | 
+`public `[`vec4`](#unionvec4)` `[`y`](#structmat4_8____unnamed13_____1a415290769594460e2e485922904f345d) | 
+`public `[`vec4`](#unionvec4)` `[`z`](#structmat4_8____unnamed13_____1afbade9e36a3f36d3d676c1b808451dd7) | 
+`public `[`vec4`](#unionvec4)` `[`w`](#structmat4_8____unnamed13_____1af1290186a5d0b1ceab27f4e77c0c5d68) | 
 
 ## Members
 
-#### `public vec4 `[`x`](#structmat4_8____unnamed13_____1a9dd4e461268c8034f5c8564e155c67a6) <a id="structmat4_8____unnamed13_____1a9dd4e461268c8034f5c8564e155c67a6"></a>
+#### `public `[`vec4`](#unionvec4)` `[`x`](#structmat4_8____unnamed13_____1a9dd4e461268c8034f5c8564e155c67a6) <a id="structmat4_8____unnamed13_____1a9dd4e461268c8034f5c8564e155c67a6"></a>
 
-#### `public vec4 `[`y`](#structmat4_8____unnamed13_____1a415290769594460e2e485922904f345d) <a id="structmat4_8____unnamed13_____1a415290769594460e2e485922904f345d"></a>
+#### `public `[`vec4`](#unionvec4)` `[`y`](#structmat4_8____unnamed13_____1a415290769594460e2e485922904f345d) <a id="structmat4_8____unnamed13_____1a415290769594460e2e485922904f345d"></a>
 
-#### `public vec4 `[`z`](#structmat4_8____unnamed13_____1afbade9e36a3f36d3d676c1b808451dd7) <a id="structmat4_8____unnamed13_____1afbade9e36a3f36d3d676c1b808451dd7"></a>
+#### `public `[`vec4`](#unionvec4)` `[`z`](#structmat4_8____unnamed13_____1afbade9e36a3f36d3d676c1b808451dd7) <a id="structmat4_8____unnamed13_____1afbade9e36a3f36d3d676c1b808451dd7"></a>
 
-#### `public vec4 `[`w`](#structmat4_8____unnamed13_____1af1290186a5d0b1ceab27f4e77c0c5d68) <a id="structmat4_8____unnamed13_____1af1290186a5d0b1ceab27f4e77c0c5d68"></a>
+#### `public `[`vec4`](#unionvec4)` `[`w`](#structmat4_8____unnamed13_____1af1290186a5d0b1ceab27f4e77c0c5d68) <a id="structmat4_8____unnamed13_____1af1290186a5d0b1ceab27f4e77c0c5d68"></a>
 
 # struct `Module` <a id="struct_module"></a>
 
@@ -694,51 +694,105 @@ This function constructs a graphics module from the specified dynamic library. T
 
 # struct `sCamera` <a id="structs_camera"></a>
 
+Camera structure.
+
+This structure represents a camera in 3D space with position, orientation, and movement capabilities. It provides functions for yaw, pitch, and movement operations.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public vec3 `[`pos`](#structs_camera_1a4b94bb74bd24be1efc4e160435ae4b3a) | 
-`public vec3 `[`up`](#structs_camera_1ac1844af4a3e0292aab1c84022493a1a5) | 
-`public vec3 `[`forward`](#structs_camera_1ac0a76945dff826b387ca385cc15b4ec4) | 
-`public float `[`yaw`](#structs_camera_1a338014b5eba9a892111da9b29775f012) | 
-`public float `[`pitch`](#structs_camera_1a72641be2dd535a719d363dae63c2807d) | 
-`public inline vec3 `[`right`](#structs_camera_1a327743eaabccc477b78e7cb6e83ea06c)`()` | 
-`public inline vec3 `[`left`](#structs_camera_1ad5700423000b9b58b92477a1d17d78f1)`()` | 
-`public inline vec3 `[`back`](#structs_camera_1af756a5ae5b9ad6c2061871d8e18415ec)`()` | 
-`public inline vec3 `[`down`](#structs_camera_1a52a4247fffb271d5bf299a6f312f073a)`()` | 
-`public inline vec3 `[`right`](#structs_camera_1a9fb08058ab74f1f1b0430b34421d741c)`(vec3 forward)` | 
-`public inline vec3 `[`left`](#structs_camera_1ae556d8c13622c8f48f076ccc360d8752)`(vec3 forward)` | 
-`public inline vec3 `[`back`](#structs_camera_1a026be479af001be2a70ecbd7f7fc203f)`(vec3 forward)` | 
-`public inline vec3 `[`down`](#structs_camera_1a70185b7a8aa602d6dd07cec3ad911d65)`(vec3 up)` | 
+`public `[`vec3`](#unionvec3)` `[`pos`](#structs_camera_1a4b94bb74bd24be1efc4e160435ae4b3a) | Camera position in 3D space.
+`public `[`vec3`](#unionvec3)` `[`up`](#structs_camera_1ac1844af4a3e0292aab1c84022493a1a5) | Camera up vector.
+`public `[`vec3`](#unionvec3)` `[`forward`](#structs_camera_1ac0a76945dff826b387ca385cc15b4ec4) | Camera forward vector.
+`public float `[`yaw`](#structs_camera_1a338014b5eba9a892111da9b29775f012) | Camera yaw angle in radians.
+`public float `[`pitch`](#structs_camera_1a72641be2dd535a719d363dae63c2807d) | Camera pitch angle in radians.
+`public inline `[`vec3`](#unionvec3)` `[`right`](#structs_camera_1a327743eaabccc477b78e7cb6e83ea06c)`()` | Camera right vector.
+`public inline `[`vec3`](#unionvec3)` `[`left`](#structs_camera_1ad5700423000b9b58b92477a1d17d78f1)`()` | Camera left vector.
+`public inline `[`vec3`](#unionvec3)` `[`back`](#structs_camera_1af756a5ae5b9ad6c2061871d8e18415ec)`()` | Camera back vector.
+`public inline `[`vec3`](#unionvec3)` `[`down`](#structs_camera_1a52a4247fffb271d5bf299a6f312f073a)`()` | Camera down vector.
+`public inline `[`vec3`](#unionvec3)` `[`right`](#structs_camera_1a9fb08058ab74f1f1b0430b34421d741c)`(`[`vec3`](#unionvec3)` forward)` | Camera right vector based on different forward vector.
+`public inline `[`vec3`](#unionvec3)` `[`left`](#structs_camera_1ae556d8c13622c8f48f076ccc360d8752)`(`[`vec3`](#unionvec3)` forward)` | Camera left vector based on different forward vector.
+`public inline `[`vec3`](#unionvec3)` `[`back`](#structs_camera_1a026be479af001be2a70ecbd7f7fc203f)`(`[`vec3`](#unionvec3)` forward)` | Camera back vector based on different forward vector.
+`public inline `[`vec3`](#unionvec3)` `[`down`](#structs_camera_1a70185b7a8aa602d6dd07cec3ad911d65)`(`[`vec3`](#unionvec3)` up)` | Camera down vector based on different up vector.
 
 ## Members
 
-#### `public vec3 `[`pos`](#structs_camera_1a4b94bb74bd24be1efc4e160435ae4b3a) <a id="structs_camera_1a4b94bb74bd24be1efc4e160435ae4b3a"></a>
+#### `public `[`vec3`](#unionvec3)` `[`pos`](#structs_camera_1a4b94bb74bd24be1efc4e160435ae4b3a) <a id="structs_camera_1a4b94bb74bd24be1efc4e160435ae4b3a"></a>
 
-#### `public vec3 `[`up`](#structs_camera_1ac1844af4a3e0292aab1c84022493a1a5) <a id="structs_camera_1ac1844af4a3e0292aab1c84022493a1a5"></a>
+Camera position in 3D space.
 
-#### `public vec3 `[`forward`](#structs_camera_1ac0a76945dff826b387ca385cc15b4ec4) <a id="structs_camera_1ac0a76945dff826b387ca385cc15b4ec4"></a>
+#### `public `[`vec3`](#unionvec3)` `[`up`](#structs_camera_1ac1844af4a3e0292aab1c84022493a1a5) <a id="structs_camera_1ac1844af4a3e0292aab1c84022493a1a5"></a>
+
+Camera up vector.
+
+#### `public `[`vec3`](#unionvec3)` `[`forward`](#structs_camera_1ac0a76945dff826b387ca385cc15b4ec4) <a id="structs_camera_1ac0a76945dff826b387ca385cc15b4ec4"></a>
+
+Camera forward vector.
 
 #### `public float `[`yaw`](#structs_camera_1a338014b5eba9a892111da9b29775f012) <a id="structs_camera_1a338014b5eba9a892111da9b29775f012"></a>
 
+Camera yaw angle in radians.
+
 #### `public float `[`pitch`](#structs_camera_1a72641be2dd535a719d363dae63c2807d) <a id="structs_camera_1a72641be2dd535a719d363dae63c2807d"></a>
 
-#### `public inline vec3 `[`right`](#structs_camera_1a327743eaabccc477b78e7cb6e83ea06c)`()` <a id="structs_camera_1a327743eaabccc477b78e7cb6e83ea06c"></a>
+Camera pitch angle in radians.
 
-#### `public inline vec3 `[`left`](#structs_camera_1ad5700423000b9b58b92477a1d17d78f1)`()` <a id="structs_camera_1ad5700423000b9b58b92477a1d17d78f1"></a>
+#### `public inline `[`vec3`](#unionvec3)` `[`right`](#structs_camera_1a327743eaabccc477b78e7cb6e83ea06c)`()` <a id="structs_camera_1a327743eaabccc477b78e7cb6e83ea06c"></a>
 
-#### `public inline vec3 `[`back`](#structs_camera_1af756a5ae5b9ad6c2061871d8e18415ec)`()` <a id="structs_camera_1af756a5ae5b9ad6c2061871d8e18415ec"></a>
+Camera right vector.
 
-#### `public inline vec3 `[`down`](#structs_camera_1a52a4247fffb271d5bf299a6f312f073a)`()` <a id="structs_camera_1a52a4247fffb271d5bf299a6f312f073a"></a>
+#### `public inline `[`vec3`](#unionvec3)` `[`left`](#structs_camera_1ad5700423000b9b58b92477a1d17d78f1)`()` <a id="structs_camera_1ad5700423000b9b58b92477a1d17d78f1"></a>
 
-#### `public inline vec3 `[`right`](#structs_camera_1a9fb08058ab74f1f1b0430b34421d741c)`(vec3 forward)` <a id="structs_camera_1a9fb08058ab74f1f1b0430b34421d741c"></a>
+Camera left vector.
 
-#### `public inline vec3 `[`left`](#structs_camera_1ae556d8c13622c8f48f076ccc360d8752)`(vec3 forward)` <a id="structs_camera_1ae556d8c13622c8f48f076ccc360d8752"></a>
+#### `public inline `[`vec3`](#unionvec3)` `[`back`](#structs_camera_1af756a5ae5b9ad6c2061871d8e18415ec)`()` <a id="structs_camera_1af756a5ae5b9ad6c2061871d8e18415ec"></a>
 
-#### `public inline vec3 `[`back`](#structs_camera_1a026be479af001be2a70ecbd7f7fc203f)`(vec3 forward)` <a id="structs_camera_1a026be479af001be2a70ecbd7f7fc203f"></a>
+Camera back vector.
 
-#### `public inline vec3 `[`down`](#structs_camera_1a70185b7a8aa602d6dd07cec3ad911d65)`(vec3 up)` <a id="structs_camera_1a70185b7a8aa602d6dd07cec3ad911d65"></a>
+#### `public inline `[`vec3`](#unionvec3)` `[`down`](#structs_camera_1a52a4247fffb271d5bf299a6f312f073a)`()` <a id="structs_camera_1a52a4247fffb271d5bf299a6f312f073a"></a>
+
+Camera down vector.
+
+#### `public inline `[`vec3`](#unionvec3)` `[`right`](#structs_camera_1a9fb08058ab74f1f1b0430b34421d741c)`(`[`vec3`](#unionvec3)` forward)` <a id="structs_camera_1a9fb08058ab74f1f1b0430b34421d741c"></a>
+
+Camera right vector based on different forward vector.
+
+#### Parameters
+* `forward` The forward vector to calculate the right vector from. 
+
+#### Returns
+The right vector based on the specified forward vector.
+
+#### `public inline `[`vec3`](#unionvec3)` `[`left`](#structs_camera_1ae556d8c13622c8f48f076ccc360d8752)`(`[`vec3`](#unionvec3)` forward)` <a id="structs_camera_1ae556d8c13622c8f48f076ccc360d8752"></a>
+
+Camera left vector based on different forward vector.
+
+#### Parameters
+* `forward` The forward vector to calculate the left vector from. 
+
+#### Returns
+The left vector based on the specified forward vector.
+
+#### `public inline `[`vec3`](#unionvec3)` `[`back`](#structs_camera_1a026be479af001be2a70ecbd7f7fc203f)`(`[`vec3`](#unionvec3)` forward)` <a id="structs_camera_1a026be479af001be2a70ecbd7f7fc203f"></a>
+
+Camera back vector based on different forward vector.
+
+#### Parameters
+* `forward` The forward vector to calculate the back vector from. 
+
+#### Returns
+The back vector based on the specified forward vector.
+
+#### `public inline `[`vec3`](#unionvec3)` `[`down`](#structs_camera_1a70185b7a8aa602d6dd07cec3ad911d65)`(`[`vec3`](#unionvec3)` up)` <a id="structs_camera_1a70185b7a8aa602d6dd07cec3ad911d65"></a>
+
+Camera down vector based on different up vector.
+
+#### Parameters
+* `up` The up vector to calculate the down vector from. 
+
+#### Returns
+The down vector based on the specified up vector.
 
 # struct `Script` <a id="struct_script"></a>
 
@@ -908,36 +962,41 @@ This structure represents a mesh that can be used in a shader program. Implement
 
 # struct `sModelTransform` <a id="structs_model_transform"></a>
 
+Model transformation structure.
+
+This structure represents a model transformation in 3D space with position, scale, and rotation. It provides a matrix function to calculate the transformation matrix based on the current position, scale, and rotation.
+
+The transformation matrix is used to transform model coordinates to world coordinates.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public vec3 `[`pos`](#structs_model_transform_1aac335e8a460119b02ade04cb145ccb87) | 
-`public vec3 `[`sca`](#structs_model_transform_1a5cf86854bf9d3f34b4fa5f9ad7ef2bcb) | 
-`public vec3 `[`rot`](#structs_model_transform_1a7aa59462936ba2c55431ff243f693f23) | 
-`public vec3 `[`lastPos`](#structs_model_transform_1a3f8b10396dd85575a1e50351184123b3) | 
-`public vec3 `[`lastSca`](#structs_model_transform_1aac6f3894b99298df72a7ec2c6f258282) | 
-`public vec3 `[`lastRot`](#structs_model_transform_1a65904bb9e0b6ddc0423163fb3b6107d7) | 
-`public mat4 `[`internal_matrix`](#structs_model_transform_1ab447224c6f8735bb1b2f5f638f35e17f) | 
-`public inline mat4 `[`matrix`](#structs_model_transform_1a439db170aa197a5c9a714190ff182d46)`()` | 
+`public `[`vec3`](#unionvec3)` `[`pos`](#structs_model_transform_1aac335e8a460119b02ade04cb145ccb87) | Model position in 3D space.
+`public `[`vec3`](#unionvec3)` `[`sca`](#structs_model_transform_1a5cf86854bf9d3f34b4fa5f9ad7ef2bcb) | Model scale in 3D space.
+`public `[`vec3`](#unionvec3)` `[`rot`](#structs_model_transform_1a7aa59462936ba2c55431ff243f693f23) | Model rotation in 3D space.
+`public inline `[`mat4`](#unionmat4)` `[`matrix`](#structs_model_transform_1a439db170aa197a5c9a714190ff182d46)`()` | Model transformation matrix.
 
 ## Members
 
-#### `public vec3 `[`pos`](#structs_model_transform_1aac335e8a460119b02ade04cb145ccb87) <a id="structs_model_transform_1aac335e8a460119b02ade04cb145ccb87"></a>
+#### `public `[`vec3`](#unionvec3)` `[`pos`](#structs_model_transform_1aac335e8a460119b02ade04cb145ccb87) <a id="structs_model_transform_1aac335e8a460119b02ade04cb145ccb87"></a>
 
-#### `public vec3 `[`sca`](#structs_model_transform_1a5cf86854bf9d3f34b4fa5f9ad7ef2bcb) <a id="structs_model_transform_1a5cf86854bf9d3f34b4fa5f9ad7ef2bcb"></a>
+Model position in 3D space.
 
-#### `public vec3 `[`rot`](#structs_model_transform_1a7aa59462936ba2c55431ff243f693f23) <a id="structs_model_transform_1a7aa59462936ba2c55431ff243f693f23"></a>
+#### `public `[`vec3`](#unionvec3)` `[`sca`](#structs_model_transform_1a5cf86854bf9d3f34b4fa5f9ad7ef2bcb) <a id="structs_model_transform_1a5cf86854bf9d3f34b4fa5f9ad7ef2bcb"></a>
 
-#### `public vec3 `[`lastPos`](#structs_model_transform_1a3f8b10396dd85575a1e50351184123b3) <a id="structs_model_transform_1a3f8b10396dd85575a1e50351184123b3"></a>
+Model scale in 3D space.
 
-#### `public vec3 `[`lastSca`](#structs_model_transform_1aac6f3894b99298df72a7ec2c6f258282) <a id="structs_model_transform_1aac6f3894b99298df72a7ec2c6f258282"></a>
+#### `public `[`vec3`](#unionvec3)` `[`rot`](#structs_model_transform_1a7aa59462936ba2c55431ff243f693f23) <a id="structs_model_transform_1a7aa59462936ba2c55431ff243f693f23"></a>
 
-#### `public vec3 `[`lastRot`](#structs_model_transform_1a65904bb9e0b6ddc0423163fb3b6107d7) <a id="structs_model_transform_1a65904bb9e0b6ddc0423163fb3b6107d7"></a>
+Model rotation in 3D space.
 
-#### `public mat4 `[`internal_matrix`](#structs_model_transform_1ab447224c6f8735bb1b2f5f638f35e17f) <a id="structs_model_transform_1ab447224c6f8735bb1b2f5f638f35e17f"></a>
+#### `public inline `[`mat4`](#unionmat4)` `[`matrix`](#structs_model_transform_1a439db170aa197a5c9a714190ff182d46)`()` <a id="structs_model_transform_1a439db170aa197a5c9a714190ff182d46"></a>
 
-#### `public inline mat4 `[`matrix`](#structs_model_transform_1a439db170aa197a5c9a714190ff182d46)`()` <a id="structs_model_transform_1a439db170aa197a5c9a714190ff182d46"></a>
+Model transformation matrix.
+
+#### Returns
+The transformation matrix based on the current position, scale, and rotation.
 
 # struct `sShader` <a id="structs_shader"></a>
 
@@ -1085,7 +1144,7 @@ Uniform element structure.
 
 This structure defines a single uniform element in a shader program. It contains the shader type, name, type, and size of the uniform. The size is defined as countx * county, where countx is the number of components and county is the number of elements in the array.
 
-> Todo: Add support for arrays like vec3[] and mat4[]. 
+> Todo: Add support for arrays like [vec3](#unionvec3)[] and [mat4](#unionmat4)[]. 
 
 Test if uneven matrices work (e.g. mat3x4).
 
@@ -1124,9 +1183,9 @@ Construct a matrix uniform element.
 
 * `type` The type of the uniform. 
 
-* `countx` The x size of the matrix (e.g. 4 for a mat4). 
+* `countx` The x size of the matrix (e.g. 4 for a [mat4](#unionmat4)). 
 
-* `county` The y size of the matrix (e.g. 4 for a mat4).
+* `county` The y size of the matrix (e.g. 4 for a [mat4](#unionmat4)).
 
 #### `public inline  `[`sUniformElement`](#structs_uniform_element_1a3c097b87365c1a9dd7a44ef81f45f1de)`(`[`sShaderType`](#gfx_2module_8h_1afb4c39d3e32b47474f8c0e18f26a4ecd)` shaderType,const char * name,`[`sUniformType`](#gfx_2module_8h_1ab36772a0596f81df1a2cbbd7d12aa809)` type,size_t countx)` <a id="structs_uniform_element_1a3c097b87365c1a9dd7a44ef81f45f1de"></a>
 
@@ -1139,7 +1198,7 @@ Construct a vector or scalar uniform element.
 
 * `type` The type of the uniform. 
 
-* `countx` The size of the vector (e.g. 4 for a vec4).
+* `countx` The size of the vector (e.g. 4 for a [vec4](#unionvec4)).
 
 # struct `sUniforms` <a id="structs_uniforms"></a>
 
@@ -1348,12 +1407,12 @@ If true, the window will be displayed in fullscreen mode. This may not be suppor
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public sModelTransform `[`transform`](#structsw_level_object_1a9ff2fc7eba5f2d724880cddbf8037409) | 
+`public `[`sModelTransform`](#structs_model_transform)` `[`transform`](#structsw_level_object_1a9ff2fc7eba5f2d724880cddbf8037409) | 
 `public void * `[`ecsObject`](#structsw_level_object_1a3ba1acbfae093deab2a1cbddae682926) | 
 
 ## Members
 
-#### `public sModelTransform `[`transform`](#structsw_level_object_1a9ff2fc7eba5f2d724880cddbf8037409) <a id="structsw_level_object_1a9ff2fc7eba5f2d724880cddbf8037409"></a>
+#### `public `[`sModelTransform`](#structs_model_transform)` `[`transform`](#structsw_level_object_1a9ff2fc7eba5f2d724880cddbf8037409) <a id="structsw_level_object_1a9ff2fc7eba5f2d724880cddbf8037409"></a>
 
 #### `public void * `[`ecsObject`](#structsw_level_object_1a3ba1acbfae093deab2a1cbddae682926) <a id="structsw_level_object_1a3ba1acbfae093deab2a1cbddae682926"></a>
 
