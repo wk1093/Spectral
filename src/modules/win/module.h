@@ -220,8 +220,8 @@ public:
      * @param window A pointer to the window to swap buffers for.
      * @note This function should be called after rendering to the window to display the content.
      */
-    void swapBuffers(sWindow* window) {
-        internal_swapBuffers(*window);
+    void swapBuffers(sWindow window) {
+        internal_swapBuffers(window);
     }
 
     /**
@@ -233,8 +233,8 @@ public:
      * @return true if the window should close, false otherwise.
      * @note This function is typically used to determine if the window should be closed based on user input or other conditions.
      */
-    bool shouldClose(sWindow* window) {
-        return internal_shouldClose(*window);
+    bool shouldClose(sWindow window) {
+        return internal_shouldClose(window);
     }
 
     /**
@@ -247,8 +247,8 @@ public:
      * @note This function is typically used to programmatically close the window based on user input or other conditions.
      * @note This function may not be supported on all platforms or windowing libraries.
      */
-    void setShouldClose(sWindow* window, bool value) {
-        internal_setShouldClose(*window, value);
+    void setShouldClose(sWindow window, bool value) {
+        internal_setShouldClose(window, value);
     }
 
     /**
@@ -260,8 +260,8 @@ public:
      * @return A pointer to the handle of the window.
      * @note Unlike the other functions, this one MUST be supported by all windowing libraries for the graphics module to work.
      */
-    void* getHandle(sWindow* window) {
-        return internal_getHandle(*window);
+    void* getHandle(sWindow window) {
+        return internal_getHandle(window);
     }
 
     /**
@@ -275,8 +275,8 @@ public:
      * @note This should not be relied on for gameplay, as there will be an input module for that
      * @todo Update this once the input module is implemented.
      */
-    bool isKeyPressed(sWindow* window, Key key) {
-        return internal_isKeyPressed(*window, key);
+    bool isKeyPressed(sWindow window, Key key) {
+        return internal_isKeyPressed(window, key);
     }
 
     /**
@@ -290,8 +290,8 @@ public:
      * @note This should not be relied on for gameplay, as there will be an input module for that
      * @todo Update this once the input module is implemented.
      */
-    bool isMouseButtonPressed(sWindow* window, int button) {
-        return internal_isMouseButtonPressed(*window, button);
+    bool isMouseButtonPressed(sWindow window, int button) {
+        return internal_isMouseButtonPressed(window, button);
     }
 
     /**
@@ -306,8 +306,8 @@ public:
      * @note This should not be relied on for gameplay, as there will be an input module for that
      * @todo Update this once the input module is implemented.
      */
-    void getMousePosition(sWindow* window, float* x, float* y) {
-        internal_getMousePosition(*window, x, y);
+    void getMousePosition(sWindow window, float* x, float* y) {
+        internal_getMousePosition(window, x, y);
     }
 
     /**
@@ -322,8 +322,8 @@ public:
      * @note This should not be relied on for gameplay, as there will be an input module for that
      * @todo Update this once the input module is implemented.
      */
-    void setMousePosition(sWindow* window, float x, float y) {
-        internal_setMousePosition(*window, x, y);
+    void setMousePosition(sWindow window, float x, float y) {
+        internal_setMousePosition(window, x, y);
     }
 
     /**
@@ -339,8 +339,8 @@ public:
      * @todo Update this once the input module is implemented.
      * @see #CursorMode
      */
-    void setCursorMode(sWindow* window, CursorMode mode) {
-        internal_setCursorMode(*window, mode);
+    void setCursorMode(sWindow window, CursorMode mode) {
+        internal_setCursorMode(window, mode);
     }
 
     /**
@@ -353,8 +353,8 @@ public:
      * @note This may not be supported on all platforms or windowing libraries.
      * @note This is useful for displaying the current state of the application or game in the window title.
      */
-    void setWindowTitle(sWindow* window, const char* title) {
-        internal_setWindowTitle(*window, title);
+    void setWindowTitle(sWindow window, const char* title) {
+        internal_setWindowTitle(window, title);
     }
 
     /**
