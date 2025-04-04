@@ -253,7 +253,11 @@ struct Module {
     /**
      * @brief Default constructor for the Module class.
      * 
-     * This constructor initializes the module name, implementation name, and handle to NULL.
+     * This constructor initializes the library. The inherited module should provide functionality to use that library.
+     * The ident field should be filled out by any inherited module, and the path will be passed in to select the implementation.
+     * 
+     * @param path The implementation name of the module. This is the name of the module to load.
+     * @param ident The name of the module. This is the type of the module to load.
      */
     inline explicit Module(const char* path, const char* ident) : lib(path, ident) {
         if (!lib.valid()) {

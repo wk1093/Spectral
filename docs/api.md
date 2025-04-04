@@ -769,7 +769,12 @@ The dynamic library handle for the module.
 
 Default constructor for the [Module](#struct_module) class.
 
-This constructor initializes the module name, implementation name, and handle to NULL.
+This constructor initializes the library. The inherited module should provide functionality to use that library. The ident field should be filled out by any inherited module, and the path will be passed in to select the implementation.
+
+#### Parameters
+* `path` The implementation name of the module. This is the name of the module to load. 
+
+* `ident` The name of the module. This is the type of the module to load.
 
 # struct `sAudioClip` <a id="structs_audio_clip"></a>
 
