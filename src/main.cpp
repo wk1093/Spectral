@@ -4,7 +4,7 @@
 int main(int argc, char** argv) {
     const char* window_module;
     const char* graphics_module;
-    bool use_dx = false;
+    bool use_dx = true;
     if (use_dx) {
         window_module = "glfw_noapi";
         graphics_module = "d3d11_1";

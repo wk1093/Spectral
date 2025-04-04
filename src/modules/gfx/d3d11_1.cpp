@@ -5,6 +5,16 @@
 
 #include "module.h"
 
+sArenaAllocator* gArena = nullptr;
+
+CEXPORT size_t getDesiredArenaSize() {
+    return 1024 * 1024; // Assume 1MB for now, this should be enough for some cases, but bigger games will reallocate this anyway
+}
+
+CEXPORT void moduleInit(sArenaAllocator* arena) {
+    gArena = arena;
+}
+
 CEXPORT const char* getShaderType() {
     return "hlsl";
 }
@@ -398,7 +408,14 @@ CEXPORT sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexSize
     for (int i = 0; i < vd->count; i++) {
         sizeofVertex += vd->elements[i];
     }
-    return {new sInternalMesh{vertexBuffer, indexBuffer, sizeofVertex * (unsigned int)(sizeof(float)), 0, indexSize / sizeof(sIndex)}};
+    // return {new sInternalMesh{vertexBuffer, indexBuffer, sizeofVertex * (unsigned int)(sizeof(float)), 0, indexSize / sizeof(sIndex)}};
+    auto* internal = gArena->allocate<sInternalMesh>();
+    internal->vertexBuffer = vertexBuffer;
+    internal->indexBuffer = indexBuffer;
+    internal->stride = sizeofVertex * (unsigned int)(sizeof(float));
+    internal->offset = 0;
+    internal->numIndices = indexSize / sizeof(sIndex);
+    return {internal};
 }
 
 CEXPORT void drawMesh(sMesh mesh) {
@@ -433,7 +450,15 @@ CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefini
                 printf("ERROR CODE: %lu\n", GetLastError());
             }
 
-            return {new sInternalShader{sShaderType::VERTEX, vertexShader, nullptr, nullptr, shaderBlob, vertDef}};
+            // return {new sInternalShader{sShaderType::VERTEX, vertexShader, nullptr, nullptr, shaderBlob, vertDef}};
+            auto* internal = gArena->allocate<sInternalShader>();
+            internal->type = sShaderType::VERTEX;
+            internal->vertexShader = vertexShader;
+            internal->pixelShader = nullptr;
+            internal->geometryShader = nullptr;
+            internal->shaderBlob = shaderBlob;
+            internal->vertDef = vertDef;
+            return {internal};
         } break;
         case sShaderType::FRAGMENT: {
             ID3D11PixelShader *pixelShader;
@@ -450,7 +475,15 @@ CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefini
                 MessageBoxA(0, "CreatePixelShader() failed", "Fatal Error", MB_OK);
                 printf("ERROR CODE: %lu\n", GetLastError());
             }
-            return {new sInternalShader{sShaderType::FRAGMENT, nullptr, pixelShader, nullptr, shaderBlob, nullptr}};
+            // return {new sInternalShader{sShaderType::FRAGMENT, nullptr, pixelShader, nullptr, shaderBlob, nullptr}};
+            auto* internal = gArena->allocate<sInternalShader>();
+            internal->type = sShaderType::FRAGMENT;
+            internal->vertexShader = nullptr;
+            internal->pixelShader = pixelShader;
+            internal->geometryShader = nullptr;
+            internal->shaderBlob = shaderBlob;
+            internal->vertDef = nullptr;
+            return {internal};
         } break;
         case sShaderType::GEOMETRY: {
             printf("GEOMETRY SHADER UNIMPLEMENTED\n");
@@ -558,7 +591,13 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
     }
     fragmentShader.shaderBlob->Release();
 
-    return {new sInternalShaderProgram{vertexShader, fragmentShader, inputLayout}};
+    // return {new sInternalShaderProgram{vertexShader, fragmentShader, inputLayout}};
+    auto* internal = gArena->allocate<sInternalShaderProgram>();
+    internal->vertexShader = vertexShader;
+    internal->fragmentShader = fragmentShader;
+    internal->inputLayout = inputLayout;
+    internal->textureCount = 0;
+    return {internal};
 }
 
 struct sInternalUniforms {
@@ -570,11 +609,9 @@ struct sInternalUniforms {
 };
 
 CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def) {
-    sInternalUniforms* internal = (sInternalUniforms*)malloc(sizeof(sInternalUniforms));
-    if (!internal) {
-        MessageBoxA(0, "malloc() failed", "Fatal Error", MB_OK);
-        printf("ERROR CODE: %lu\n", GetLastError());
-    }
+    // sInternalUniforms* internal = (sInternalUniforms*)malloc(sizeof(sInternalUniforms));
+    sInternalUniforms* internal = (sInternalUniforms*)gArena->allocate(sizeof(sInternalUniforms));
+
     internal->program = program;
     internal->fragmentPart = getPartialf(def, sShaderType::FRAGMENT);
     internal->vertexPart = getPartialf(def, sShaderType::VERTEX);
@@ -591,7 +628,9 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
     bufferDesc.StructureByteStride = 0;
 
     D3D11_SUBRESOURCE_DATA subResourceData{};
-    uint8_t* fakeBuffer = new uint8_t[fakeFragSize];
+    // uint8_t* fakeBuffer = new uint8_t[fakeFragSize];
+    uint8_t* fakeBuffer = (uint8_t*)gArena->allocate(fakeFragSize);
+    memset(fakeBuffer, 0, fakeFragSize);
     subResourceData.pSysMem = fakeBuffer;
     subResourceData.SysMemPitch = 0;
     subResourceData.SysMemSlicePitch = 0;
@@ -602,7 +641,9 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
     }
 
     bufferDesc.ByteWidth = fakeVertSize;
-    uint8_t* fakeBuffer2 = new uint8_t[fakeVertSize];
+    // uint8_t* fakeBuffer2 = new uint8_t[fakeVertSize];
+    uint8_t* fakeBuffer2 = (uint8_t*)gArena->allocate(fakeVertSize);
+    memset(fakeBuffer2, 0, fakeVertSize);
     subResourceData.pSysMem = fakeBuffer2;
     hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, &subResourceData, &internal->vertexBuffer);
     if (FAILED(hResult)) {
@@ -610,8 +651,8 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
         printf("ERROR CODE: %lu\n", GetLastError());
     }
 
-    delete[] fakeBuffer;
-    delete[] fakeBuffer2;
+    // delete[] fakeBuffer;
+    // delete[] fakeBuffer2;
 
     return {internal};
 }
@@ -710,11 +751,9 @@ CEXPORT sTexture createTexture(sTextureDefinition def) {
         printf("ERROR CODE: %lu\n", GetLastError());
     }
 
-    sInternalTexture* internal = (sInternalTexture*)malloc(sizeof(sInternalTexture));
-    if (!internal) {
-        MessageBoxA(0, "malloc() failed", "Fatal Error", MB_OK);
-        printf("ERROR CODE: %lu\n", GetLastError());
-    }
+    // sInternalTexture* internal = (sInternalTexture*)malloc(sizeof(sInternalTexture));
+    sInternalTexture* internal = (sInternalTexture*)gArena->allocate(sizeof(sInternalTexture));
+
     internal->texture = textureView;
     internal->sampler = sampler;
     
@@ -733,7 +772,7 @@ CEXPORT void freeTexture(sTexture texture) {
     auto* internal = (sInternalTexture*)texture.internal;
     internal->texture->Release();
     internal->sampler->Release();
-    free(internal);
+    // free(internal);
 }
 
 CEXPORT void freeShader(sShader shader) {
@@ -747,27 +786,27 @@ CEXPORT void freeShader(sShader shader) {
     if (internal->geometryShader) {
         internal->geometryShader->Release();
     }
-    free(internal);
+    // free(internal);
 }
 
 CEXPORT void freeShaderProgram(sShaderProgram program) {
     auto* internal = (sInternalShaderProgram*)program.internal;
     internal->inputLayout->Release();
-    free(internal);
+    // free(internal);
 }
 
 CEXPORT void freeMesh(sMesh mesh) {
     auto* internal = (sInternalMesh*)mesh.internal;
     internal->vertexBuffer->Release();
     internal->indexBuffer->Release();
-    free(internal);
+    // free(internal);
 }
 
 CEXPORT void freeUniforms(sUniforms uniforms) {
     auto* internal = (sInternalUniforms*)uniforms.internal;
     internal->fragmentBuffer->Release();
     internal->vertexBuffer->Release();
-    free(internal);
+    // free(internal);
 }
 
 CEXPORT void destroy() {
