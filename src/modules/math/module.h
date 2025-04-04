@@ -148,10 +148,10 @@ union vec2 {
     };
     float f[2];
 
-    vec2(float x, float y) : x(x), y(y) {}
-    vec2() : x(0), y(0) {}
-    vec2(int x, int y) : x((float)x), y((float)y) {}
-    vec2(unsigned int x, unsigned int y) : x((float)x), y((float)y) {}
+    inline vec2(float x, float y) : x(x), y(y) {}
+    inline vec2() : x(0), y(0) {}
+    inline vec2(int x, int y) : x((float)x), y((float)y) {}
+    inline vec2(unsigned int x, unsigned int y) : x((float)x), y((float)y) {}
 };
 inline vec2 operator+(vec2 a, vec2 b) {
     return {a.x + b.x, a.y + b.y};
@@ -343,44 +343,44 @@ struct sCamera {
     float pitch = 0.0f;
 
     /// @brief Camera right vector.
-    vec3 right() {
+    inline vec3 right() {
         return normalize(cross(forward, up));
     }
     /// @brief Camera left vector.
-    vec3 left() {
+    inline vec3 left() {
         return normalize(cross(up, forward));
     }
     /// @brief Camera back vector.
-    vec3 back() {
+    inline vec3 back() {
         return normalize(-forward);
     }
     /// @brief Camera down vector.
-    vec3 down() {
+    inline vec3 down() {
         return normalize(-up);
     }
 
     /// @brief Camera right vector based on different forward vector.
     /// @param forward The forward vector to calculate the right vector from.
     /// @return The right vector based on the specified forward vector.
-    vec3 right(vec3 forward) {
+    inline vec3 right(vec3 forward) {
         return normalize(cross(forward, up));
     }
     /// @brief Camera left vector based on different forward vector.
     /// @param forward The forward vector to calculate the left vector from.
     /// @return The left vector based on the specified forward vector.
-    vec3 left(vec3 forward) {
+    inline vec3 left(vec3 forward) {
         return normalize(cross(up, forward));
     }
     /// @brief Camera back vector based on different forward vector.
     /// @param forward The forward vector to calculate the back vector from.
     /// @return The back vector based on the specified forward vector.
-    vec3 back(vec3 forward) {
+    inline vec3 back(vec3 forward) {
         return normalize(-forward);
     }
     /// @brief Camera down vector based on different up vector.
     /// @param up The up vector to calculate the down vector from.
     /// @return The down vector based on the specified up vector.
-    vec3 down(vec3 up) {
+    inline vec3 down(vec3 up) {
         return normalize(-up);
     }
 };
@@ -467,7 +467,7 @@ struct sModelTransform {
     /// @endcond
     /// @brief Model transformation matrix.
     /// @return The transformation matrix based on the current position, scale, and rotation.
-    mat4 matrix() {
+    inline mat4 matrix() {
         if (pos != lastPos || sca != lastSca || rot != lastRot) {
             internal_matrix = translate(pos) * rotate(rot) * scale(sca);
             lastPos = pos;

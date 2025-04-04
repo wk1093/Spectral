@@ -31,7 +31,7 @@
 
 #include <cstring>
 
-std::filesystem::path getexepath() {
+inline std::filesystem::path getexepath() {
 #ifdef _WIN32
     wchar_t path[MAX_PATH] = { 0 };
     GetModuleFileNameW(NULL, path, MAX_PATH);
@@ -44,11 +44,11 @@ std::filesystem::path getexepath() {
 #endif
 }
 
-std::filesystem::path getexedir() {
+inline std::filesystem::path getexedir() {
     return getexepath().parent_path();
 }
 
-bool readFile(const char* path, std::string& out) {
+inline bool readFile(const char* path, std::string& out) {
     std::ifstream file(path);
     if (!file.is_open()) {
         return false;
@@ -76,7 +76,7 @@ public:
     const char* mod_imp;
 
 private:
-    void load(const char* path_in) {
+    inline void load(const char* path_in) {
 #ifdef _WIN32
         char* path = (char*)malloc(strlen(path_in) + 2);
         strcpy(path, path_in);
@@ -112,13 +112,13 @@ private:
     }
 public:
 
-    DynamicLibrary() {
+    inline DynamicLibrary() {
         mod_name = nullptr;
         mod_imp = nullptr;
         handle = NULL;
     }
 
-    DynamicLibrary(const char* path, const char* ident) {
+    inline DynamicLibrary(const char* path, const char* ident) {
         mod_name = ident;
         mod_imp = path;
         char* p = makePath(path, ident);
@@ -126,7 +126,7 @@ public:
         free(p);
     }
 
-    static char* makePath(const char* path, const char* ident) {
+    inline static char* makePath(const char* path, const char* ident) {
 
         char* fullPath = (char*)malloc(10+strlen(ident)*2+strlen(path)+1+strlen(SPECTRAL_PLATFORM)+strlen(spectralSuffix)+10);
         sprintf(fullPath, "modules/%s/%s/%s_%s%s", SPECTRAL_PLATFORM, ident, ident, path, spectralSuffix);
@@ -141,7 +141,7 @@ public:
 #endif
     }
 
-    void* getSymbol(const char* name) {
+    inline void* getSymbol(const char* name) {
         void* sym;
         if (!handle) {
             printf("Error: Library not loaded\n");
@@ -163,14 +163,14 @@ public:
         return sym;
     }
 
-    bool valid() {
+    inline bool valid() {
         return handle != NULL;
     }
 };
 
 struct Module {
     DynamicLibrary lib;
-    explicit Module(const char* path, const char* ident) : lib(path, ident) {
+    inline explicit Module(const char* path, const char* ident) : lib(path, ident) {
         if (!lib.valid()) {
             printf("Error loading module %s\n", path);
             return;

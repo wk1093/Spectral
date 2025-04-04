@@ -2,12 +2,12 @@
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`class `[`Game`](#class_game) | 
+`class `[`Game`](#class_game) | [Game](#class_game) module class.
 `struct `[`AssetBuffer`](#struct_asset_buffer) | Asset buffer structure.
 `struct `[`AssetLoader`](#struct_asset_loader) | Asset loader class.
 `struct `[`AudioModule`](#struct_audio_module) | 
 `struct `[`DynamicLibrary`](#struct_dynamic_library) | 
-`struct `[`GameContext`](#struct_game_context) | 
+`struct `[`GameContext`](#struct_game_context) | [Game](#class_game) context structure.
 `struct `[`GraphicsModule`](#struct_graphics_module) | Graphics module class.
 `struct `[`mat4.__unnamed13__`](#structmat4_8____unnamed13____) | 
 `struct `[`Module`](#struct_module) | 
@@ -65,18 +65,36 @@ class Game
   : private Module
 ```  
 
+[Game](#class_game) module class.
+
+This class represents the game being loaded from the "game.dll" library. It provides access to the main function of the game, which is called to start the game.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public GameMain `[`main`](#class_game_1a8ad7e4256e9e9379c5966365504ba751) | 
-`public inline  `[`Game`](#class_game_1ad59df6562a58a614fda24622d3715b65)`()` | 
+`public inline int `[`main`](#class_game_1a2bbc17727cec6bba33279ab2499b1a8b)`(`[`GameContext`](#struct_game_context)` * ctx)` | Main function of the game.
+`public inline  `[`Game`](#class_game_1ad59df6562a58a614fda24622d3715b65)`()` | Constructor for the [Game](#class_game) class.
 
 ## Members
 
-#### `public GameMain `[`main`](#class_game_1a8ad7e4256e9e9379c5966365504ba751) <a id="class_game_1a8ad7e4256e9e9379c5966365504ba751"></a>
+#### `public inline int `[`main`](#class_game_1a2bbc17727cec6bba33279ab2499b1a8b)`(`[`GameContext`](#struct_game_context)` * ctx)` <a id="class_game_1a2bbc17727cec6bba33279ab2499b1a8b"></a>
+
+Main function of the game.
+
+This function is called to start the game. It takes a pointer to the game context as an argument.
+
+#### Parameters
+* `ctx` Pointer to the game context. 
+
+#### Returns
+An integer representing the exit code of the game.
 
 #### `public inline  `[`Game`](#class_game_1ad59df6562a58a614fda24622d3715b65)`()` <a id="class_game_1ad59df6562a58a614fda24622d3715b65"></a>
+
+Constructor for the [Game](#class_game) class.
+
+This constructor loads the game library and retrieves the main function of the game. It initializes the game module and checks for errors in loading the library and main function.
 
 # struct `AssetBuffer` <a id="struct_asset_buffer"></a>
 
@@ -120,7 +138,7 @@ This class makes it seem as if they are loaded from a file, but they are actuall
 --------------------------------|---------------------------------------------
 `public inline  `[`AssetLoader`](#struct_asset_loader_1ae090ac88a0e6df2c7cc560da9f4c4f25)`()` | Constructor for the [AssetLoader](#struct_asset_loader) class.
 `public inline `[`AssetBuffer`](#struct_asset_buffer)` `[`loadAsset`](#struct_asset_loader_1aefc1c811522ac04f63ca4dd6dcdffc61)`(const char * path)` | Loads an asset from a file path.
-`public inline `[`TextAssetBuffer`](#struct_text_asset_buffer)` `[`loadTextAsset`](#struct_asset_loader_1ac36e9ddc0bfecc543910eecbf24d1164)`(const char * path)` | 
+`public inline `[`TextAssetBuffer`](#struct_text_asset_buffer)` `[`loadTextAsset`](#struct_asset_loader_1ac36e9ddc0bfecc543910eecbf24d1164)`(const char * path)` | Loads a text asset from a file path.
 
 ## Members
 
@@ -143,6 +161,16 @@ This function loads an asset from the specified file path and returns an asset b
 An asset buffer containing the loaded asset data.
 
 #### `public inline `[`TextAssetBuffer`](#struct_text_asset_buffer)` `[`loadTextAsset`](#struct_asset_loader_1ac36e9ddc0bfecc543910eecbf24d1164)`(const char * path)` <a id="struct_asset_loader_1ac36e9ddc0bfecc543910eecbf24d1164"></a>
+
+Loads a text asset from a file path.
+
+This function loads a text asset from the specified file path and returns a text asset buffer containing the data and length of the text asset.
+
+#### Parameters
+* `path` The "path" to the text asset file. See [AssetLoader](#struct_asset_loader) for more details. 
+
+#### Returns
+A text asset buffer containing the loaded text asset data.
 
 # struct `AudioModule` <a id="struct_audio_module"></a>
 
@@ -256,30 +284,46 @@ struct AudioModule
 
 # struct `GameContext` <a id="struct_game_context"></a>
 
+[Game](#class_game) context structure.
+
+This structure contains the context for the game, including the window, graphics, shader, texture, text, and asset loader modules. This is passed to the "main" function of the game.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public `[`WindowModule`](#struct_window_module)` `[`winm`](#struct_game_context_1adf7f1d5403d8c252c64e942e61cea40e) | 
-`public `[`GraphicsModule`](#struct_graphics_module)` `[`gfxm`](#struct_game_context_1a98856d42044a8ad116a14ff4b0691dde) | 
-`public `[`ShaderModule`](#struct_shader_module)` `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) | 
-`public `[`TextureModule`](#struct_texture_module)` `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) | 
-`public `[`TextModule`](#struct_text_module)` `[`textm`](#struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87) | 
-`public `[`AssetLoader`](#struct_asset_loader)` `[`assetm`](#struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4) | 
+`public `[`WindowModule`](#struct_window_module)` `[`winm`](#struct_game_context_1adf7f1d5403d8c252c64e942e61cea40e) | Window module.
+`public `[`GraphicsModule`](#struct_graphics_module)` `[`gfxm`](#struct_game_context_1a98856d42044a8ad116a14ff4b0691dde) | Graphics module.
+`public `[`ShaderModule`](#struct_shader_module)` `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) | Shader module.
+`public `[`TextureModule`](#struct_texture_module)` `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) | Texture module.
+`public `[`TextModule`](#struct_text_module)` `[`textm`](#struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87) | Text module.
+`public `[`AssetLoader`](#struct_asset_loader)` `[`assetm`](#struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4) | Asset loader module.
 
 ## Members
 
 #### `public `[`WindowModule`](#struct_window_module)` `[`winm`](#struct_game_context_1adf7f1d5403d8c252c64e942e61cea40e) <a id="struct_game_context_1adf7f1d5403d8c252c64e942e61cea40e"></a>
 
+Window module.
+
 #### `public `[`GraphicsModule`](#struct_graphics_module)` `[`gfxm`](#struct_game_context_1a98856d42044a8ad116a14ff4b0691dde) <a id="struct_game_context_1a98856d42044a8ad116a14ff4b0691dde"></a>
+
+Graphics module.
 
 #### `public `[`ShaderModule`](#struct_shader_module)` `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) <a id="struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c"></a>
 
+Shader module.
+
 #### `public `[`TextureModule`](#struct_texture_module)` `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) <a id="struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132"></a>
+
+Texture module.
 
 #### `public `[`TextModule`](#struct_text_module)` `[`textm`](#struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87) <a id="struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87"></a>
 
+Text module.
+
 #### `public `[`AssetLoader`](#struct_asset_loader)` `[`assetm`](#struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4) <a id="struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4"></a>
+
+Asset loader module.
 
 # struct `GraphicsModule` <a id="struct_graphics_module"></a>
 

@@ -13,7 +13,7 @@
 #endif
 
 #ifdef _WIN32
-extern "C" void *getProcAddress(const char *name) {
+extern "C" inline void *getProcAddress(const char *name) {
     void *p = (void *)wglGetProcAddress(name);
     if(p == 0 ||
        (p == (void*)0x1) || (p == (void*)0x2) || (p == (void*)0x3) ||
@@ -26,7 +26,7 @@ extern "C" void *getProcAddress(const char *name) {
     return p;
 }
 #elif __linux__
-extern "C" void *getProcAddress(const char *name) {
+extern "C" inline void *getProcAddress(const char *name) {
     void *p = (void *)glXGetProcAddress((const GLubyte *)name);
     if(p == 0 ||
        (p == (void*)0x1) || (p == (void*)0x2) || (p == (void*)0x3) ||

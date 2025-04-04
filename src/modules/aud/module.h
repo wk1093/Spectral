@@ -49,23 +49,23 @@ struct AudioModule : public Module {
     audio::DestroyAudioSource destroyAudioSource;
     audio::Destroy destroy;
 
-    void seekAudioSourceSeconds(sAudioSource source, float seconds) {
+    inline void seekAudioSourceSeconds(sAudioSource source, float seconds) {
         seekAudioSourceSamples(source, seconds * getAudioSourceSampleRate(source));
     }
 
-    void seekAudioSourcePercent(sAudioSource source, float percent) {
+    inline void seekAudioSourcePercent(sAudioSource source, float percent) {
         seekAudioSourceSamples(source, percent * getAudioSourceSamples(source));
     }
 
-    float getAudioSourcePercent(sAudioSource source) {
+    inline float getAudioSourcePercent(sAudioSource source) {
         return (float)getAudioSourceSamples(source) / getAudioSourceSampleRate(source);
     }
 
-    float getAudioSourceSeconds(sAudioSource source) {
+    inline float getAudioSourceSeconds(sAudioSource source) {
         return (float)getAudioSourceSamples(source) / getAudioSourceSampleRate(source);
     }
 
-    explicit AudioModule(const char* dylib) : Module(dylib, "aud") {
+    inline explicit AudioModule(const char* dylib) : Module(dylib, "aud") {
         init = (audio::Init)lib.getSymbol("init");
         loadAudioClip = (audio::LoadAudioClip)lib.getSymbol("loadAudioClip");
         createAudioSource = (audio::CreateAudioSource)lib.getSymbol("createAudioSource");
