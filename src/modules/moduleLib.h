@@ -249,11 +249,19 @@ public:
  * 
  * This structure is a small wrapper around the DynamicLibrary that creates a standardized interface for modules.
  */
+ namespace smod {
+    typedef size_t (*GetDesiredArenaSize)(void);
+    typedef void (*ModuleInit)(sArenaAllocator* allocator);
+}
 struct Module {
     /// @brief The dynamic library handle for the module.
     DynamicLibrary lib;
     /// @brief The allocator that will be used for the module.
     sArenaAllocator* allocator = nullptr;
+private:
+    smod::GetDesiredArenaSize getDesiredArenaSize = nullptr;
+    smod::ModuleInit moduleInit = nullptr;
+public:
     /**
      * @brief Default constructor for the Module class.
      * 
@@ -277,5 +285,27 @@ struct Module {
             printf("Module %s.%s loaded\n", ident, path);
         }
         free(pth);
+
+        getDesiredArenaSize = (smod::GetDesiredArenaSize)lib.getSymbol("getDesiredArenaSize");
+
+        if (getDesiredArenaSize) {
+            size_t size = getDesiredArenaSize();
+            if (size > 0) {
+                allocator = new sArenaAllocator("Module", size);
+            } else {
+                printf("Module %s.%s doesn't use arena memory, consider refactoring this module\n", ident, path);
+                allocator = new sArenaAllocator("Module", 0);
+            }
+        } else {
+            printf("Module %s.%s does not have a getDesiredArenaSize function\n", ident, path);
+            allocator = new sArenaAllocator("Module", 0);
+        }
+
+        moduleInit = (smod::ModuleInit)lib.getSymbol("moduleInit");
+        if (moduleInit) {
+            moduleInit(allocator);
+        } else {
+            printf("Module %s.%s does not have a moduleInit function\n", ident, path);
+        }
     }
 };
