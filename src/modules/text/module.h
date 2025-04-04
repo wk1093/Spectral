@@ -138,7 +138,6 @@ public:
      * This function draws the specified text object using the graphics module.
      * 
      * @param text The text object to draw.
-     * @return void
      * @see createText
      */
     inline void drawText(sText text) {

@@ -31,6 +31,13 @@
 
 #include <cstring>
 
+/**
+ * @brief Get the path to the current executable.
+ * 
+ * @todo Ensure this works on all platforms
+ * 
+ * @return The path to the current executable.
+ */
 inline std::filesystem::path getexepath() {
 #ifdef _WIN32
     wchar_t path[MAX_PATH] = { 0 };
@@ -44,10 +51,25 @@ inline std::filesystem::path getexepath() {
 #endif
 }
 
+/**
+ * @brief Get the directory of the current executable.
+ * 
+ * @return The directory containing the current executable.
+ */
 inline std::filesystem::path getexedir() {
     return getexepath().parent_path();
 }
 
+/**
+ * @brief Read a file into a string.
+ * 
+ * A helper function to read a file into a string.
+ * 
+ * @param path The path to the file.
+ * @param out The string to store the contents of the file.
+ * 
+ * @return True if the file was read successfully, false otherwise.
+ */
 inline bool readFile(const char* path, std::string& out) {
     std::ifstream file(path);
     if (!file.is_open()) {
@@ -57,6 +79,7 @@ inline bool readFile(const char* path, std::string& out) {
     return true;
 }
 
+/// @cond DOXYGEN_OMIT
 #ifdef _WIN32
 const char* outputSuffix = ".dll";
 #else
@@ -64,7 +87,14 @@ const char* outputSuffix = ".so";
 #endif
 
 const char* spectralSuffix = ".splmod";
+/// @endcond
 
+/**
+ * @brief Dynamic library loader class.
+ * 
+ * This class is used to load dynamic libraries at runtime.
+ * It provides functions to load a library, get a symbol from the library, and check if the library is valid.
+ */
 struct DynamicLibrary {
 #ifdef _WIN32
     HINSTANCE handle;
@@ -72,7 +102,9 @@ struct DynamicLibrary {
     void* handle;
 #endif
 public:
+    /// @brief The name of the module. tex, shdr, gfx, win, etc.
     const char* mod_name;
+    /// @brief The implementation name of the module. stb (tex_stb), glad (gfx_glad), etc.
     const char* mod_imp;
 
 private:
@@ -112,12 +144,25 @@ private:
     }
 public:
 
+    /**
+     * @brief Default constructor for the DynamicLibrary class.
+     * 
+     * This constructor initializes the module name, implementation name, and handle to NULL.
+     * @note This constructor does not load a library. And the resulting object is invalid.
+     */
     inline DynamicLibrary() {
         mod_name = nullptr;
         mod_imp = nullptr;
         handle = NULL;
     }
 
+    /**
+     * @brief Constructor for the DynamicLibrary class.
+     * 
+     * This constructor loads a library from the specified path and sets the module name and implementation name.
+     * @param path The implementation name of the module. This is the name of the module to load.
+     * @param ident The name of the module. This is the type of the module to load.
+     */
     inline DynamicLibrary(const char* path, const char* ident) {
         mod_name = ident;
         mod_imp = path;
@@ -126,6 +171,16 @@ public:
         free(p);
     }
 
+    /**
+     * @brief Create a valid path to a module from the module type and implementation name.
+     * 
+     * This function creates a valid path to a module from the module type and implementation name.
+     * The path is in the format "modules/<platform>/<ident>/<ident>_<path>_<platform>.splmod".
+     * 
+     * @param path The implementation name of the module. This is the name of the module to load.
+     * @param ident The name of the module. This is the type of the module to load.
+     * @return A path to the module file.
+     */
     inline static char* makePath(const char* path, const char* ident) {
 
         char* fullPath = (char*)malloc(10+strlen(ident)*2+strlen(path)+1+strlen(SPECTRAL_PLATFORM)+strlen(spectralSuffix)+10);
@@ -133,6 +188,9 @@ public:
         return fullPath;
     }
 
+    /**
+     * @brief Destructor for the DynamicLibrary class.
+     */
     ~DynamicLibrary() {
 #ifdef _WIN32
         FreeLibrary(handle);
@@ -141,6 +199,15 @@ public:
 #endif
     }
 
+    /**
+     * @brief Get a symbol from the loaded library.
+     * 
+     * This function retrieves a symbol from the loaded library.
+     * It returns a pointer to the symbol if it is found, or NULL if it is not found.
+     * 
+     * @param name The name of the symbol to retrieve.
+     * @return A pointer to the symbol if it is found, or NULL if it is not found.
+     */
     inline void* getSymbol(const char* name) {
         void* sym;
         if (!handle) {
@@ -163,13 +230,31 @@ public:
         return sym;
     }
 
+    /**
+     * @brief Check if the library is valid.
+     * 
+     * This function checks if the library is valid by checking if the handle is not NULL.
+     * 
+     * @return True if the library is valid, false otherwise.
+     */
     inline bool valid() {
         return handle != NULL;
     }
 };
 
+/**
+ * @brief A module structure.
+ * 
+ * This structure is a small wrapper around the DynamicLibrary that creates a standardized interface for modules.
+ */
 struct Module {
+    /// @brief The dynamic library handle for the module.
     DynamicLibrary lib;
+    /**
+     * @brief Default constructor for the Module class.
+     * 
+     * This constructor initializes the module name, implementation name, and handle to NULL.
+     */
     inline explicit Module(const char* path, const char* ident) : lib(path, ident) {
         if (!lib.valid()) {
             printf("Error loading module %s\n", path);

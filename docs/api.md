@@ -6,11 +6,11 @@
 `struct `[`AssetBuffer`](#struct_asset_buffer) | Asset buffer structure.
 `struct `[`AssetLoader`](#struct_asset_loader) | Asset loader class.
 `struct `[`AudioModule`](#struct_audio_module) | 
-`struct `[`DynamicLibrary`](#struct_dynamic_library) | 
+`struct `[`DynamicLibrary`](#struct_dynamic_library) | Dynamic library loader class.
 `struct `[`GameContext`](#struct_game_context) | [Game](#class_game) context structure.
 `struct `[`GraphicsModule`](#struct_graphics_module) | Graphics module class.
 `struct `[`mat4.__unnamed13__`](#structmat4_8____unnamed13____) | 
-`struct `[`Module`](#struct_module) | 
+`struct `[`Module`](#struct_module) | A module structure.
 `struct `[`sAudioClip`](#structs_audio_clip) | 
 `struct `[`sAudioSource`](#structs_audio_source) | 
 `struct `[`sCamera`](#structs_camera) | Camera structure.
@@ -251,18 +251,22 @@ struct AudioModule
 
 # struct `DynamicLibrary` <a id="struct_dynamic_library"></a>
 
+Dynamic library loader class.
+
+This class is used to load dynamic libraries at runtime. It provides functions to load a library, get a symbol from the library, and check if the library is valid.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
 `public void * `[`handle`](#struct_dynamic_library_1a49bee1e919b86c8b92bf801e433ed8ff) | 
-`public const char * `[`mod_name`](#struct_dynamic_library_1a73a46cd7644aa42c16d61c447aa39e44) | 
-`public const char * `[`mod_imp`](#struct_dynamic_library_1a6a8fe24283e97641dca9612be64b34ae) | 
-`public inline  `[`DynamicLibrary`](#struct_dynamic_library_1a5068283b12c51f6f3589f18ba7075494)`()` | 
-`public inline  `[`DynamicLibrary`](#struct_dynamic_library_1a7793f674c0ca06e9edc702aa404fedd3)`(const char * path,const char * ident)` | 
-`public inline  `[`~DynamicLibrary`](#struct_dynamic_library_1a25dd7a7cd386fbc1c8abde597c39c881)`()` | 
-`public inline void * `[`getSymbol`](#struct_dynamic_library_1a74cdae708163e43a26b410e5d1861ed0)`(const char * name)` | 
-`public inline bool `[`valid`](#struct_dynamic_library_1ae708350e2f9a9c34ff6361ebdda4c72d)`()` | 
+`public const char * `[`mod_name`](#struct_dynamic_library_1a73a46cd7644aa42c16d61c447aa39e44) | The name of the module. tex, shdr, gfx, win, etc.
+`public const char * `[`mod_imp`](#struct_dynamic_library_1a6a8fe24283e97641dca9612be64b34ae) | The implementation name of the module. stb (tex_stb), glad (gfx_glad), etc.
+`public inline  `[`DynamicLibrary`](#struct_dynamic_library_1a5068283b12c51f6f3589f18ba7075494)`()` | Default constructor for the [DynamicLibrary](#struct_dynamic_library) class.
+`public inline  `[`DynamicLibrary`](#struct_dynamic_library_1a7793f674c0ca06e9edc702aa404fedd3)`(const char * path,const char * ident)` | Constructor for the [DynamicLibrary](#struct_dynamic_library) class.
+`public inline  `[`~DynamicLibrary`](#struct_dynamic_library_1a25dd7a7cd386fbc1c8abde597c39c881)`()` | Destructor for the [DynamicLibrary](#struct_dynamic_library) class.
+`public inline void * `[`getSymbol`](#struct_dynamic_library_1a74cdae708163e43a26b410e5d1861ed0)`(const char * name)` | Get a symbol from the loaded library.
+`public inline bool `[`valid`](#struct_dynamic_library_1ae708350e2f9a9c34ff6361ebdda4c72d)`()` | Check if the library is valid.
 
 ## Members
 
@@ -270,17 +274,52 @@ struct AudioModule
 
 #### `public const char * `[`mod_name`](#struct_dynamic_library_1a73a46cd7644aa42c16d61c447aa39e44) <a id="struct_dynamic_library_1a73a46cd7644aa42c16d61c447aa39e44"></a>
 
+The name of the module. tex, shdr, gfx, win, etc.
+
 #### `public const char * `[`mod_imp`](#struct_dynamic_library_1a6a8fe24283e97641dca9612be64b34ae) <a id="struct_dynamic_library_1a6a8fe24283e97641dca9612be64b34ae"></a>
+
+The implementation name of the module. stb (tex_stb), glad (gfx_glad), etc.
 
 #### `public inline  `[`DynamicLibrary`](#struct_dynamic_library_1a5068283b12c51f6f3589f18ba7075494)`()` <a id="struct_dynamic_library_1a5068283b12c51f6f3589f18ba7075494"></a>
 
+Default constructor for the [DynamicLibrary](#struct_dynamic_library) class.
+
+This constructor initializes the module name, implementation name, and handle to NULL. This constructor does not load a library. And the resulting object is invalid.
+
 #### `public inline  `[`DynamicLibrary`](#struct_dynamic_library_1a7793f674c0ca06e9edc702aa404fedd3)`(const char * path,const char * ident)` <a id="struct_dynamic_library_1a7793f674c0ca06e9edc702aa404fedd3"></a>
+
+Constructor for the [DynamicLibrary](#struct_dynamic_library) class.
+
+This constructor loads a library from the specified path and sets the module name and implementation name. 
+#### Parameters
+* `path` The implementation name of the module. This is the name of the module to load. 
+
+* `ident` The name of the module. This is the type of the module to load.
 
 #### `public inline  `[`~DynamicLibrary`](#struct_dynamic_library_1a25dd7a7cd386fbc1c8abde597c39c881)`()` <a id="struct_dynamic_library_1a25dd7a7cd386fbc1c8abde597c39c881"></a>
 
+Destructor for the [DynamicLibrary](#struct_dynamic_library) class.
+
 #### `public inline void * `[`getSymbol`](#struct_dynamic_library_1a74cdae708163e43a26b410e5d1861ed0)`(const char * name)` <a id="struct_dynamic_library_1a74cdae708163e43a26b410e5d1861ed0"></a>
 
+Get a symbol from the loaded library.
+
+This function retrieves a symbol from the loaded library. It returns a pointer to the symbol if it is found, or NULL if it is not found.
+
+#### Parameters
+* `name` The name of the symbol to retrieve. 
+
+#### Returns
+A pointer to the symbol if it is found, or NULL if it is not found.
+
 #### `public inline bool `[`valid`](#struct_dynamic_library_1ae708350e2f9a9c34ff6361ebdda4c72d)`()` <a id="struct_dynamic_library_1ae708350e2f9a9c34ff6361ebdda4c72d"></a>
+
+Check if the library is valid.
+
+This function checks if the library is valid by checking if the handle is not NULL.
+
+#### Returns
+True if the library is valid, false otherwise.
 
 # struct `GameContext` <a id="struct_game_context"></a>
 
@@ -709,18 +748,28 @@ This function constructs a graphics module from the specified dynamic library. T
 
 # struct `Module` <a id="struct_module"></a>
 
+A module structure.
+
+This structure is a small wrapper around the [DynamicLibrary](#struct_dynamic_library) that creates a standardized interface for modules.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public DynamicLibrary `[`lib`](#struct_module_1aeb415182f1cd3d4536fa7bde81fec1ec) | 
-`public inline  explicit `[`Module`](#struct_module_1abaed7f29287dabeebc1d20de1c5ada14)`(const char * path,const char * ident)` | 
+`public `[`DynamicLibrary`](#struct_dynamic_library)` `[`lib`](#struct_module_1aeb415182f1cd3d4536fa7bde81fec1ec) | The dynamic library handle for the module.
+`public inline  explicit `[`Module`](#struct_module_1abaed7f29287dabeebc1d20de1c5ada14)`(const char * path,const char * ident)` | Default constructor for the [Module](#struct_module) class.
 
 ## Members
 
-#### `public DynamicLibrary `[`lib`](#struct_module_1aeb415182f1cd3d4536fa7bde81fec1ec) <a id="struct_module_1aeb415182f1cd3d4536fa7bde81fec1ec"></a>
+#### `public `[`DynamicLibrary`](#struct_dynamic_library)` `[`lib`](#struct_module_1aeb415182f1cd3d4536fa7bde81fec1ec) <a id="struct_module_1aeb415182f1cd3d4536fa7bde81fec1ec"></a>
+
+The dynamic library handle for the module.
 
 #### `public inline  explicit `[`Module`](#struct_module_1abaed7f29287dabeebc1d20de1c5ada14)`(const char * path,const char * ident)` <a id="struct_module_1abaed7f29287dabeebc1d20de1c5ada14"></a>
+
+Default constructor for the [Module](#struct_module) class.
+
+This constructor initializes the module name, implementation name, and handle to NULL.
 
 # struct `sAudioClip` <a id="structs_audio_clip"></a>
 
@@ -1708,9 +1757,6 @@ This function draws the specified text object using the graphics module.
 
 #### Parameters
 * `text` The text object to draw. 
-
-#### Returns
-void 
 
 **See also**: [createText](#struct_text_module_1adf6a3b4f8ec0184d3390d01fc3415264)
 
