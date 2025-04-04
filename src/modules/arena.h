@@ -26,7 +26,7 @@ struct sArenaAllocator {
      * This constructor initializes the arena allocator with a specified size and tracker string.
      * It allocates memory for the arena and initializes the offset to zero.
      */
-    inline sArenaAllocator(const char* tracker, size_t size) : size(size), offset(0) {
+    inline sArenaAllocator(const char* tracker, size_t size) : tracker(tracker), size(size), offset(0) {
         buffer = (uint8_t*)malloc(size); // Allocate memory for the arena
         memset(buffer, 0, size);         // Initialize the buffer to zero
     }
@@ -49,7 +49,9 @@ struct sArenaAllocator {
     inline void* allocate(size_t bytes) {
         if (offset + bytes > size) {
             printf("Arena allocator '%s' out of memory! Requested %zu bytes, available %zu bytes\n", tracker, bytes, size - offset);
-            return nullptr; // Not enough space in the arena
+            // return nullptr; // Not enough space in the arena
+            printf("Attempting to resize arena allocator '%s' from %zu bytes to %zu bytes\n", tracker, size, size + bytes);
+            resize(size + bytes); // Attempt to resize the arena, we will us
         }
         void* ptr = buffer + offset;
         offset += bytes; // Update the offset
@@ -92,5 +94,24 @@ struct sArenaAllocator {
     template<typename T>
     inline T* allocateArray(size_t count) {
         return (T*)allocate(sizeof(T) * count); // Allocate memory for an array of type T
+    }
+
+    /**
+     * @brief Resizes the arena allocator.
+     * 
+     * This function should be avoided, but if you run out of room, you can create more.
+     */
+    inline void resize(size_t newSize) {
+        if (newSize <= size) {
+            printf("Arena allocator '%s' resize requested to %zu bytes, but current size is %zu bytes\n", tracker, newSize, size);
+            return; // No need to resize if the new size is less than or equal to the current size
+        }
+        uint8_t* newBuffer = (uint8_t*)realloc(buffer, newSize);
+        if (!newBuffer) {
+            printf("Arena allocator '%s' failed to resize to %zu bytes\n", tracker, newSize);
+            return; // Failed to resize the buffer
+        }
+        buffer = newBuffer; // Update the buffer pointer
+        size = newSize;     // Update the size
     }
 };

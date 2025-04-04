@@ -286,19 +286,25 @@ public:
         }
         free(pth);
 
+        char* mod = (char*)malloc(strlen(ident) + strlen(path) + 2);
+        strcpy(mod, ident);
+        strcat(mod, ".");
+        strcat(mod, path);
+
+
         getDesiredArenaSize = (smod::GetDesiredArenaSize)lib.getSymbol("getDesiredArenaSize");
 
         if (getDesiredArenaSize) {
             size_t size = getDesiredArenaSize();
             if (size > 0) {
-                allocator = new sArenaAllocator("Module", size);
+                allocator = new sArenaAllocator(mod, size);
             } else {
                 printf("Module %s.%s doesn't use arena memory, consider refactoring this module\n", ident, path);
-                allocator = new sArenaAllocator("Module", 0);
+                allocator = new sArenaAllocator(mod, 0);
             }
         } else {
             printf("Module %s.%s does not have a getDesiredArenaSize function\n", ident, path);
-            allocator = new sArenaAllocator("Module", 0);
+            allocator = new sArenaAllocator(mod, 0);
         }
 
         moduleInit = (smod::ModuleInit)lib.getSymbol("moduleInit");
@@ -307,5 +313,7 @@ public:
         } else {
             printf("Module %s.%s does not have a moduleInit function\n", ident, path);
         }
+
+
     }
 };

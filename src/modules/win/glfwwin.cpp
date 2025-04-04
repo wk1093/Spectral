@@ -18,6 +18,16 @@
 
 #include "module.h"
 
+sArenaAllocator* gArena = nullptr;
+
+CEXPORT size_t getDesiredArenaSize() {
+    return sizeof(sWindow);
+}
+
+CEXPORT void moduleInit(sArenaAllocator* arena) {
+    gArena = arena;
+}
+
 const int* keys = new int[static_cast<unsigned long>(Key::KeyCount)] {
         GLFW_KEY_A, GLFW_KEY_B, GLFW_KEY_C, GLFW_KEY_D, GLFW_KEY_E, GLFW_KEY_F, GLFW_KEY_G, GLFW_KEY_H, GLFW_KEY_I,
         GLFW_KEY_J, GLFW_KEY_K, GLFW_KEY_L, GLFW_KEY_M, GLFW_KEY_N, GLFW_KEY_O, GLFW_KEY_P, GLFW_KEY_Q, GLFW_KEY_R,
@@ -71,7 +81,7 @@ CEXPORT sWindow* loadWindow(const char* title, int width, int height, sWindowFla
         return {nullptr};
     }
 
-    sWindow* win = (sWindow*)malloc(sizeof(sWindow));
+    sWindow* win = gArena->allocate<sWindow>();
     win->internal = internal;
     win->width = width;
     win->height = height;
@@ -87,7 +97,6 @@ CEXPORT sWindow* loadWindow(const char* title, int width, int height, sWindowFla
 CEXPORT void destroyWindow(sWindow* window) {
     glfwDestroyWindow((GLFWwindow*)(window->internal));
     glfwTerminate();
-    free(window);
 }
 
 CEXPORT void updateWindow(sWindow* window) {
