@@ -3,8 +3,8 @@
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
 `class `[`Game`](#class_game) | 
-`struct `[`AssetBuffer`](#struct_asset_buffer) | 
-`struct `[`AssetLoader`](#struct_asset_loader) | 
+`struct `[`AssetBuffer`](#struct_asset_buffer) | Asset buffer structure.
+`struct `[`AssetLoader`](#struct_asset_loader) | Asset loader class.
 `struct `[`AudioModule`](#struct_audio_module) | 
 `struct `[`DynamicLibrary`](#struct_dynamic_library) | 
 `struct `[`GameContext`](#struct_game_context) | 
@@ -16,13 +16,13 @@
 `struct `[`sCamera`](#structs_camera) | Camera structure.
 `struct `[`Script`](#struct_script) | 
 `struct `[`ScriptLoaderModule`](#struct_script_loader_module) | 
-`struct `[`sFont`](#structs_font) | 
+`struct `[`sFont`](#structs_font) | Text rendering module class.
 `struct `[`ShaderModule`](#struct_shader_module) | [ShaderModule](#struct_shader_module) is a module that provides functionality for compiling and creating shaders.
 `struct `[`sMesh`](#structs_mesh) | Mesh structure.
 `struct `[`sModelTransform`](#structs_model_transform) | Model transformation structure.
 `struct `[`sShader`](#structs_shader) | Shader structure.
 `struct `[`sShaderProgram`](#structs_shader_program) | Shader program structure.
-`struct `[`sText`](#structs_text) | 
+`struct `[`sText`](#structs_text) | Text structure.
 `struct `[`sTexture`](#structs_texture) | Texture structure.
 `struct `[`sTextureDefinition`](#structs_texture_definition) | Texture definition structure.
 `struct `[`sUniformDefinition`](#structs_uniform_definition) | Uniform definition structure.
@@ -41,8 +41,8 @@
 `struct `[`swScript`](#structsw_script) | 
 `struct `[`swTexture`](#structsw_texture) | 
 `struct `[`swWorld`](#structsw_world) | 
-`struct `[`TextAssetBuffer`](#struct_text_asset_buffer) | 
-`struct `[`TextModule`](#struct_text_module) | 
+`struct `[`TextAssetBuffer`](#struct_text_asset_buffer) | Text asset buffer structure.
+`struct `[`TextModule`](#struct_text_module) | [TextModule](#struct_text_module) class.
 `struct `[`TextureModule`](#struct_texture_module) | Texture loading module class.
 `struct `[`vec2.__unnamed11__`](#structvec2_8____unnamed11____) | 
 `struct `[`vec2.__unnamed9__`](#structvec2_8____unnamed9____) | 
@@ -80,18 +80,26 @@ class Game
 
 # struct `AssetBuffer` <a id="struct_asset_buffer"></a>
 
+Asset buffer structure.
+
+This structure represents an asset buffer containing the data and length of the asset.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public const uint8_t * `[`data`](#struct_asset_buffer_1a5628ea7dea03b763da086645d5b57c5a) | 
-`public size_t `[`len`](#struct_asset_buffer_1a792420415a5540a2ed57d1f6d8d3eebd) | 
+`public const uint8_t * `[`data`](#struct_asset_buffer_1a5628ea7dea03b763da086645d5b57c5a) | Pointer to the asset data.
+`public size_t `[`len`](#struct_asset_buffer_1a792420415a5540a2ed57d1f6d8d3eebd) | Length of the asset data.
 
 ## Members
 
 #### `public const uint8_t * `[`data`](#struct_asset_buffer_1a5628ea7dea03b763da086645d5b57c5a) <a id="struct_asset_buffer_1a5628ea7dea03b763da086645d5b57c5a"></a>
 
+Pointer to the asset data.
+
 #### `public size_t `[`len`](#struct_asset_buffer_1a792420415a5540a2ed57d1f6d8d3eebd) <a id="struct_asset_buffer_1a792420415a5540a2ed57d1f6d8d3eebd"></a>
+
+Length of the asset data.
 
 # struct `AssetLoader` <a id="struct_asset_loader"></a>
 
@@ -100,21 +108,41 @@ struct AssetLoader
   : public Module
 ```  
 
+Asset loader class.
+
+This class represents the asset loader module and provides methods for loading assets and text assets. It is responsible for loading the asset loader library and providing access to its functions.
+
+This class makes it seem as if they are loaded from a file, but they are actually all stored in the binary as a big assets.dll file.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public inline  `[`AssetLoader`](#struct_asset_loader_1ae090ac88a0e6df2c7cc560da9f4c4f25)`()` | 
-`public inline AssetBuffer `[`loadAsset`](#struct_asset_loader_1aefc1c811522ac04f63ca4dd6dcdffc61)`(const char * path)` | 
-`public inline TextAssetBuffer `[`loadTextAsset`](#struct_asset_loader_1ac36e9ddc0bfecc543910eecbf24d1164)`(const char * path)` | 
+`public inline  `[`AssetLoader`](#struct_asset_loader_1ae090ac88a0e6df2c7cc560da9f4c4f25)`()` | Constructor for the [AssetLoader](#struct_asset_loader) class.
+`public inline `[`AssetBuffer`](#struct_asset_buffer)` `[`loadAsset`](#struct_asset_loader_1aefc1c811522ac04f63ca4dd6dcdffc61)`(const char * path)` | Loads an asset from a file path.
+`public inline `[`TextAssetBuffer`](#struct_text_asset_buffer)` `[`loadTextAsset`](#struct_asset_loader_1ac36e9ddc0bfecc543910eecbf24d1164)`(const char * path)` | 
 
 ## Members
 
 #### `public inline  `[`AssetLoader`](#struct_asset_loader_1ae090ac88a0e6df2c7cc560da9f4c4f25)`()` <a id="struct_asset_loader_1ae090ac88a0e6df2c7cc560da9f4c4f25"></a>
 
-#### `public inline AssetBuffer `[`loadAsset`](#struct_asset_loader_1aefc1c811522ac04f63ca4dd6dcdffc61)`(const char * path)` <a id="struct_asset_loader_1aefc1c811522ac04f63ca4dd6dcdffc61"></a>
+Constructor for the [AssetLoader](#struct_asset_loader) class.
 
-#### `public inline TextAssetBuffer `[`loadTextAsset`](#struct_asset_loader_1ac36e9ddc0bfecc543910eecbf24d1164)`(const char * path)` <a id="struct_asset_loader_1ac36e9ddc0bfecc543910eecbf24d1164"></a>
+This constructor initializes the asset loader module with the specified library path and sets up the function pointers for loading assets and text assets.
+
+#### `public inline `[`AssetBuffer`](#struct_asset_buffer)` `[`loadAsset`](#struct_asset_loader_1aefc1c811522ac04f63ca4dd6dcdffc61)`(const char * path)` <a id="struct_asset_loader_1aefc1c811522ac04f63ca4dd6dcdffc61"></a>
+
+Loads an asset from a file path.
+
+This function loads an asset from the specified file path and returns an asset buffer containing the data and length of the asset.
+
+#### Parameters
+* `path` The "path" to the asset file. See [AssetLoader](#struct_asset_loader) for more details. 
+
+#### Returns
+An asset buffer containing the loaded asset data.
+
+#### `public inline `[`TextAssetBuffer`](#struct_text_asset_buffer)` `[`loadTextAsset`](#struct_asset_loader_1ac36e9ddc0bfecc543910eecbf24d1164)`(const char * path)` <a id="struct_asset_loader_1ac36e9ddc0bfecc543910eecbf24d1164"></a>
 
 # struct `AudioModule` <a id="struct_audio_module"></a>
 
@@ -236,8 +264,8 @@ struct AudioModule
 `public `[`GraphicsModule`](#struct_graphics_module)` `[`gfxm`](#struct_game_context_1a98856d42044a8ad116a14ff4b0691dde) | 
 `public `[`ShaderModule`](#struct_shader_module)` `[`shdr`](#struct_game_context_1a18f6ad3eb96d8c8d81ceff1383ce1f3c) | 
 `public `[`TextureModule`](#struct_texture_module)` `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) | 
-`public TextModule `[`textm`](#struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87) | 
-`public AssetLoader `[`assetm`](#struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4) | 
+`public `[`TextModule`](#struct_text_module)` `[`textm`](#struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87) | 
+`public `[`AssetLoader`](#struct_asset_loader)` `[`assetm`](#struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4) | 
 
 ## Members
 
@@ -249,9 +277,9 @@ struct AudioModule
 
 #### `public `[`TextureModule`](#struct_texture_module)` `[`texm`](#struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132) <a id="struct_game_context_1a4a5a84d1863f95f95bff9e04762eb132"></a>
 
-#### `public TextModule `[`textm`](#struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87) <a id="struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87"></a>
+#### `public `[`TextModule`](#struct_text_module)` `[`textm`](#struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87) <a id="struct_game_context_1a146dcd5835f865af5cf53e2ec30adf87"></a>
 
-#### `public AssetLoader `[`assetm`](#struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4) <a id="struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4"></a>
+#### `public `[`AssetLoader`](#struct_asset_loader)` `[`assetm`](#struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4) <a id="struct_game_context_1a57fe2af4cbf219067eadfb06b6334bf4"></a>
 
 # struct `GraphicsModule` <a id="struct_graphics_module"></a>
 
@@ -846,6 +874,10 @@ struct ScriptLoaderModule
 
 # struct `sFont` <a id="structs_font"></a>
 
+Text rendering module class.
+
+This class represents the text rendering module and provides methods for loading fonts, creating text, and rendering it.
+
 ## Summary
 
  Members                        | Descriptions                                
@@ -1034,6 +1066,10 @@ This structure represents a shader program that can be used to render meshes. Im
 #### `public `[`GraphicsModule`](#struct_graphics_module)` * `[`creator`](#structs_shader_program_1a4fea0cc5a2b5954e764cca58dd3bff26) <a id="structs_shader_program_1a4fea0cc5a2b5954e764cca58dd3bff26"></a>
 
 # struct `sText` <a id="structs_text"></a>
+
+Text structure.
+
+This structure represents a text object and contains the internal representation of the text. It is used to create and render text using the text rendering module.
 
 ## Summary
 
@@ -1502,18 +1538,26 @@ If true, the window will be displayed in fullscreen mode. This may not be suppor
 
 # struct `TextAssetBuffer` <a id="struct_text_asset_buffer"></a>
 
+Text asset buffer structure.
+
+This structure represents a text asset buffer containing the data and length of the text asset.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public const char * `[`data`](#struct_text_asset_buffer_1a24a59c388d04469d287b5649a6dc1d4b) | 
-`public size_t `[`len`](#struct_text_asset_buffer_1a3387757c5f439d6b38f00452c559f3b0) | 
+`public const char * `[`data`](#struct_text_asset_buffer_1a24a59c388d04469d287b5649a6dc1d4b) | Pointer to the text asset data.
+`public size_t `[`len`](#struct_text_asset_buffer_1a3387757c5f439d6b38f00452c559f3b0) | Length of the text asset data.
 
 ## Members
 
 #### `public const char * `[`data`](#struct_text_asset_buffer_1a24a59c388d04469d287b5649a6dc1d4b) <a id="struct_text_asset_buffer_1a24a59c388d04469d287b5649a6dc1d4b"></a>
 
+Pointer to the text asset data.
+
 #### `public size_t `[`len`](#struct_text_asset_buffer_1a3387757c5f439d6b38f00452c559f3b0) <a id="struct_text_asset_buffer_1a3387757c5f439d6b38f00452c559f3b0"></a>
+
+Length of the text asset data.
 
 # struct `TextModule` <a id="struct_text_module"></a>
 
@@ -1522,60 +1566,204 @@ struct TextModule
   : public Module
 ```  
 
+[TextModule](#struct_text_module) class.
+
+This class represents the text rendering module and provides methods for loading fonts, creating text, and rendering it. It is responsible for loading the text rendering library and providing access to its functions.
+
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public text::Init `[`init`](#struct_text_module_1a8a2f31481840637eca26e6863da0aca6) | 
-`public text::LoadFont `[`internal_loadFont`](#struct_text_module_1a0619de2ed02a2c9d94d64b8c098ccaec) | 
-`public text::LoadFontAsset `[`internal_loadFontAsset`](#struct_text_module_1ac833eee3f8e53ae972cde49685cdd198) | 
-`public text::CreateText `[`createText`](#struct_text_module_1a888e5ec2da9e24ab61174273a5c81932) | 
-`public text::DrawText `[`drawText`](#struct_text_module_1a9cb778a7ffd4e85925c3200acba59e72) | 
-`public text::FreeText `[`freeText`](#struct_text_module_1ab0f3371867b96669b2dfa1071cfbafcf) | 
-`public text::FreeFont `[`freeFont`](#struct_text_module_1af9926bec2a36edc173af9aea2de2fef7) | 
-`public text::SetTextColor `[`setTextColor`](#struct_text_module_1a8ecfc24c9711ab7e648d21ea028b3804) | 
-`public text::SetTextModel `[`setTextModel`](#struct_text_module_1a9d1e4f4c14b9594979f32496627f7568) | 
-`public text::SetTextView `[`setTextView`](#struct_text_module_1a397aa2f9a1db1d64ac20173cf3eaa310) | 
-`public text::SetTextProj `[`setTextProj`](#struct_text_module_1aa2cfa0e102eeaf49c1dee594654491e4) | 
-`public text::MeasureText `[`measureText`](#struct_text_module_1aa238dd4cf00b46fe5c18f67e2b377940) | 
-`public text::SetTextZ `[`setTextZ`](#struct_text_module_1a5ade4bfd014881acd5ba714329d1a472) | 
-`public inline sFont `[`loadFont`](#struct_text_module_1a3c17f97f54ef29abfa84c946fc5f9905)`(const char * path,int size,const char * vertpath,const char * fragpath)` | 
-`public inline sFont `[`loadFontAsset`](#struct_text_module_1a5801ab765f08be602a4af480a83061d0)`(const char * path,int size,const char * vertpath,const char * fragpath)` | 
-`public inline  `[`TextModule`](#struct_text_module_1a692bd0c26d18e518f91aee8e32e3a337)`(const char * path)` | 
+`public inline void `[`init`](#struct_text_module_1a5bb63a4d59fa1f0a90d7e902b0d12433)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,`[`ShaderModule`](#struct_shader_module)` * shdr,`[`AssetLoader`](#struct_asset_loader)` * assetm)` | Initializes the text rendering module.
+`public inline `[`sFont`](#structs_font)` `[`loadFont`](#struct_text_module_1a3c17f97f54ef29abfa84c946fc5f9905)`(const char * path,int size,const char * vertpath,const char * fragpath)` | Loads a font from a file path.
+`public inline `[`sFont`](#structs_font)` `[`loadFontAsset`](#struct_text_module_1a5801ab765f08be602a4af480a83061d0)`(const char * path,int size,const char * vertpath,const char * fragpath)` | Loads a font asset from a file path.
+`public inline `[`sText`](#structs_text)` `[`createText`](#struct_text_module_1adf6a3b4f8ec0184d3390d01fc3415264)`(`[`sFont`](#structs_font)` font,const char * text)` | Creates a text object from a font and text string.
+`public inline void `[`drawText`](#struct_text_module_1ab85882d8fdbf5bf6d7fa4290ff4b750d)`(`[`sText`](#structs_text)` text)` | Draws a text object.
+`public inline void `[`freeText`](#struct_text_module_1a2196c86d0ba20432f973b5d0286bda6e)`(`[`sText`](#structs_text)` text)` | Frees a text object.
+`public inline void `[`freeFont`](#struct_text_module_1a12b2b0d7e9b1922b3edd681a5280b901)`(`[`sFont`](#structs_font)` font)` | Frees a font object.
+`public inline void `[`setTextColor`](#struct_text_module_1ade434c8eed6ae19fd0027d7fe1438990)`(`[`sText`](#structs_text)` text,`[`vec3`](#unionvec3)` color)` | Sets the color of a text object.
+`public inline void `[`setTextModel`](#struct_text_module_1a379a45e6201dfc08061da5f6068dc493)`(`[`sText`](#structs_text)` text,`[`mat4`](#unionmat4)` model)` | Sets the model matrix of a text object.
+`public inline void `[`setTextView`](#struct_text_module_1a00f72400fd6f0e79ceacc4770f844263)`(`[`sText`](#structs_text)` text,`[`mat4`](#unionmat4)` view)` | Sets the view matrix of a text object.
+`public inline void `[`setTextProj`](#struct_text_module_1a11e2791311c90b963194f41b755c98c3)`(`[`sText`](#structs_text)` text,`[`mat4`](#unionmat4)` proj)` | Sets the projection matrix of a text object.
+`public inline `[`vec2`](#unionvec2)` `[`measureText`](#struct_text_module_1a9cbfb7fbd1555be9a4c9b9a4bfbc1493)`(`[`sFont`](#structs_font)` font,const char * text)` | Measures the size of a text string using a font.
+`public inline void `[`setTextZ`](#struct_text_module_1a050b09a231b89908eff66449f8b869be)`(`[`sText`](#structs_text)` text,float z)` | Sets the Z coordinate of a text object.
+`public inline  `[`TextModule`](#struct_text_module_1a692bd0c26d18e518f91aee8e32e3a337)`(const char * path)` | Constructor for the [TextModule](#struct_text_module) class.
 
 ## Members
 
-#### `public text::Init `[`init`](#struct_text_module_1a8a2f31481840637eca26e6863da0aca6) <a id="struct_text_module_1a8a2f31481840637eca26e6863da0aca6"></a>
+#### `public inline void `[`init`](#struct_text_module_1a5bb63a4d59fa1f0a90d7e902b0d12433)`(`[`GraphicsModule`](#struct_graphics_module)` * gfxm,`[`ShaderModule`](#struct_shader_module)` * shdr,`[`AssetLoader`](#struct_asset_loader)` * assetm)` <a id="struct_text_module_1a5bb63a4d59fa1f0a90d7e902b0d12433"></a>
 
-#### `public text::LoadFont `[`internal_loadFont`](#struct_text_module_1a0619de2ed02a2c9d94d64b8c098ccaec) <a id="struct_text_module_1a0619de2ed02a2c9d94d64b8c098ccaec"></a>
+Initializes the text rendering module.
 
-#### `public text::LoadFontAsset `[`internal_loadFontAsset`](#struct_text_module_1ac833eee3f8e53ae972cde49685cdd198) <a id="struct_text_module_1ac833eee3f8e53ae972cde49685cdd198"></a>
+This function initializes the text rendering module with the specified graphics module, shader module, and asset loader.
 
-#### `public text::CreateText `[`createText`](#struct_text_module_1a888e5ec2da9e24ab61174273a5c81932) <a id="struct_text_module_1a888e5ec2da9e24ab61174273a5c81932"></a>
+#### Parameters
+* `gfxm` Pointer to the graphics module. 
 
-#### `public text::DrawText `[`drawText`](#struct_text_module_1a9cb778a7ffd4e85925c3200acba59e72) <a id="struct_text_module_1a9cb778a7ffd4e85925c3200acba59e72"></a>
+* `shdr` Pointer to the shader module. 
 
-#### `public text::FreeText `[`freeText`](#struct_text_module_1ab0f3371867b96669b2dfa1071cfbafcf) <a id="struct_text_module_1ab0f3371867b96669b2dfa1071cfbafcf"></a>
+* `assetm` Pointer to the asset loader.
 
-#### `public text::FreeFont `[`freeFont`](#struct_text_module_1af9926bec2a36edc173af9aea2de2fef7) <a id="struct_text_module_1af9926bec2a36edc173af9aea2de2fef7"></a>
+#### `public inline `[`sFont`](#structs_font)` `[`loadFont`](#struct_text_module_1a3c17f97f54ef29abfa84c946fc5f9905)`(const char * path,int size,const char * vertpath,const char * fragpath)` <a id="struct_text_module_1a3c17f97f54ef29abfa84c946fc5f9905"></a>
 
-#### `public text::SetTextColor `[`setTextColor`](#struct_text_module_1a8ecfc24c9711ab7e648d21ea028b3804) <a id="struct_text_module_1a8ecfc24c9711ab7e648d21ea028b3804"></a>
+Loads a font from a file path.
 
-#### `public text::SetTextModel `[`setTextModel`](#struct_text_module_1a9d1e4f4c14b9594979f32496627f7568) <a id="struct_text_module_1a9d1e4f4c14b9594979f32496627f7568"></a>
+This function loads a font from the specified file path and size, and returns a font object.
 
-#### `public text::SetTextView `[`setTextView`](#struct_text_module_1a397aa2f9a1db1d64ac20173cf3eaa310) <a id="struct_text_module_1a397aa2f9a1db1d64ac20173cf3eaa310"></a>
+#### Parameters
+* `path` The path to the font file. 
 
-#### `public text::SetTextProj `[`setTextProj`](#struct_text_module_1aa2cfa0e102eeaf49c1dee594654491e4) <a id="struct_text_module_1aa2cfa0e102eeaf49c1dee594654491e4"></a>
+* `size` The size of the font. 
 
-#### `public text::MeasureText `[`measureText`](#struct_text_module_1aa238dd4cf00b46fe5c18f67e2b377940) <a id="struct_text_module_1aa238dd4cf00b46fe5c18f67e2b377940"></a>
+* `vertpath` The path to the vertex shader file. 
 
-#### `public text::SetTextZ `[`setTextZ`](#struct_text_module_1a5ade4bfd014881acd5ba714329d1a472) <a id="struct_text_module_1a5ade4bfd014881acd5ba714329d1a472"></a>
+* `fragpath` The path to the fragment shader file. 
 
-#### `public inline sFont `[`loadFont`](#struct_text_module_1a3c17f97f54ef29abfa84c946fc5f9905)`(const char * path,int size,const char * vertpath,const char * fragpath)` <a id="struct_text_module_1a3c17f97f54ef29abfa84c946fc5f9905"></a>
+#### Returns
+A font object containing the loaded font data.
 
-#### `public inline sFont `[`loadFontAsset`](#struct_text_module_1a5801ab765f08be602a4af480a83061d0)`(const char * path,int size,const char * vertpath,const char * fragpath)` <a id="struct_text_module_1a5801ab765f08be602a4af480a83061d0"></a>
+#### `public inline `[`sFont`](#structs_font)` `[`loadFontAsset`](#struct_text_module_1a5801ab765f08be602a4af480a83061d0)`(const char * path,int size,const char * vertpath,const char * fragpath)` <a id="struct_text_module_1a5801ab765f08be602a4af480a83061d0"></a>
+
+Loads a font asset from a file path.
+
+This function loads a font asset from the specified file path and size, and returns a font object.
+
+#### Parameters
+* `path` The path to the font asset file. 
+
+* `size` The size of the font. 
+
+* `vertpath` The path to the vertex shader file. 
+
+* `fragpath` The path to the fragment shader file. 
+
+#### Returns
+A font object containing the loaded font asset data.
+
+#### `public inline `[`sText`](#structs_text)` `[`createText`](#struct_text_module_1adf6a3b4f8ec0184d3390d01fc3415264)`(`[`sFont`](#structs_font)` font,const char * text)` <a id="struct_text_module_1adf6a3b4f8ec0184d3390d01fc3415264"></a>
+
+Creates a text object from a font and text string.
+
+This function creates a text object from the specified font and text string, and returns a text object.
+
+#### Parameters
+* `font` The font object to use for the text. 
+
+* `text` The text string to create. 
+
+#### Returns
+A text object containing the created text data. 
+
+The text object should be freed using the freeText function when it is no longer needed.
+
+#### `public inline void `[`drawText`](#struct_text_module_1ab85882d8fdbf5bf6d7fa4290ff4b750d)`(`[`sText`](#structs_text)` text)` <a id="struct_text_module_1ab85882d8fdbf5bf6d7fa4290ff4b750d"></a>
+
+Draws a text object.
+
+This function draws the specified text object using the graphics module.
+
+#### Parameters
+* `text` The text object to draw. 
+
+#### Returns
+void 
+
+**See also**: [createText](#struct_text_module_1adf6a3b4f8ec0184d3390d01fc3415264)
+
+#### `public inline void `[`freeText`](#struct_text_module_1a2196c86d0ba20432f973b5d0286bda6e)`(`[`sText`](#structs_text)` text)` <a id="struct_text_module_1a2196c86d0ba20432f973b5d0286bda6e"></a>
+
+Frees a text object.
+
+This function frees the specified text object. This should be called when the text is no longer needed to free the resources used by the text.
+
+#### Parameters
+* `text` The text object to free.
+
+#### `public inline void `[`freeFont`](#struct_text_module_1a12b2b0d7e9b1922b3edd681a5280b901)`(`[`sFont`](#structs_font)` font)` <a id="struct_text_module_1a12b2b0d7e9b1922b3edd681a5280b901"></a>
+
+Frees a font object.
+
+This function frees the specified font object. This should be called when the font is no longer needed to free the resources used by the font.
+
+#### Parameters
+* `font` The font object to free.
+
+#### `public inline void `[`setTextColor`](#struct_text_module_1ade434c8eed6ae19fd0027d7fe1438990)`(`[`sText`](#structs_text)` text,`[`vec3`](#unionvec3)` color)` <a id="struct_text_module_1ade434c8eed6ae19fd0027d7fe1438990"></a>
+
+Sets the color of a text object.
+
+This function sets the color of the specified text object.
+
+#### Parameters
+* `text` The text object to set the color for. 
+
+* `color` The color to set for the text object.
+
+#### `public inline void `[`setTextModel`](#struct_text_module_1a379a45e6201dfc08061da5f6068dc493)`(`[`sText`](#structs_text)` text,`[`mat4`](#unionmat4)` model)` <a id="struct_text_module_1a379a45e6201dfc08061da5f6068dc493"></a>
+
+Sets the model matrix of a text object.
+
+This function sets the model matrix of the specified text object.
+
+#### Parameters
+* `text` The text object to set the model matrix for. 
+
+* `model` The model matrix to set for the text object.
+
+#### `public inline void `[`setTextView`](#struct_text_module_1a00f72400fd6f0e79ceacc4770f844263)`(`[`sText`](#structs_text)` text,`[`mat4`](#unionmat4)` view)` <a id="struct_text_module_1a00f72400fd6f0e79ceacc4770f844263"></a>
+
+Sets the view matrix of a text object.
+
+#### `public inline void `[`setTextProj`](#struct_text_module_1a11e2791311c90b963194f41b755c98c3)`(`[`sText`](#structs_text)` text,`[`mat4`](#unionmat4)` proj)` <a id="struct_text_module_1a11e2791311c90b963194f41b755c98c3"></a>
+
+Sets the projection matrix of a text object.
+
+This function sets the projection matrix of the specified text object.
+
+#### Parameters
+* `text` The text object to set the projection matrix for. 
+
+* `proj` The projection matrix to set for the text object.
+
+#### `public inline `[`vec2`](#unionvec2)` `[`measureText`](#struct_text_module_1a9cbfb7fbd1555be9a4c9b9a4bfbc1493)`(`[`sFont`](#structs_font)` font,const char * text)` <a id="struct_text_module_1a9cbfb7fbd1555be9a4c9b9a4bfbc1493"></a>
+
+Measures the size of a text string using a font.
+
+This function measures the size of the specified text string using the specified font and returns the size as a [vec2](#unionvec2).
+
+#### Parameters
+* `font` The font object to use for measuring the text. 
+
+* `text` The text string to measure. 
+
+#### Returns
+The size of the text string as a [vec2](#unionvec2). 
+
+This function does not create a text object and does not require freeing.
+
+#### `public inline void `[`setTextZ`](#struct_text_module_1a050b09a231b89908eff66449f8b869be)`(`[`sText`](#structs_text)` text,float z)` <a id="struct_text_module_1a050b09a231b89908eff66449f8b869be"></a>
+
+Sets the Z coordinate of a text object.
+
+This function sets the Z coordinate of the specified text object.
+
+#### Parameters
+* `text` The text object to set the Z coordinate for. 
+
+* `z` The Z coordinate to set for the text object.
 
 #### `public inline  `[`TextModule`](#struct_text_module_1a692bd0c26d18e518f91aee8e32e3a337)`(const char * path)` <a id="struct_text_module_1a692bd0c26d18e518f91aee8e32e3a337"></a>
+
+Constructor for the [TextModule](#struct_text_module) class.
+
+This constructor initializes the text rendering module with the specified library path and sets up the function pointers for the text rendering functions.
+
+#### Parameters
+* `path` The implementation name/id to load (ex: "freetype"). 
+
+This argument shouldn't be named "path" as it is not a path, but an identifier for the implementation to load. 
+
+This name should be the second part of the module name (ex "freetype" for "text_freetype.splmod").
 
 # struct `TextureModule` <a id="struct_texture_module"></a>
 

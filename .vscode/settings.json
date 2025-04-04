@@ -93,4 +93,5 @@
         "valarray": "cpp"
     },
     "cmake.generator": "Ninja",
+    "C_Cpp.doxygen.generatedStyle": "/**",
 }
