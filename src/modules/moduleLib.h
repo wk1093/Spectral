@@ -31,6 +31,8 @@
 
 #include <cstring>
 
+#include "arena.h"
+
 /**
  * @brief Get the path to the current executable.
  * 
@@ -250,6 +252,8 @@ public:
 struct Module {
     /// @brief The dynamic library handle for the module.
     DynamicLibrary lib;
+    /// @brief The allocator that will be used for the module.
+    sArenaAllocator* allocator = nullptr;
     /**
      * @brief Default constructor for the Module class.
      * 
@@ -272,5 +276,6 @@ struct Module {
         } else {
             printf("Module %s.%s loaded\n", ident, path);
         }
+        free(pth);
     }
 };
