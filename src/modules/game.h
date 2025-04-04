@@ -62,7 +62,7 @@ public:
      * This constructor loads the game library and retrieves the main function of the game.
      * It initializes the game module and checks for errors in loading the library and main function.
      */
-    Game() : Module("game", "game") {
+    Game() : Module("game", "game", false) {
         if (!lib.valid()) {
             printf("Error loading main game module\n");
             return;

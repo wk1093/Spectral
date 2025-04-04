@@ -12,6 +12,16 @@ There will be multiple vertices (4 for each character)
 
 #include <vector>
 
+sArenaAllocator* gArena = nullptr;
+
+CEXPORT size_t getDesiredArenaSize() {
+    return 1024 * 512; // starting point, will auto resize if needed. Auto resize is slow, but this should only happen on loading, so it shouldn't slow down the game.
+}
+
+CEXPORT void moduleInit(sArenaAllocator* arena) {
+    gArena = arena;
+}
+
 struct sFreeTypeContext {
     FT_Library ft;
     GraphicsModule* gfxm;
@@ -151,7 +161,8 @@ CEXPORT sFont loadFont(const char* path, int size, const char* vertpath, const c
         return {nullptr};
     }
 
-    sInternalFont* internal = (sInternalFont*)malloc(sizeof(sInternalFont));
+    // sInternalFont* internal = (sInternalFont*)malloc(sizeof(sInternalFont));
+    sInternalFont* internal = (sInternalFont*)gArena->allocate<sInternalFont>();
     if (!internal) {
         printf("Error allocating memory for font\n");
         return {nullptr};
@@ -176,7 +187,8 @@ CEXPORT sFont loadFontAsset(const char* path, int size, const char* vertpath, co
         return {nullptr};
     }
 
-    sInternalFont* internal = (sInternalFont*)malloc(sizeof(sInternalFont));
+    // sInternalFont* internal = (sInternalFont*)malloc(sizeof(sInternalFont));
+    sInternalFont* internal = (sInternalFont*)gArena->allocate<sInternalFont>();
     if (!internal) {
         printf("Error allocating memory for font\n");
         return {nullptr};
@@ -217,6 +229,7 @@ CEXPORT sText createText(sFont font, const char* text) {
     sInternalFont* internalFont = (sInternalFont*)font.internal;
 
     sInternalText* internal = (sInternalText*)malloc(sizeof(sInternalText));
+    // text objects cannot be arena allocated, because they can be created and destroyed at any time which would quickly fill the arena and cause too much memory to be wasted
     if (!internal) {
         printf("Error allocating memory for text\n");
         return {nullptr};
@@ -233,6 +246,7 @@ CEXPORT sText createText(sFont font, const char* text) {
 
     internal->vertexCount = 4 * strlen(text);
     internal->vertices = (TextVertex*)malloc(sizeof(TextVertex) * internal->vertexCount);
+    // internal->vertices = (TextVertex*)gArena->allocateArray<TextVertex>(internal->vertexCount);
     if (!internal->vertices) {
         printf("Error allocating memory for text vertices\n");
         return {nullptr};
@@ -312,7 +326,7 @@ CEXPORT void freeFont(sFont font) {
     __freetype_context.gfxm->freeShader(internal->vertexShader);
     __freetype_context.gfxm->freeShaderProgram(internal->shader);
     __freetype_context.gfxm->freeVertexDefinition(internal->vertDef);
-    free(internal);
+    // free(internal);
 
 }
 

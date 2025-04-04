@@ -2,6 +2,16 @@
 
 #include <stb_image.h>
 
+sArenaAllocator* gArena = nullptr;
+
+CEXPORT size_t getDesiredArenaSize() {
+    return 0;
+}
+
+CEXPORT void moduleInit(sArenaAllocator* arena) {
+    gArena = arena;
+}
+
 CEXPORT sTextureDefinition loadTexture(const char* path) {
     int width, height, channels;
     stbi_set_flip_vertically_on_load(true);

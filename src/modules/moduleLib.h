@@ -270,8 +270,9 @@ public:
      * 
      * @param path The implementation name of the module. This is the name of the module to load.
      * @param ident The name of the module. This is the type of the module to load.
+     * @param useAlloc If true, the module will use the arena allocator. If false, it will not.
      */
-    inline explicit Module(const char* path, const char* ident) : lib(path, ident) {
+    inline explicit Module(const char* path, const char* ident, bool useAlloc=true) : lib(path, ident) {
         if (!lib.valid()) {
             printf("Error loading module %s\n", path);
             return;
@@ -286,34 +287,36 @@ public:
         }
         free(pth);
 
-        char* mod = (char*)malloc(strlen(ident) + strlen(path) + 2);
-        strcpy(mod, ident);
-        strcat(mod, ".");
-        strcat(mod, path);
+        if (useAlloc) {
+
+            char* mod = (char*)malloc(strlen(ident) + strlen(path) + 2);
+            strcpy(mod, ident);
+            strcat(mod, ".");
+            strcat(mod, path);
 
 
-        getDesiredArenaSize = (smod::GetDesiredArenaSize)lib.getSymbol("getDesiredArenaSize");
+            getDesiredArenaSize = (smod::GetDesiredArenaSize)lib.getSymbol("getDesiredArenaSize");
 
-        if (getDesiredArenaSize) {
-            size_t size = getDesiredArenaSize();
-            if (size > 0) {
-                allocator = new sArenaAllocator(mod, size);
+            if (getDesiredArenaSize) {
+                size_t size = getDesiredArenaSize();
+                if (size > 0) {
+                    allocator = new sArenaAllocator(mod, size);
+                } else {
+                    allocator = new sArenaAllocator(mod, 0);
+                }
             } else {
-                printf("Module %s.%s doesn't use arena memory, consider refactoring this module\n", ident, path);
+                printf("Module %s.%s does not have a getDesiredArenaSize function\n", ident, path);
                 allocator = new sArenaAllocator(mod, 0);
             }
-        } else {
-            printf("Module %s.%s does not have a getDesiredArenaSize function\n", ident, path);
-            allocator = new sArenaAllocator(mod, 0);
+
+            moduleInit = (smod::ModuleInit)lib.getSymbol("moduleInit");
+            if (moduleInit) {
+                moduleInit(allocator);
+            } else {
+                printf("Module %s.%s does not have a moduleInit function\n", ident, path);
+            }
+
+            free(mod);
         }
-
-        moduleInit = (smod::ModuleInit)lib.getSymbol("moduleInit");
-        if (moduleInit) {
-            moduleInit(allocator);
-        } else {
-            printf("Module %s.%s does not have a moduleInit function\n", ident, path);
-        }
-
-
     }
 };

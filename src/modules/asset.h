@@ -65,7 +65,7 @@ struct AssetLoader : Module {
      * 
      * This constructor initializes the asset loader module with the specified library path and sets up the function pointers for loading assets and text assets.
      */
-    AssetLoader() : Module("assets", "game") {
+    AssetLoader() : Module("assets", "game", false) {
         // assets are stored in a module, basically a big cpp file with a bunch of variables
     }
 

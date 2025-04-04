@@ -3,6 +3,16 @@
 #include <vector>
 #include <string>
 
+sArenaAllocator* gArena = nullptr;
+
+CEXPORT size_t getDesiredArenaSize() {
+    return 0;
+}
+
+CEXPORT void moduleInit(sArenaAllocator* arena) {
+    gArena = arena;
+}
+
 // #define DEBUG_SHADER
 
 const char* hlsl_header = R"(
