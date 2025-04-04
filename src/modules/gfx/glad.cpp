@@ -3,6 +3,16 @@
 
 #include "module.h"
 
+sArenaAllocator* gArena = nullptr;
+
+CEXPORT size_t getDesiredArenaSize() {
+    return 1024 * 1024; // Assume 1MB for now, this should be enough for some cases, but bigger games will reallocate this anyway
+}
+
+CEXPORT void moduleInit(sArenaAllocator* arena) {
+    gArena = arena;
+}
+
 CEXPORT const char* getShaderType() {
     return "glsl";
 }
@@ -83,7 +93,8 @@ CEXPORT sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexSize
         offset += vertDef->elements[i];
     }
 
-    sInternalMesh* internalMesh = (sInternalMesh*)malloc(sizeof(sInternalMesh));
+    // sInternalMesh* internalMesh = (sInternalMesh*)malloc(sizeof(sInternalMesh));
+    sInternalMesh* internalMesh = gArena->allocate<sInternalMesh>();
     internalMesh->vao = vao;
     internalMesh->vbo = vbo;
     internalMesh->ebo = ebo;
@@ -133,7 +144,8 @@ CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefini
         return {nullptr};
     }
 
-    sInternalShader* internal = (sInternalShader*)malloc(sizeof(sInternalShader));
+    // sInternalShader* internal = (sInternalShader*)malloc(sizeof(sInternalShader));
+    sInternalShader* internal = gArena->allocate<sInternalShader>();
     internal->shader = shader;
     internal->vertDef = vertDef;
     return {internal};
@@ -166,7 +178,8 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
         return {nullptr};
     }
 
-    sInternalShaderProgram* internal = (sInternalShaderProgram*)malloc(sizeof(sInternalShaderProgram));
+    // sInternalShaderProgram* internal = (sInternalShaderProgram*)malloc(sizeof(sInternalShaderProgram));
+    sInternalShaderProgram* internal = gArena->allocate<sInternalShaderProgram>();
     internal->program = program;
     internal->texcount = 0;
     return {internal};
@@ -183,10 +196,12 @@ struct sInternalUniforms {
 };
 
 CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def) {
-    sInternalUniforms* internal = (sInternalUniforms*)malloc(sizeof(sInternalUniforms));
+    // sInternalUniforms* internal = (sInternalUniforms*)malloc(sizeof(sInternalUniforms));
+    sInternalUniforms* internal = gArena->allocate<sInternalUniforms>();
     internal->def = def;
     internal->program = program;
-    internal->locations = (int*)malloc(sizeof(int) * def.count);
+    // internal->locations = (int*)malloc(sizeof(int) * def.count);
+    internal->locations = gArena->allocateArray<int>(def.count);
     for (size_t i = 0; i < def.count; i++) {
         internal->locations[i] = glGetUniformLocation(*(unsigned int*)program.internal, def.elements[i].name);
     }
@@ -310,7 +325,8 @@ CEXPORT sTexture createTexture(sTextureDefinition tex) {
     }
     glTexImage2D(GL_TEXTURE_2D, 0, format, tex.width, tex.height, 0, format, GL_UNSIGNED_BYTE, tex.data);
     glGenerateMipmap(GL_TEXTURE_2D);
-    sInternalTexture* internal = (sInternalTexture*)malloc(sizeof(sInternalTexture));
+    // sInternalTexture* internal = (sInternalTexture*)malloc(sizeof(sInternalTexture));
+    sInternalTexture* internal = gArena->allocate<sInternalTexture>();
     internal->texture = texture;
     return {internal};
 }
@@ -327,19 +343,19 @@ CEXPORT void useTexture(sShaderProgram program, sTexture texture, const char* na
 CEXPORT void freeTexture(sTexture texture) {
     sInternalTexture* internal = (sInternalTexture*)texture.internal;
     glDeleteTextures(1, &internal->texture);
-    free(internal);
+    // free(internal);
 }
 
 CEXPORT void freeShader(sShader shader) {
     sInternalShader* internal = (sInternalShader*)shader.internal;
     glDeleteShader(internal->shader);
-    free(internal);
+    // free(internal);
 }
 
 CEXPORT void freeShaderProgram(sShaderProgram program) {
     sInternalShaderProgram* internal = (sInternalShaderProgram*)program.internal;
     glDeleteProgram(internal->program);
-    free(internal);
+    // free(internal);
 }
 
 CEXPORT void freeMesh(sMesh mesh) {
@@ -347,13 +363,13 @@ CEXPORT void freeMesh(sMesh mesh) {
     glDeleteVertexArrays(1, &internal->vao);
     glDeleteBuffers(1, &internal->vbo);
     glDeleteBuffers(1, &internal->ebo);
-    free(internal);
+    // free(internal);
 }
 
 CEXPORT void freeUniforms(sUniforms uniforms) {
     sInternalUniforms* internal = (sInternalUniforms*)uniforms.internal;
-    free(internal->locations);
-    free(internal);
+    // free(internal->locations);
+    // free(internal);
 }
 
 CEXPORT void destroy() {

@@ -115,7 +115,7 @@ CEXPORT int game_main(GameContext* ctx) {
     TextModule textm = ctx->textm;
     AssetLoader assetm = ctx->assetm;
     std::string window_title = "Test (win_" + std::string(winm.lib.mod_imp) + ", gfx_" + std::string(gfxm.lib.mod_imp) + ")";
-
+    
     sWindow* win = winm.loadWindow(window_title.c_str(), 800, 600, {true, true});
     gfxm.init(win);
     textm.init(&gfxm, &shdr, &assetm);
