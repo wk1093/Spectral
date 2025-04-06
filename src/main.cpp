@@ -9,7 +9,12 @@ int main(int argc, char** argv) {
     // Display a simple popup to select the window and graphics modules
     // default to the window and graphics modules selected above
     char* winmod=nullptr, *gfxmod=nullptr;
-    sSelectModules(win_mods, &winmod, gfx_mods, &gfxmod);
+    if (win_mods.size() == 1 && gfx_mods.size() == 1) {
+        winmod = (char*)win_mods[0].c_str();
+        gfxmod = (char*)gfx_mods[0].c_str();
+    } else {
+        sSelectModules(win_mods, &winmod, gfx_mods, &gfxmod);
+    }
     if (!winmod || !gfxmod) {
         printf("exiting\n");
         return 1;
