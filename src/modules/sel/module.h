@@ -6,6 +6,17 @@
 #include <commctrl.h>
 #endif
 typedef std::vector<std::string> sModuleList;
+/**
+ * @brief Selects the window and graphics modules from a list of available modules.
+ * 
+ * This function will do something different depending on the platform, but mostly it will display a dialog box with a list of available modules and allow the user to select one.
+ * 
+ * @param win_mods A list of available window modules.
+ * @param window_module A pointer to a string that will be set to the selected window module.
+ * @param gfx_mods A list of available graphics modules.
+ * @param graphics_module A pointer to a string that will be set to the selected graphics module.
+ */
+void sSelectModules(sModuleList win_mods, char** window_module, sModuleList gfx_mods, char** graphics_module);
 #ifdef _WIN32
 
 int __selected_window_module = 0;
