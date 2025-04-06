@@ -1,5 +1,6 @@
 #include "modules/game.h"
 #include "modules/sel/module.h"
+// #include "modules/aud/module.h"
 
 int main(int argc, char** argv) {
     printf("Getting module implementations\n");
@@ -54,6 +55,8 @@ int main(int argc, char** argv) {
     Game game;
     GameContext game_context = {winm, gfxm, shdr, texm, textm, assetm};
     int a = game.main(&game_context);
+
+    // audm.destroy();
 
     printf("Game returned %d\n", a);
 

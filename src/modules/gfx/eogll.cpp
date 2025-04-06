@@ -9,6 +9,7 @@ CEXPORT const char* getShaderType() {
 }
 
 CEXPORT void init(sWindow* win) {
+    printf("Eogll is beginning to become deprecated, and will be removed in the future\n");
     if (strcmp(win->creator->lib.mod_imp, "eogll") == 0) {
         auto* w = (EogllWindow*)win->internal;
         glfwMakeContextCurrent(w->window);

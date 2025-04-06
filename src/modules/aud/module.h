@@ -7,13 +7,12 @@ struct sAudioClip {
 
 struct sAudioSource {
     void* internal;
-    float posX, posY, posZ;
-    float velX, velY, velZ;
 };
 
 namespace audio {
     typedef void (*Init)();
     typedef sAudioClip (*LoadAudioClip)(const char* path);
+    typedef sAudioClip (*LoadAudioClipFromMemory)(const char* name, const void* data, size_t size);
     typedef sAudioSource (*CreateAudioSource)(sAudioClip clip);
     typedef void (*PlayAudioSource)(sAudioSource source);
     typedef void (*StopAudioSource)(sAudioSource source);
@@ -23,7 +22,8 @@ namespace audio {
     typedef void (*SetAudioSourceGain)(sAudioSource source, float gain);
     typedef void (*SetAudioSourceLooping)(sAudioSource source, bool looping);
     typedef void (*SeekAudioSourceSamples)(sAudioSource source, int samples);
-    typedef int (*GetAudioSourceSamples)(sAudioSource source);
+    typedef int (*GetAudioSourceSampleCount)(sAudioSource source);
+    typedef int (*GetAudioSourceSamplePos)(sAudioSource source);
     typedef int (*GetAudioSourceSampleRate)(sAudioSource source);
     typedef void (*DestroyAudioClip)(sAudioClip clip);
     typedef void (*DestroyAudioSource)(sAudioSource source);
@@ -34,6 +34,7 @@ namespace audio {
 struct AudioModule : public Module {
     audio::Init init;
     audio::LoadAudioClip loadAudioClip;
+    audio::LoadAudioClipFromMemory loadAudioClipFromMemory;
     audio::CreateAudioSource createAudioSource;
     audio::PlayAudioSource playAudioSource;
     audio::StopAudioSource stopAudioSource;
@@ -43,7 +44,8 @@ struct AudioModule : public Module {
     audio::SetAudioSourceGain setAudioSourceGain;
     audio::SetAudioSourceLooping setAudioSourceLooping;
     audio::SeekAudioSourceSamples seekAudioSourceSamples;
-    audio::GetAudioSourceSamples getAudioSourceSamples;
+    audio::GetAudioSourceSampleCount getAudioSourceSampleCount;
+    audio::GetAudioSourceSamplePos getAudioSourceSamplePos;
     audio::GetAudioSourceSampleRate getAudioSourceSampleRate;
     audio::DestroyAudioClip destroyAudioClip;
     audio::DestroyAudioSource destroyAudioSource;
@@ -54,20 +56,21 @@ struct AudioModule : public Module {
     }
 
     inline void seekAudioSourcePercent(sAudioSource source, float percent) {
-        seekAudioSourceSamples(source, percent * getAudioSourceSamples(source));
+        seekAudioSourceSamples(source, percent * getAudioSourceSampleCount(source));
     }
 
     inline float getAudioSourcePercent(sAudioSource source) {
-        return (float)getAudioSourceSamples(source) / getAudioSourceSampleRate(source);
+        return (float)getAudioSourceSampleCount(source) / getAudioSourceSampleRate(source);
     }
 
     inline float getAudioSourceSeconds(sAudioSource source) {
-        return (float)getAudioSourceSamples(source) / getAudioSourceSampleRate(source);
+        return (float)getAudioSourceSampleCount(source) / getAudioSourceSampleRate(source);
     }
 
     inline explicit AudioModule(const char* dylib) : Module(dylib, "aud") {
         init = (audio::Init)lib.getSymbol("init");
         loadAudioClip = (audio::LoadAudioClip)lib.getSymbol("loadAudioClip");
+        loadAudioClipFromMemory = (audio::LoadAudioClipFromMemory)lib.getSymbol("loadAudioClipFromMemory");
         createAudioSource = (audio::CreateAudioSource)lib.getSymbol("createAudioSource");
         playAudioSource = (audio::PlayAudioSource)lib.getSymbol("playAudioSource");
         stopAudioSource = (audio::StopAudioSource)lib.getSymbol("stopAudioSource");
@@ -77,7 +80,8 @@ struct AudioModule : public Module {
         setAudioSourceGain = (audio::SetAudioSourceGain)lib.getSymbol("setAudioSourceGain");
         setAudioSourceLooping = (audio::SetAudioSourceLooping)lib.getSymbol("setAudioSourceLooping");
         seekAudioSourceSamples = (audio::SeekAudioSourceSamples)lib.getSymbol("seekAudioSourceSamples");
-        getAudioSourceSamples = (audio::GetAudioSourceSamples)lib.getSymbol("getAudioSourceSamples");
+        getAudioSourceSampleCount = (audio::GetAudioSourceSampleCount)lib.getSymbol("getAudioSourceSampleCount");
+        getAudioSourceSamplePos = (audio::GetAudioSourceSamplePos)lib.getSymbol("getAudioSourceSamplePos");
         getAudioSourceSampleRate = (audio::GetAudioSourceSampleRate)lib.getSymbol("getAudioSourceSampleRate");
         destroyAudioClip = (audio::DestroyAudioClip)lib.getSymbol("destroyAudioClip");
         destroyAudioSource = (audio::DestroyAudioSource)lib.getSymbol("destroyAudioSource");
