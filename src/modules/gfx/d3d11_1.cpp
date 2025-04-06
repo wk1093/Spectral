@@ -7,12 +7,23 @@
 
 sArenaAllocator* gArena = nullptr;
 
+struct sInternalMesh {
+    ID3D11Buffer* vertexBuffer;
+    ID3D11Buffer* indexBuffer;
+    UINT stride;
+    UINT offset;
+    size_t numIndices;
+};
+
+sTypedSmartArena<sInternalMesh>* gMeshArena = nullptr;
+
 CEXPORT size_t getDesiredArenaSize() {
     return 1024 * 1024; // Assume 1MB for now, this should be enough for some cases, but bigger games will reallocate this anyway
 }
 
 CEXPORT void moduleInit(sArenaAllocator* arena) {
     gArena = arena;
+    gMeshArena = new sTypedSmartArena<sInternalMesh>(arena->tracker, 1024 * 1024); // 1MB for meshes
 }
 
 CEXPORT const char* getShaderType() {
@@ -340,14 +351,6 @@ CEXPORT void present() {
     __d3d11_1_context.swapChain->Present(vsync, 0);
 }
 
-struct sInternalMesh {
-    ID3D11Buffer* vertexBuffer;
-    ID3D11Buffer* indexBuffer;
-    UINT stride;
-    UINT offset;
-    size_t numIndices;
-};
-
 struct sInternalShader {
     enum sShaderType type;
     ID3D11VertexShader* vertexShader;
@@ -409,7 +412,8 @@ CEXPORT sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexSize
         sizeofVertex += vd->elements[i];
     }
     // return {new sInternalMesh{vertexBuffer, indexBuffer, sizeofVertex * (unsigned int)(sizeof(float)), 0, indexSize / sizeof(sIndex)}};
-    auto* internal = gArena->allocate<sInternalMesh>();
+    // auto* internal = gArena->allocate<sInternalMesh>();
+    auto* internal = gMeshArena->allocate();
     internal->vertexBuffer = vertexBuffer;
     internal->indexBuffer = indexBuffer;
     internal->stride = sizeofVertex * (unsigned int)(sizeof(float));
@@ -800,6 +804,7 @@ CEXPORT void freeMesh(sMesh mesh) {
     internal->vertexBuffer->Release();
     internal->indexBuffer->Release();
     // free(internal);
+    gMeshArena->free(internal);
 }
 
 CEXPORT void freeUniforms(sUniforms uniforms) {
