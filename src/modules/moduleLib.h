@@ -14,6 +14,7 @@
 #include <cstdio>
 #include <fstream>
 #include <string>
+#include <vector>
 
 #ifndef SPECTRAL_PLATFORM
 #define SPECTRAL_PLATFORM "unknown"
@@ -320,3 +321,27 @@ public:
         }
     }
 };
+
+/**
+ * @brief Get a list of all modules that match the given identifier.
+ * 
+ * This function searches the current directory for all files with the ".splmod" extension and checks if their names contain the given identifier.
+ * It returns a vector of strings containing the names of the matching modules.
+ * 
+ * @param ident The identifier to search for in the module names.
+ * @return A vector of strings containing the names of the matching modules.
+ */
+std::vector<std::string> getModuleImpls(const char* ident) {
+    std::vector<std::string> out;
+    std::filesystem::path p = getexedir() / "modules" / SPECTRAL_PLATFORM;
+    for (auto& entry : std::filesystem::recursive_directory_iterator(p)) {
+        if (entry.path().extension() == ".splmod") {
+            std::string name = entry.path().stem().string();
+            if (name.find(ident) != std::string::npos) {
+                out.push_back(name);
+                printf("Module %s found\n", name.c_str());
+            }
+        }
+    }
+    return out;
+}

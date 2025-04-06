@@ -1,25 +1,37 @@
 #include "modules/game.h"
-// #include "modules/aud/module.h"
+#include "modules/sel/module.h"
 
 int main(int argc, char** argv) {
-    const char* window_module;
-    const char* graphics_module;
-    bool use_dx = true;
-    if (use_dx) {
-        window_module = "glfw_noapi";
-        graphics_module = "d3d11_1";
-    } else {
-        window_module = "glfw_gl";
-        graphics_module = "glad";
-    }
-    if (argc == 3) {
-        window_module = argv[1];
-        graphics_module = argv[2];
+    printf("Getting module implementations\n");
+    std::vector<std::string> win_mods = getModuleImpls("win");
+    std::vector<std::string> gfx_mods = getModuleImpls("gfx");
+
+    // Display a simple popup to select the window and graphics modules
+    // default to the window and graphics modules selected above
+    char* winmod=nullptr, *gfxmod=nullptr;
+    sSelectModules(win_mods, &winmod, gfx_mods, &gfxmod);
+    if (!winmod || !gfxmod) {
+        printf("exiting\n");
+        return 1;
     }
 
-    WindowModule winm(window_module);
+    // remove everythin before the first '_' including the '_'
+    char* winmod_ = strchr(winmod, '_');
+    if (winmod_) {
+        winmod_++;
+    } else {
+        winmod_ = winmod;
+    }
+    char* gfxmod_ = strchr(gfxmod, '_');
+    if (gfxmod_) {
+        gfxmod_++;
+    } else {
+        gfxmod_ = gfxmod;
+    }
+
+    WindowModule winm(winmod_);
     if (!winm.lib.valid()) return 1;
-    GraphicsModule gfxm(graphics_module);
+    GraphicsModule gfxm(gfxmod_);
     if (!gfxm.lib.valid()) return 1;
     ShaderModule shdr("spsl", gfxm.getShaderType());
     if (!shdr.lib.valid()) return 1;
