@@ -12,34 +12,12 @@ There will be multiple vertices (4 for each character)
 
 #include <vector>
 
-sArenaAllocator* gArena = nullptr;
-
-CEXPORT size_t getDesiredArenaSize() {
-    return 1024 * 512; // starting point, will auto resize if needed. Auto resize is slow, but this should only happen on loading, so it shouldn't slow down the game.
-}
-
-CEXPORT void moduleInit(sArenaAllocator* arena) {
-    gArena = arena;
-}
-
 struct sFreeTypeContext {
     FT_Library ft;
     GraphicsModule* gfxm;
     ShaderModule* shdr;
     AssetLoader* assetm;
 };
-
-static sFreeTypeContext __freetype_context;
-
-CEXPORT void init(GraphicsModule* gfxm, ShaderModule* shdr, AssetLoader* assetm) {
-    FT_Error error = FT_Init_FreeType(&__freetype_context.ft);
-    if (error) {
-        printf("Error initializing FreeType\n");
-    }
-    __freetype_context.gfxm = gfxm;
-    __freetype_context.shdr = shdr;
-    __freetype_context.assetm = assetm;
-}
 
 struct sInternalFont {
     sVertexDefinition* vertDef;
@@ -70,6 +48,40 @@ struct TextUniforms {
     mat4 model;
     float z;
 };
+
+struct sInternalText {
+    sInternalFont* font;
+    char* text;
+    TextUniforms uniforms;
+    size_t vertexCount; // should be 4 * strlen(text)
+    TextVertex* vertices;
+    sMesh mesh;
+};
+
+sArenaAllocator* gArena = nullptr;
+
+sTypedSmartArena<sInternalText>* gTextObjects = nullptr;
+
+CEXPORT size_t getDesiredArenaSize() {
+    return 1024 * 512; // starting point, will auto resize if needed. Auto resize is slow, but this should only happen on loading, so it shouldn't slow down the game.
+}
+
+CEXPORT void moduleInit(sArenaAllocator* arena) {
+    gArena = arena;
+    gTextObjects = new sTypedSmartArena<sInternalText>("text", 1024 * 512);
+}
+
+static sFreeTypeContext __freetype_context;
+
+CEXPORT void init(GraphicsModule* gfxm, ShaderModule* shdr, AssetLoader* assetm) {
+    FT_Error error = FT_Init_FreeType(&__freetype_context.ft);
+    if (error) {
+        printf("Error initializing FreeType\n");
+    }
+    __freetype_context.gfxm = gfxm;
+    __freetype_context.shdr = shdr;
+    __freetype_context.assetm = assetm;
+}
 
 sVertexDefinition* fontVertDef() {
     sVertexDefinition* vertDef = __freetype_context.gfxm->createVertexDefinition({2, 2});
@@ -216,19 +228,11 @@ CEXPORT sFont loadFontAsset(const char* path, int size, const char* vertpath, co
     return {internal};
 }
 
-struct sInternalText {
-    sInternalFont* font;
-    char* text;
-    TextUniforms uniforms;
-    size_t vertexCount; // should be 4 * strlen(text)
-    TextVertex* vertices;
-    sMesh mesh;
-};
-
 CEXPORT sText createText(sFont font, const char* text) {
     sInternalFont* internalFont = (sInternalFont*)font.internal;
 
-    sInternalText* internal = (sInternalText*)malloc(sizeof(sInternalText));
+    // sInternalText* internal = (sInternalText*)malloc(sizeof(sInternalText));
+    sInternalText* internal = (sInternalText*)gTextObjects->allocate();
     // text objects cannot be arena allocated, because they can be created and destroyed at any time which would quickly fill the arena and cause too much memory to be wasted
     if (!internal) {
         printf("Error allocating memory for text\n");
@@ -315,7 +319,8 @@ CEXPORT void freeText(sText text) {
     __freetype_context.gfxm->freeMesh(internal->mesh);
     free(internal->vertices);
     free(internal->text);
-    free(internal);
+    // free(internal);
+    gTextObjects->free(internal); // free the internal text object
 }
 
 CEXPORT void freeFont(sFont font) {

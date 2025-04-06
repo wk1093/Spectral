@@ -5,12 +5,22 @@
 
 sArenaAllocator* gArena = nullptr;
 
+struct sInternalMesh {
+    unsigned int vao;
+    unsigned int vbo;
+    unsigned int ebo;
+    size_t indexCount;
+};
+
+sTypedSmartArena<sInternalMesh>* gMeshArena = nullptr;
+
 CEXPORT size_t getDesiredArenaSize() {
     return 1024 * 1024; // Assume 1MB for now, this should be enough for some cases, but bigger games will reallocate this anyway
 }
 
 CEXPORT void moduleInit(sArenaAllocator* arena) {
     gArena = arena;
+    gMeshArena = new sTypedSmartArena<sInternalMesh>(arena->tracker, 1024 * 1024); // 1MB for meshes
 }
 
 CEXPORT const char* getShaderType() {
@@ -53,13 +63,6 @@ CEXPORT void clear() {
 
 }
 
-struct sInternalMesh {
-    unsigned int vao;
-    unsigned int vbo;
-    unsigned int ebo;
-    size_t indexCount;
-};
-
 struct sInternalShader {
     unsigned int shader;
     sVertexDefinition* vertDef;
@@ -94,7 +97,8 @@ CEXPORT sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexSize
     }
 
     // sInternalMesh* internalMesh = (sInternalMesh*)malloc(sizeof(sInternalMesh));
-    sInternalMesh* internalMesh = gArena->allocate<sInternalMesh>();
+    // sInternalMesh* internalMesh = gArena->allocate<sInternalMesh>();
+    sInternalMesh* internalMesh = gMeshArena->allocate();
     internalMesh->vao = vao;
     internalMesh->vbo = vbo;
     internalMesh->ebo = ebo;
@@ -364,6 +368,7 @@ CEXPORT void freeMesh(sMesh mesh) {
     glDeleteBuffers(1, &internal->vbo);
     glDeleteBuffers(1, &internal->ebo);
     // free(internal);
+    gMeshArena->free(internal);
 }
 
 CEXPORT void freeUniforms(sUniforms uniforms) {
