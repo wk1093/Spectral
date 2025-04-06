@@ -90,7 +90,16 @@
         "semaphore": "cpp",
         "stop_token": "cpp",
         "thread": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "complex": "cpp",
+        "coroutine": "cpp",
+        "expected": "cpp",
+        "future": "cpp",
+        "queue": "cpp",
+        "source_location": "cpp",
+        "stack": "cpp",
+        "xhash": "cpp",
+        "xtree": "cpp"
     },
     "cmake.generator": "Ninja",
     "C_Cpp.doxygen.generatedStyle": "/**",

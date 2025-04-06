@@ -345,3 +345,88 @@ std::vector<std::string> getModuleImpls(const char* ident) {
     }
     return out;
 }
+
+struct sModuleDef {
+    std::string mod;
+    std::string impl;
+    std::string dispname;
+    struct sSubModuleDef {
+        std::string mod;
+        std::string impl;
+        std::vector<std::string> tags;
+    };
+
+    std::vector<sSubModuleDef> submods;
+};
+
+sModuleDef getModuleDef(const char* filepath) {
+    // example input:
+    // v1 // version
+    // win glfw // mod impl
+    // GLFW // dispname
+    // win glfw_gl gl // submod: mod impl tags
+    // win glfw_noapi vulk,dx,noapi // submod: mod impl tags
+
+    sModuleDef def;
+    std::ifstream file(filepath);
+    if (!file.is_open()) {
+        printf("Error opening file %s\n", filepath);
+        return def;
+    }
+    std::string line;
+    std::getline(file, line); // version
+    if (line != "v1") {
+        printf("Error: Invalid version %s\n", line.c_str());
+        return def;
+    }
+    std::getline(file, line); // mod impl
+    size_t pos = line.find(" ");
+    if (pos == std::string::npos) {
+        printf("Error: Invalid module definition %s\n", line.c_str());
+        return def;
+    }
+    def.mod = line.substr(0, pos);
+    def.impl = line.substr(pos + 1);
+    std::getline(file, line); // dispname
+    def.dispname = line;
+    while (std::getline(file, line)) {
+        sModuleDef::sSubModuleDef submod;
+        size_t pos = line.find(" ");
+        if (pos == std::string::npos) {
+            printf("Error: Invalid submodule definition %s\n", line.c_str());
+            continue;
+        }
+        submod.mod = line.substr(0, pos);
+        size_t pos2 = line.find(" ", pos + 1);
+        if (pos2 == std::string::npos) {
+            printf("Error: Invalid submodule definition %s\n", line.c_str());
+            continue;
+        }
+        submod.impl = line.substr(pos + 1, pos2 - pos - 1);
+        std::string tags = line.substr(pos2 + 1);
+        size_t start = 0;
+        size_t end = tags.find(",");
+        while (end != std::string::npos) {
+            submod.tags.push_back(tags.substr(start, end - start));
+            start = end + 1;
+            end = tags.find(",", start);
+        }
+        submod.tags.push_back(tags.substr(start));
+        def.submods.push_back(submod);
+    }
+    return def;
+}
+
+std::vector<sModuleDef> getModuleDefs() {
+    std::vector<sModuleDef> out;
+    std::filesystem::path p = getexedir() / "modules/defs";
+    for (auto& entry : std::filesystem::recursive_directory_iterator(p)) {
+        if (entry.path().extension() == ".spldef") {
+            sModuleDef def = getModuleDef(entry.path().string().c_str());
+            if (!def.mod.empty()) {
+                out.push_back(def);
+            }
+        }
+    }
+    return out;
+}
