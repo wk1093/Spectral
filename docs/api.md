@@ -10,7 +10,8 @@
 `struct `[`GameContext`](#struct_game_context) | [Game](#class_game) context structure.
 `struct `[`GraphicsModule`](#struct_graphics_module) | Graphics module class.
 `struct `[`mat4.__unnamed13__`](#structmat4_8____unnamed13____) | 
-`struct `[`Module`](#struct_module) | A module structure.
+`struct `[`Module`](#struct_module) | 
+`struct `[`sArenaAllocator`](#structs_arena_allocator) | 
 `struct `[`sAudioClip`](#structs_audio_clip) | 
 `struct `[`sAudioSource`](#structs_audio_source) | 
 `struct `[`sCamera`](#structs_camera) | Camera structure.
@@ -748,16 +749,13 @@ This function constructs a graphics module from the specified dynamic library. T
 
 # struct `Module` <a id="struct_module"></a>
 
-A module structure.
-
-This structure is a small wrapper around the [DynamicLibrary](#struct_dynamic_library) that creates a standardized interface for modules.
-
 ## Summary
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
 `public `[`DynamicLibrary`](#struct_dynamic_library)` `[`lib`](#struct_module_1aeb415182f1cd3d4536fa7bde81fec1ec) | The dynamic library handle for the module.
-`public inline  explicit `[`Module`](#struct_module_1abaed7f29287dabeebc1d20de1c5ada14)`(const char * path,const char * ident)` | Default constructor for the [Module](#struct_module) class.
+`public sArenaAllocator * `[`allocator`](#struct_module_1ae01ba321a65bc2b6c28d3e961bb0794d) | The allocator that will be used for the module.
+`public inline  explicit `[`Module`](#struct_module_1add94d172e88d0ce77c136d7ef8c7510a)`(const char * path,const char * ident,bool useAlloc)` | Default constructor for the Module class.
 
 ## Members
 
@@ -765,16 +763,119 @@ This structure is a small wrapper around the [DynamicLibrary](#struct_dynamic_li
 
 The dynamic library handle for the module.
 
-#### `public inline  explicit `[`Module`](#struct_module_1abaed7f29287dabeebc1d20de1c5ada14)`(const char * path,const char * ident)` <a id="struct_module_1abaed7f29287dabeebc1d20de1c5ada14"></a>
+#### `public sArenaAllocator * `[`allocator`](#struct_module_1ae01ba321a65bc2b6c28d3e961bb0794d) <a id="struct_module_1ae01ba321a65bc2b6c28d3e961bb0794d"></a>
 
-Default constructor for the [Module](#struct_module) class.
+The allocator that will be used for the module.
+
+#### `public inline  explicit `[`Module`](#struct_module_1add94d172e88d0ce77c136d7ef8c7510a)`(const char * path,const char * ident,bool useAlloc)` <a id="struct_module_1add94d172e88d0ce77c136d7ef8c7510a"></a>
+
+Default constructor for the Module class.
 
 This constructor initializes the library. The inherited module should provide functionality to use that library. The ident field should be filled out by any inherited module, and the path will be passed in to select the implementation.
 
 #### Parameters
 * `path` The implementation name of the module. This is the name of the module to load. 
 
-* `ident` The name of the module. This is the type of the module to load.
+* `ident` The name of the module. This is the type of the module to load. 
+
+* `useAlloc` If true, the module will use the arena allocator. If false, it will not.
+
+# struct `sArenaAllocator` <a id="structs_arena_allocator"></a>
+
+## Summary
+
+ Members                        | Descriptions                                
+--------------------------------|---------------------------------------------
+`public uint8_t * `[`buffer`](#structs_arena_allocator_1a19613939947acab9f3ab8fc352aab75d) | Pointer to the memory buffer.
+`public size_t `[`size`](#structs_arena_allocator_1acb3bb337644e7fef702fbef046c31bb7) | Size of the memory buffer.
+`public size_t `[`offset`](#structs_arena_allocator_1aa473aeed44352944bbbc5fb54d5dcfb1) | Current offset in the memory buffer.
+`public const char * `[`tracker`](#structs_arena_allocator_1aed4991be43ba4531cdb20a53a138fb23) | Tracker string for debugging purposes.
+`public inline  `[`sArenaAllocator`](#structs_arena_allocator_1a7204adb68a11bb186e8285e8116e9b4a)`(const char * tracker,size_t size)` | Constructor for the arena allocator.
+`public inline  `[`~sArenaAllocator`](#structs_arena_allocator_1ab8d4acf8fcb0308c687123ded0568760)`()` | Destructor for the arena allocator.
+`public inline void * `[`allocate`](#structs_arena_allocator_1ad6b2e29bc93de2b67be5a21ac75be6f0)`(size_t bytes)` | Allocates memory from the arena.
+`public inline void `[`reset`](#structs_arena_allocator_1a9ca86257e968d555a2035f9e1b475c28)`()` | Resets the arena allocator.
+`public template<>`  <br/>`inline T * `[`allocate`](#structs_arena_allocator_1a28ccc94c5d063006c0ce38bd9b6a0ebf)`()` | Allocates memory for a type T.
+`public template<>`  <br/>`inline T * `[`allocateArray`](#structs_arena_allocator_1a67eb3ab5ee1fb7da52403eab6693d8fc)`(size_t count)` | Allocates memory for an array of type T.
+`public inline void `[`resize`](#structs_arena_allocator_1af7fbd0acd6cd9d6e26ecf8b5d02cd484)`(size_t newSize)` | Resizes the arena allocator.
+
+## Members
+
+#### `public uint8_t * `[`buffer`](#structs_arena_allocator_1a19613939947acab9f3ab8fc352aab75d) <a id="structs_arena_allocator_1a19613939947acab9f3ab8fc352aab75d"></a>
+
+Pointer to the memory buffer.
+
+#### `public size_t `[`size`](#structs_arena_allocator_1acb3bb337644e7fef702fbef046c31bb7) <a id="structs_arena_allocator_1acb3bb337644e7fef702fbef046c31bb7"></a>
+
+Size of the memory buffer.
+
+#### `public size_t `[`offset`](#structs_arena_allocator_1aa473aeed44352944bbbc5fb54d5dcfb1) <a id="structs_arena_allocator_1aa473aeed44352944bbbc5fb54d5dcfb1"></a>
+
+Current offset in the memory buffer.
+
+#### `public const char * `[`tracker`](#structs_arena_allocator_1aed4991be43ba4531cdb20a53a138fb23) <a id="structs_arena_allocator_1aed4991be43ba4531cdb20a53a138fb23"></a>
+
+Tracker string for debugging purposes.
+
+#### `public inline  `[`sArenaAllocator`](#structs_arena_allocator_1a7204adb68a11bb186e8285e8116e9b4a)`(const char * tracker,size_t size)` <a id="structs_arena_allocator_1a7204adb68a11bb186e8285e8116e9b4a"></a>
+
+Constructor for the arena allocator.
+
+This constructor initializes the arena allocator with a specified size and tracker string. It allocates memory for the arena and initializes the offset to zero.
+
+#### `public inline  `[`~sArenaAllocator`](#structs_arena_allocator_1ab8d4acf8fcb0308c687123ded0568760)`()` <a id="structs_arena_allocator_1ab8d4acf8fcb0308c687123ded0568760"></a>
+
+Destructor for the arena allocator.
+
+This destructor frees the allocated memory for the arena. It is called when the arena allocator goes out of scope or is deleted.
+
+#### `public inline void * `[`allocate`](#structs_arena_allocator_1ad6b2e29bc93de2b67be5a21ac75be6f0)`(size_t bytes)` <a id="structs_arena_allocator_1ad6b2e29bc93de2b67be5a21ac75be6f0"></a>
+
+Allocates memory from the arena.
+
+#### Parameters
+* `bytes` The number of bytes to allocate. 
+
+#### Returns
+Pointer to the allocated memory, or nullptr if there is not enough space.
+
+#### `public inline void `[`reset`](#structs_arena_allocator_1a9ca86257e968d555a2035f9e1b475c28)`()` <a id="structs_arena_allocator_1a9ca86257e968d555a2035f9e1b475c28"></a>
+
+Resets the arena allocator.
+
+This function resets the offset to zero, effectively freeing all allocated memory.
+
+#### `public template<>`  <br/>`inline T * `[`allocate`](#structs_arena_allocator_1a28ccc94c5d063006c0ce38bd9b6a0ebf)`()` <a id="structs_arena_allocator_1a28ccc94c5d063006c0ce38bd9b6a0ebf"></a>
+
+Allocates memory for a type T.
+
+This function allocates memory for a type T and returns a pointer to the allocated memory. It is a template function that can be used for any type.
+
+#### Parameters
+* `T` The type to allocate memory for. 
+
+#### Returns
+Pointer to the allocated memory for type T.
+
+#### `public template<>`  <br/>`inline T * `[`allocateArray`](#structs_arena_allocator_1a67eb3ab5ee1fb7da52403eab6693d8fc)`(size_t count)` <a id="structs_arena_allocator_1a67eb3ab5ee1fb7da52403eab6693d8fc"></a>
+
+Allocates memory for an array of type T.
+
+This function allocates memory for an array of type T and returns a pointer to the allocated memory. It is a template function that can be used for any type.
+
+#### Parameters
+* `T` the type to allocate memory for. 
+
+#### Parameters
+* `count` The number of elements to allocate memory for. 
+
+#### Returns
+Pointer to the allocated memory for an array of type T.
+
+#### `public inline void `[`resize`](#structs_arena_allocator_1af7fbd0acd6cd9d6e26ecf8b5d02cd484)`(size_t newSize)` <a id="structs_arena_allocator_1af7fbd0acd6cd9d6e26ecf8b5d02cd484"></a>
+
+Resizes the arena allocator.
+
+This function should be avoided, but if you run out of room, you can create more.
 
 # struct `sAudioClip` <a id="structs_audio_clip"></a>
 
