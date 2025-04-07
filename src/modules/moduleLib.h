@@ -15,6 +15,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
 
 #ifndef SPECTRAL_PLATFORM
 #define SPECTRAL_PLATFORM "unknown"
@@ -339,12 +340,23 @@ std::vector<std::string> getModuleImpls(const char* ident) {
             std::string name = entry.path().stem().string();
             if (name.find(ident) != std::string::npos) {
                 out.push_back(name);
-                printf("Module %s found\n", name.c_str());
             }
         }
     }
     return out;
 }
+
+// a module that depends on windows that have the "gl" tag would have the following line in the submod def area of the file (the line starting with !dep makes it a dep instead of a submod):
+// !dep win gl
+// a module that depends on windows with either "noapi" OR "dx" would have this:
+// !dep win noapi,dx
+// a module that depends on windows with "noapi" AND "dx" would have this:
+// !dep win noapi
+// !dep win dx
+// a module that depends on windows with "gl" AND shaders with "gl":
+// !dep win gl
+// !dep shdr gl
+
 
 struct sModuleDef {
     std::string mod;
@@ -357,7 +369,41 @@ struct sModuleDef {
     };
 
     std::vector<sSubModuleDef> submods;
+    struct sModuleDep {
+        std::string mod;
+        std::vector<std::string> tags;
+    };
+
+    std::vector<sModuleDep> deps;
 };
+
+std::ostream& operator<<(std::ostream& os, const sModuleDef::sSubModuleDef& submod) {
+    os << "submod " << submod.mod << " " << submod.impl << ": ";
+    for (const auto& tag : submod.tags) {
+        os << tag << " ";
+    }
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const sModuleDef::sModuleDep& dep) {
+    os << "dep " << dep.mod << ": ";
+    for (const auto& tag : dep.tags) {
+        os << tag << " ";
+    }
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const sModuleDef& def) {
+    os << "mod " << def.mod << " " << def.impl << "\n";
+    os << "dispname " << def.dispname << "\n";
+    for (const auto& submod : def.submods) {
+        os << submod << "\n";
+    }
+    for (const auto& dep : def.deps) {
+        os << dep << "\n";
+    }
+    return os;
+}
 
 sModuleDef getModuleDef(const char* filepath) {
     // example input:
@@ -412,6 +458,18 @@ sModuleDef getModuleDef(const char* filepath) {
             end = tags.find(",", start);
         }
         submod.tags.push_back(tags.substr(start));
+        if (submod.mod == "!dep") {
+            // this is a dependency, not a submodule
+            sModuleDef::sModuleDep dep;
+            dep.mod = submod.impl;
+            if (submod.tags.size() == 0) {
+                printf("Error: Invalid dependency definition %s\n", line.c_str());
+                continue;
+            }
+            dep.tags = submod.tags;
+            def.deps.push_back(dep);
+            continue;
+        }
         def.submods.push_back(submod);
     }
     return def;
@@ -426,6 +484,58 @@ std::vector<sModuleDef> getModuleDefs() {
             if (!def.mod.empty()) {
                 out.push_back(def);
             }
+        }
+    }
+    return out;
+}
+
+std::vector<sModuleDef> reduceDependencies(const std::vector<sModuleDef>& defs, const std::string& mod, const std::string& impl) {
+    // remove any defs that contain a dependency that is the same module as the given one, but isn't the same selection/implementaiton
+    // we will first find the sModuledef for the given mod
+    
+    sModuleDef selectedDef;
+    for (const auto& def : defs) {
+        if (def.mod == mod && def.impl == impl) {
+            selectedDef = def;
+            break;
+        }
+    }
+    if (selectedDef.mod.empty()) {
+        printf("Error: Module %s.%s not found\n", mod.c_str(), impl.c_str());
+        return {};
+    }
+    // now we will remove any defs that have a dependency that is the same module as the given one, but isn't the same selection/implementation
+    std::vector<sModuleDef> out;
+    for (const auto& def : defs) {
+        if (def.mod == selectedDef.mod) {
+            out.push_back(def);
+            continue;
+        }
+        bool valid = true;
+        for (const auto& dep : selectedDef.deps) {
+            if (dep.mod == def.mod) {
+                // check if the tags match
+                for (const auto& tag : dep.tags) {
+                    for (const auto& submods : def.submods) {
+                        if (std::find(submods.tags.begin(), submods.tags.end(), tag) != submods.tags.end()) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (!valid) {
+                        break;
+                    }
+                }
+                if (!valid) {
+                    break;
+                }
+            }
+            if (!valid) {
+                break;
+            }
+        }
+        if (valid) {
+            out.push_back(def);
         }
     }
     return out;
