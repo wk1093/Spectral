@@ -506,23 +506,31 @@ std::vector<sModuleDef> reduceDependencies(const std::vector<sModuleDef>& defs, 
     }
     // now we will remove any defs that have a dependency that is the same module as the given one, but isn't the same selection/implementation
     std::vector<sModuleDef> out;
-    for (const auto& def : defs) {
-        if (def.mod == selectedDef.mod) {
-            out.push_back(def);
+    out.push_back(selectedDef);
+    for (const auto& moduleDefinition : defs) {
+        if (moduleDefinition.mod == selectedDef.mod) {
             continue;
         }
         bool valid = true;
         for (const auto& dep : selectedDef.deps) {
-            if (dep.mod == def.mod) {
+            if (dep.mod == moduleDefinition.mod) {
+                valid = false;
                 // check if the tags match
                 for (const auto& tag : dep.tags) {
-                    for (const auto& submods : def.submods) {
-                        if (std::find(submods.tags.begin(), submods.tags.end(), tag) != submods.tags.end()) {
-                            valid = false;
+                    bool found = false;
+                    for (const auto& submods : moduleDefinition.submods) {
+                        for (const auto& submodTag : submods.tags) {
+                            if (submodTag == tag) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found) {
                             break;
                         }
                     }
-                    if (!valid) {
+                    if (found) {
+                        valid = true;
                         break;
                     }
                 }
@@ -535,7 +543,7 @@ std::vector<sModuleDef> reduceDependencies(const std::vector<sModuleDef>& defs, 
             }
         }
         if (valid) {
-            out.push_back(def);
+            out.push_back(moduleDefinition);
         }
     }
     return out;
