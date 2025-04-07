@@ -489,7 +489,7 @@ std::vector<sModuleDef> getModuleDefs() {
     return out;
 }
 
-std::vector<sModuleDef> reduceDependencies(const std::vector<sModuleDef>& defs, const std::string& mod, const std::string& impl) {
+std::vector<sModuleDef::sSubModuleDef> reduceDependencies(const std::vector<sModuleDef>& defs, const std::string& mod, const std::string& impl) {
     // remove any defs that contain a dependency that is the same module as the given one, but isn't the same selection/implementaiton
     // we will first find the sModuledef for the given mod
     
@@ -505,45 +505,58 @@ std::vector<sModuleDef> reduceDependencies(const std::vector<sModuleDef>& defs, 
         return {};
     }
     // now we will remove any defs that have a dependency that is the same module as the given one, but isn't the same selection/implementation
-    std::vector<sModuleDef> out;
-    out.push_back(selectedDef);
+    std::vector<sModuleDef::sSubModuleDef> out;
+    if (selectedDef.submods.size() != 1) {
+        printf("Error: Module %s.%s doesn't have exactly 1 submodule\n", mod.c_str(), impl.c_str());
+        return out;
+    }
+    out.push_back(selectedDef.submods[0]);
     for (const auto& moduleDefinition : defs) {
         if (moduleDefinition.mod == selectedDef.mod) {
             continue;
         }
-        bool valid = true;
+        bool add = true;
         for (const auto& dep : selectedDef.deps) {
             if (dep.mod == moduleDefinition.mod) {
-                valid = false;
-                // check if the tags match
-                for (const auto& tag : dep.tags) {
+                add = false;
+                for (const auto& submods : moduleDefinition.submods) {
                     bool found = false;
-                    for (const auto& submods : moduleDefinition.submods) {
+                    for (const auto& tag : dep.tags) {
                         for (const auto& submodTag : submods.tags) {
                             if (submodTag == tag) {
                                 found = true;
                                 break;
                             }
                         }
-                        if (found) {
-                            break;
-                        }
                     }
                     if (found) {
-                        valid = true;
-                        break;
+                        out.push_back(submods);
                     }
                 }
-                if (!valid) {
-                    break;
-                }
-            }
-            if (!valid) {
-                break;
             }
         }
-        if (valid) {
-            out.push_back(moduleDefinition);
+        if (add) {
+            for (const auto& submod : moduleDefinition.submods) {
+                out.push_back(submod);
+            }
+        }
+    }
+    return out;
+}
+
+std::map<std::string, std::string> getModuleMap(const std::vector<sModuleDef::sSubModuleDef>& defs) {
+    std::map<std::string, std::string> out;
+    for (const auto& def : defs) {
+        out[def.mod] = def.impl;
+    }
+    return out;
+}
+
+std::vector<sModuleDef> filterModules(const std::vector<sModuleDef>& mods, const char* type) {
+    std::vector<sModuleDef> out;
+    for (const auto& mod : mods) {
+        if (mod.mod == type) {
+            out.push_back(mod);
         }
     }
     return out;

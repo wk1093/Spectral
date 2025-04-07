@@ -84,4 +84,9 @@ public:
         internal_compile = (shader::Compile)lib.getSymbol("compile");
         internal_createShader = (shader::CreateShader)lib.getSymbol("createShader");
     }
+
+    inline explicit ShaderModule(const char* dynlib) : Module(dynlib, "shdr") {
+        internal_compile = (shader::Compile)lib.getSymbol("compile");
+        internal_createShader = (shader::CreateShader)lib.getSymbol("createShader");
+    }
 };
