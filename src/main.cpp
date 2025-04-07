@@ -43,8 +43,13 @@ int main(int argc, char** argv) {
             return 1;
         }
 
+        auto mods_sub = getSubModules(mods);
 
-        auto reduced = reduceDependencies(mods, "gfx", sel_gfx);
+        auto reduced = reduceDependencies(mods_sub, findSubDef(mods_sub, "gfx", sel_gfx));
+
+        for (auto& mod : reduced) {
+            std::cout << "Module: " << mod;
+        }
 
         std::vector<std::string> mod_types2;
 

@@ -362,30 +362,23 @@ struct sModuleDef {
     std::string mod;
     std::string impl;
     std::string dispname;
-    struct sSubModuleDef {
-        std::string mod;
-        std::string impl;
-        std::vector<std::string> tags;
-    };
 
-    std::vector<sSubModuleDef> submods;
     struct sModuleDep {
         std::string mod;
         std::vector<std::string> tags;
     };
 
-    std::vector<sModuleDep> deps;
+    struct sSubModuleDef {
+        std::string mod;
+        std::string impl;
+        std::vector<std::string> tags;
+        std::vector<sModuleDep> deps;
+    };
+
+    std::vector<sSubModuleDef> submods;
 };
 
-std::ostream& operator<<(std::ostream& os, const sModuleDef::sSubModuleDef& submod) {
-    os << "submod " << submod.mod << " " << submod.impl << ": ";
-    for (const auto& tag : submod.tags) {
-        os << tag << " ";
-    }
-    return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const sModuleDef::sModuleDep& dep) {
+inline std::ostream& operator<<(std::ostream& os, const sModuleDef::sModuleDep& dep) {
     os << "dep " << dep.mod << ": ";
     for (const auto& tag : dep.tags) {
         os << tag << " ";
@@ -393,19 +386,29 @@ std::ostream& operator<<(std::ostream& os, const sModuleDef::sModuleDep& dep) {
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const sModuleDef& def) {
+inline std::ostream& operator<<(std::ostream& os, const sModuleDef::sSubModuleDef& submod) {
+    os << "submod " << submod.mod << " " << submod.impl << ": ";
+    for (const auto& tag : submod.tags) {
+        os << tag << " ";
+    }
+    os << ", deps: ";
+    for (const auto& dep : submod.deps) {
+        os << dep << " ";
+    }
+    os << "\n";
+    return os;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const sModuleDef& def) {
     os << "mod " << def.mod << " " << def.impl << "\n";
     os << "dispname " << def.dispname << "\n";
     for (const auto& submod : def.submods) {
         os << submod << "\n";
     }
-    for (const auto& dep : def.deps) {
-        os << dep << "\n";
-    }
     return os;
 }
 
-sModuleDef getModuleDef(const char* filepath) {
+inline sModuleDef getModuleDef(const char* filepath) {
     // example input:
     // v1 // version
     // win glfw // mod impl
@@ -467,7 +470,7 @@ sModuleDef getModuleDef(const char* filepath) {
                 continue;
             }
             dep.tags = submod.tags;
-            def.deps.push_back(dep);
+            def.submods[def.submods.size() - 1].deps.push_back(dep);
             continue;
         }
         def.submods.push_back(submod);
@@ -475,7 +478,7 @@ sModuleDef getModuleDef(const char* filepath) {
     return def;
 }
 
-std::vector<sModuleDef> getModuleDefs() {
+inline std::vector<sModuleDef> getModuleDefs() {
     std::vector<sModuleDef> out;
     std::filesystem::path p = getexedir() / "modules/defs";
     for (auto& entry : std::filesystem::recursive_directory_iterator(p)) {
@@ -489,62 +492,74 @@ std::vector<sModuleDef> getModuleDefs() {
     return out;
 }
 
-std::vector<sModuleDef::sSubModuleDef> reduceDependencies(const std::vector<sModuleDef>& defs, const std::string& mod, const std::string& impl) {
-    // remove any defs that contain a dependency that is the same module as the given one, but isn't the same selection/implementaiton
-    // we will first find the sModuledef for the given mod
-    
-    sModuleDef selectedDef;
-    for (const auto& def : defs) {
-        if (def.mod == mod && def.impl == impl) {
-            selectedDef = def;
-            break;
-        }
-    }
-    if (selectedDef.mod.empty()) {
-        printf("Error: Module %s.%s not found\n", mod.c_str(), impl.c_str());
-        return {};
-    }
-    // now we will remove any defs that have a dependency that is the same module as the given one, but isn't the same selection/implementation
+inline std::vector<sModuleDef::sSubModuleDef> getSubModules(const std::vector<sModuleDef>& mods) {
     std::vector<sModuleDef::sSubModuleDef> out;
-    if (selectedDef.submods.size() != 1) {
-        printf("Error: Module %s.%s doesn't have exactly 1 submodule\n", mod.c_str(), impl.c_str());
-        return out;
-    }
-    out.push_back(selectedDef.submods[0]);
-    for (const auto& moduleDefinition : defs) {
-        if (moduleDefinition.mod == selectedDef.mod) {
-            continue;
-        }
-        bool add = true;
-        for (const auto& dep : selectedDef.deps) {
-            if (dep.mod == moduleDefinition.mod) {
-                add = false;
-                for (const auto& submods : moduleDefinition.submods) {
-                    bool found = false;
-                    for (const auto& tag : dep.tags) {
-                        for (const auto& submodTag : submods.tags) {
-                            if (submodTag == tag) {
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (found) {
-                        out.push_back(submods);
-                    }
-                }
-            }
-        }
-        if (add) {
-            for (const auto& submod : moduleDefinition.submods) {
-                out.push_back(submod);
-            }
+    for (const auto& mod : mods) {
+        for (const auto& submod : mod.submods) {
+            out.push_back(submod);
         }
     }
     return out;
 }
 
-std::map<std::string, std::string> getModuleMap(const std::vector<sModuleDef::sSubModuleDef>& defs) {
+inline sModuleDef::sSubModuleDef findSubDef(const std::vector<sModuleDef::sSubModuleDef>& defs, const char* mod, const char* impl) {
+    for (const auto& submod : defs) {
+        if (submod.mod == mod && submod.impl == impl) {
+            return submod;
+        }
+    }
+    return sModuleDef::sSubModuleDef();
+}
+
+inline std::vector<sModuleDef::sSubModuleDef> reduceDependencies(const std::vector<sModuleDef::sSubModuleDef>& defs, sModuleDef::sSubModuleDef selectedDef) {
+    printf("Reducing dependencies for %s %s\n", selectedDef.mod.c_str(), selectedDef.impl.c_str());
+    // remove any defs that contain a dependency that is the same module as the given one, but isn't the same selection/implementaiton
+    // we will first find the sModuledef for the given mod
+
+    // now we will remove any defs that have a dependency that is the same module as the given one, but isn't the same selection/implementation
+    std::vector<sModuleDef::sSubModuleDef> out;
+    std::vector<sModuleDef::sSubModuleDef> explicitlyDependedOn;
+    out.push_back(selectedDef);
+    for (const auto& moduleDefinition : defs) {
+        if (moduleDefinition.mod == selectedDef.mod) {
+            continue;
+        }
+        bool foundAll = true;
+        bool wasDep = false;
+        for (const auto& dep : selectedDef.deps) {
+            if (dep.mod == moduleDefinition.mod) {
+                bool found = false;
+                for (const auto& tag : moduleDefinition.tags) {
+                    for (const auto& submodTag : dep.tags) {
+                        if (submodTag == tag) {
+                            found = true;       
+                            wasDep = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found) {
+                    foundAll = false;
+                }
+            }
+        }
+        if (foundAll) {
+            out.push_back(moduleDefinition);
+            if (wasDep) {
+                printf("Found dependency %s %s\n", moduleDefinition.mod.c_str(), moduleDefinition.impl.c_str());
+                explicitlyDependedOn.push_back(moduleDefinition);
+            }
+        }
+    }
+    // all explicitly depended on modules should also be reduced
+    for (const auto& moduleDefinition : explicitlyDependedOn) {
+        out = reduceDependencies(out, moduleDefinition);
+    }
+
+    return out;
+}
+
+inline std::map<std::string, std::string> getModuleMap(const std::vector<sModuleDef::sSubModuleDef>& defs) {
     std::map<std::string, std::string> out;
     for (const auto& def : defs) {
         out[def.mod] = def.impl;
@@ -552,7 +567,7 @@ std::map<std::string, std::string> getModuleMap(const std::vector<sModuleDef::sS
     return out;
 }
 
-std::vector<sModuleDef> filterModules(const std::vector<sModuleDef>& mods, const char* type) {
+inline std::vector<sModuleDef> filterModules(const std::vector<sModuleDef>& mods, const char* type) {
     std::vector<sModuleDef> out;
     for (const auto& mod : mods) {
         if (mod.mod == type) {
