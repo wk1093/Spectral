@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
         std::filesystem::create_directories(engine_dir);
     }
     std::filesystem::path module_config = getexedir() / "engine" / "module_config.splcfg";
-    std::map<std::string, std::string> map;
+    std::unordered_map<std::string, std::string> map;
     if (!std::filesystem::exists(module_config) || show_config) {
         auto mods = getModuleDefs();
 
@@ -43,13 +43,10 @@ int main(int argc, char** argv) {
             return 1;
         }
 
+        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
         auto mods_sub = getSubModules(mods);
-
         auto reduced = reduceDependencies(mods_sub, findSubDef(mods_sub, "gfx", sel_gfx));
-
-        for (auto& mod : reduced) {
-            std::cout << "Module: " << mod;
-        }
 
         std::vector<std::string> mod_types2;
 
@@ -68,6 +65,11 @@ int main(int argc, char** argv) {
         }
 
         map = getModuleMap(reduced);
+
+        std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+        // nanoseconds
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+        std::cout << "Module selection took " << duration << "us" << std::endl;
 
         std::ofstream file(module_config, std::ios::out | std::ios::trunc);
         if (!file) {

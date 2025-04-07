@@ -15,7 +15,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 #ifndef SPECTRAL_PLATFORM
 #define SPECTRAL_PLATFORM "unknown"
@@ -512,7 +512,6 @@ inline sModuleDef::sSubModuleDef findSubDef(const std::vector<sModuleDef::sSubMo
 }
 
 inline std::vector<sModuleDef::sSubModuleDef> reduceDependencies(const std::vector<sModuleDef::sSubModuleDef>& defs, sModuleDef::sSubModuleDef selectedDef) {
-    printf("Reducing dependencies for %s %s\n", selectedDef.mod.c_str(), selectedDef.impl.c_str());
     // remove any defs that contain a dependency that is the same module as the given one, but isn't the same selection/implementaiton
     // we will first find the sModuledef for the given mod
 
@@ -546,7 +545,6 @@ inline std::vector<sModuleDef::sSubModuleDef> reduceDependencies(const std::vect
         if (foundAll) {
             out.push_back(moduleDefinition);
             if (wasDep) {
-                printf("Found dependency %s %s\n", moduleDefinition.mod.c_str(), moduleDefinition.impl.c_str());
                 explicitlyDependedOn.push_back(moduleDefinition);
             }
         }
@@ -559,8 +557,8 @@ inline std::vector<sModuleDef::sSubModuleDef> reduceDependencies(const std::vect
     return out;
 }
 
-inline std::map<std::string, std::string> getModuleMap(const std::vector<sModuleDef::sSubModuleDef>& defs) {
-    std::map<std::string, std::string> out;
+inline std::unordered_map<std::string, std::string> getModuleMap(const std::vector<sModuleDef::sSubModuleDef>& defs) {
+    std::unordered_map<std::string, std::string> out;
     for (const auto& def : defs) {
         out[def.mod] = def.impl;
     }
