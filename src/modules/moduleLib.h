@@ -574,3 +574,32 @@ inline std::vector<sModuleDef> filterModules(const std::vector<sModuleDef>& mods
     }
     return out;
 }
+
+inline std::vector<sModuleDef::sSubModuleDef> filterSubModules(const std::vector<sModuleDef::sSubModuleDef>& mods, const char* type) {
+    std::vector<sModuleDef::sSubModuleDef> out;
+    for (const auto& mod : mods) {
+        if (mod.mod == type) {
+            out.push_back(mod);
+        }
+    }
+    return out;
+}
+
+inline sModuleDef createDefFromSubDef(const sModuleDef::sSubModuleDef& submod) {
+    sModuleDef def;
+    def.mod = submod.mod;
+    def.impl = submod.impl;
+    def.submods.push_back(submod);
+    def.dispname = submod.mod + " " + submod.impl;
+    return def;
+}
+
+inline std::vector<sModuleDef> getSubModuleDefs(const std::vector<sModuleDef::sSubModuleDef>& mods) {
+    std::vector<sModuleDef> out;
+    for (const auto& mod : mods) {
+        sModuleDef def = createDefFromSubDef(mod);
+        out.push_back(def);
+    }
+    
+    return out;
+}

@@ -4,6 +4,53 @@
 
 #include <iostream>
 
+std::vector<std::string> getModuleTypesResolve(std::vector<sModuleDef::sSubModuleDef>& mods) {
+    std::vector<std::string> mod_types;
+    for (auto& mod : mods) {
+        if (std::find(mod_types.begin(), mod_types.end(), mod.mod) == mod_types.end()) {
+            if (!mod.mod.empty())
+                mod_types.push_back(mod.mod);
+        }
+        // check if the module is is the only one of its type
+        auto it = std::find_if(mods.begin(), mods.end(), [&](const sModuleDef::sSubModuleDef& m) {
+            return m.mod == mod.mod && m.impl != mod.impl;
+        });
+        if (it == mods.end()) {
+            // if the module is not in the list, add it to the list of modules
+            continue;
+        }
+        std::cout << "Duplicate module found: " << mod.mod << " " << mod.impl << std::endl;
+
+        // // use sSelectModules to resolve the conflict
+        // char* sel_impl = nullptr;
+        // auto filtered = filterSubModules(mods, mod.mod.c_str());
+        // auto defs = getSubModuleDefs(filtered);
+
+        // sSelectModules("Duplicate module found, select one to use", defs, &sel_impl);
+
+        // if (sel_impl == nullptr) {
+        //     std::cout << "No module selected" << std::endl;
+        //     return mod_types;
+        // }
+        // while (true) {
+        //     // find the selected module in the list of modules
+        //     auto it = std::find_if(mods.begin(), mods.end(), [&](const sModuleDef::sSubModuleDef& m) {
+        //         return m.mod == mod.mod && m.impl != sel_impl;
+        //     });
+        //     if (it != mods.end()) {
+        //         // remove the selected module from the list of modules
+        //         mods.erase(it);
+        //     } else {
+        //         break;
+        //     }
+        // }
+
+        printf("DUPLICATE RESOLVES WIP\n");
+        
+    }
+    return mod_types;
+}
+
 int main(int argc, char** argv) {
     bool show_config = false;
     for (int i = 1; i < argc; i++) {
@@ -36,7 +83,7 @@ int main(int argc, char** argv) {
         }
 
         char* sel_gfx = nullptr;
-        sSelectModules(filterModules(mods, "gfx"), &sel_gfx);
+        sSelectModules("Select Graphics Module:", filterModules(mods, "gfx"), &sel_gfx);
 
         if (sel_gfx == nullptr) {
             std::cout << "No graphics module selected" << std::endl;
@@ -50,14 +97,7 @@ int main(int argc, char** argv) {
 
         std::vector<std::string> mod_types2;
 
-        for (auto& mod : reduced) {
-            if (std::find(mod_types2.begin(), mod_types2.end(), mod.mod) == mod_types2.end()) {
-                mod_types2.push_back(mod.mod);
-            } else {
-                std::cout << "Duplicate module found: " << mod.mod << " " << mod.impl << std::endl;
-                return 1;
-            }
-        }
+        mod_types2 = getModuleTypesResolve(reduced);
 
         if (mod_types2.size() != mod_types.size()) {
             std::cout << "Lost some modules in the reduction" << std::endl;
