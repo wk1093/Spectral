@@ -6,7 +6,7 @@
 #pragma once
 #include "moduleLib.h"
 
-#include "math/module.h"
+#include "util/math.h"
 #include "gfx/module.h"
 #include "shdr/module.h"
 #include "asset.h"

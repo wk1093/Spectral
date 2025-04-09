@@ -1,5 +1,5 @@
 #include "game.h"
-#include "math/module.h" // doesn't need to be loaded, because all the functions are inlined and the module is header-only
+#include "util/math.h" // doesn't need to be loaded, because all the functions are inlined and the module is header-only
 
 #define IUI_IMPLEMENTATION
 #include "iui/module.h"

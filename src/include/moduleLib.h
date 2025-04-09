@@ -33,7 +33,7 @@
 
 #include <cstring>
 
-#include "arena.h"
+#include "util/arena.h"
 
 /**
  * @brief Get the path to the current executable.
