@@ -35,6 +35,9 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
+include_directories(${CMAKE_SOURCE_DIR}/src/include)
+include_directories(${CMAKE_SOURCE_DIR}/src/modules)
+
 # the platform is determined by the CMAKE_SYSTEM_NAME variable
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(SPECTRAL_PLATFORM "win")

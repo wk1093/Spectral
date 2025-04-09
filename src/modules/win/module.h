@@ -4,7 +4,7 @@
  */
 
 #pragma once
-#include "../moduleLib.h"
+#include "moduleLib.h"
 
 #include <stdio.h>
 #include <chrono>

@@ -19,5 +19,5 @@ target_link_libraries(Spectral SpectralInterface)
 set_target_properties(Spectral PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set_target_properties(Spectral PROPERTIES SUFFIX ".${SPECTRAL_FULLPLAT}${CMAKE_EXECUTABLE_SUFFIX}")
 target_compile_definitions(Spectral PUBLIC "SPECTRAL_PLATFORM=\"${SPECTRAL_FULLPLAT}\"")
-# set SCRIPT_INCLUDE_DIR to ../include define
+target_include_directories(Spectral PUBLIC ${CMAKE_SOURCE_DIR}/src/include ${CMAKE_SOURCE_DIR}/src/modules)
 

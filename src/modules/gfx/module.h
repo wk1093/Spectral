@@ -4,9 +4,9 @@
  */
 
 #pragma once
-#include "../moduleLib.h"
+#include "moduleLib.h"
 
-#include "../win/module.h"
+#include "win/module.h"
 
 #include <stdio.h>
 #include <initializer_list>

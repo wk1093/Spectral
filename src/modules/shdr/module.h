@@ -4,9 +4,9 @@
  */
 
 #pragma once
-#include "../moduleLib.h"
+#include "moduleLib.h"
 
-#include "../gfx/module.h"
+#include "gfx/module.h"
 
 #include <stdio.h>
 

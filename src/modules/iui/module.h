@@ -5,10 +5,10 @@
 #endif
 #include "clay.h"
 
-#include "../gfx/module.h"
-#include "../text/module.h"
-#include "../shdr/module.h"
-#include "../asset.h"
+#include "gfx/module.h"
+#include "text/module.h"
+#include "shdr/module.h"
+#include "asset.h"
 
 #define CLAY_COLOR_TO_VEC4(color) {(color).r / 255.0f, (color).g / 255.0f, (color).b / 255.0f, (color).a / 255.0f}
 

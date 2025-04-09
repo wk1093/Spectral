@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "../moduleLib.h"
-#include "../gfx/module.h"
+#include "moduleLib.h"
+#include "gfx/module.h"
 
 /// @cond DOXYGEN_OMIT
 namespace texload {

@@ -1,5 +1,5 @@
 #pragma once
-#include "../moduleLib.h"
+#include "moduleLib.h"
 
 struct sAudioClip {
     void* internal;

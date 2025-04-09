@@ -1,5 +1,5 @@
-#include "modules/game.h"
-#include "modules/sel/module.h"
+#include "game.h"
+#include "sel/module.h"
 // #include "modules/aud/module.h"
 
 #include <iostream>

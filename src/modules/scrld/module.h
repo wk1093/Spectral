@@ -5,7 +5,7 @@
 // everything that is "language-specfic" is in the dll file, and this file is the interface to that
 
 
-#include "../moduleLib.h"
+#include "moduleLib.h"
 #include <string.h>
 #include <stdlib.h>
 

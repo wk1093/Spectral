@@ -4,12 +4,12 @@
  */
 
 #pragma once
-#include "../moduleLib.h"
+#include "moduleLib.h"
 
-#include "../math/module.h"
-#include "../gfx/module.h"
-#include "../shdr/module.h"
-#include "../asset.h"
+#include "math/module.h"
+#include "gfx/module.h"
+#include "shdr/module.h"
+#include "asset.h"
 
 /**
  * @brief Text rendering module class.
