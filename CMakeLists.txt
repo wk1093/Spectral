@@ -10,10 +10,21 @@ include_directories(src/include)
 add_subdirectory(src/modules)
 add_subdirectory(src/game)
 
+add_executable(SpectralEngine src/engine.cpp)
+add_dependencies(SpectralEngine SpectralModules)
+add_dependencies(SpectralEngine SpectralGame)
+target_link_libraries(SpectralEngine SpectralInterface)
+
+set_target_properties(SpectralEngine PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set_target_properties(SpectralEngine PROPERTIES SUFFIX ".${SPECTRAL_FULLPLAT}${CMAKE_EXECUTABLE_SUFFIX}")
+target_compile_definitions(SpectralEngine PUBLIC "SPECTRAL_PLATFORM=\"${SPECTRAL_FULLPLAT}\"")
+target_include_directories(SpectralEngine PUBLIC ${CMAKE_SOURCE_DIR}/src/include ${CMAKE_SOURCE_DIR}/src/modules)
+
+set(CMAKE_EXE_NAME "SpectralEngine.${SPECTRAL_FULLPLAT}${CMAKE_EXECUTABLE_SUFFIX}")
 add_executable(Spectral src/main.cpp)
+add_compile_definitions(Spectral PUBLIC "SPECTRALENGINE_EXE_NAME=\"${CMAKE_EXE_NAME}\"")
 # add ./lib to the RPATH
-add_dependencies(Spectral SpectralModules)
-add_dependencies(Spectral SpectralGame)
+add_dependencies(Spectral SpectralEngine)
 target_link_libraries(Spectral SpectralInterface)
 
 set_target_properties(Spectral PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)

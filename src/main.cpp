@@ -1,169 +1,142 @@
-#include "game.h"
-#include "util/sel.h"
-// #include "modules/aud/module.h"
+#include <stdio.h>
 
-#include <iostream>
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+#endif
 
-std::vector<std::string> getModuleTypesResolve(std::vector<sModuleDef::sSubModuleDef>& mods) {
-    std::vector<std::string> mod_types;
-    for (auto& mod : mods) {
-        if (std::find(mod_types.begin(), mod_types.end(), mod.mod) == mod_types.end()) {
-            if (!mod.mod.empty())
-                mod_types.push_back(mod.mod);
-        }
-        // check if the module is is the only one of its type
-        auto it = std::find_if(mods.begin(), mods.end(), [&](const sModuleDef::sSubModuleDef& m) {
-            return m.mod == mod.mod && m.impl != mod.impl;
-        });
-        if (it == mods.end()) {
-            // if the module is not in the list, add it to the list of modules
-            continue;
-        }
-        std::cout << "Duplicate module found: " << mod.mod << " " << mod.impl << std::endl;
 
-        // // use sSelectModules to resolve the conflict
-        // char* sel_impl = nullptr;
-        // auto filtered = filterSubModules(mods, mod.mod.c_str());
-        // auto defs = getSubModuleDefs(filtered);
+#include "moduleLib.h"
 
-        // sSelectModules("Duplicate module found, select one to use", defs, &sel_impl);
+struct ExecutableReturnInfo {
+    int exit_code;
+    std::string log;
+};
 
-        // if (sel_impl == nullptr) {
-        //     std::cout << "No module selected" << std::endl;
-        //     return mod_types;
-        // }
-        // while (true) {
-        //     // find the selected module in the list of modules
-        //     auto it = std::find_if(mods.begin(), mods.end(), [&](const sModuleDef::sSubModuleDef& m) {
-        //         return m.mod == mod.mod && m.impl != sel_impl;
-        //     });
-        //     if (it != mods.end()) {
-        //         // remove the selected module from the list of modules
-        //         mods.erase(it);
-        //     } else {
-        //         break;
-        //     }
-        // }
-
-        printf("DUPLICATE RESOLVES WIP\n");
-        
+ExecutableReturnInfo run_executable(const std::string& path, int argc, char* argv[]) {
+    ExecutableReturnInfo result = { 0, "" };
+#ifdef WIN32
+    // Windows specific code to run the executable and capture output
+    // FILE* pipe = _popen((path + " 2>&1").c_str(), "r");
+    std::string command = path + " ";
+    for (int i = 1; i < argc; ++i) {
+        command += argv[i];
+        command += " ";
     }
-    return mod_types;
+    command += "2>&1";
+    FILE* pipe = _popen(command.c_str(), "r");
+    if (!pipe) {
+        perror("popen");
+        return result;
+    }
+
+    char buffer[4096];
+    while (fgets(buffer, sizeof(buffer), pipe) != NULL) {
+        result.log += buffer;
+    }
+
+    result.exit_code = _pclose(pipe);
+    if (result.exit_code == -1) {
+        perror("pclose");
+        return result;
+    }
+#else
+    // TODO: test linux code
+    // Linux specific code to run the executable and capture output
+    std::string command = path + " ";
+    for (int i = 1; i < argc; ++i) {
+        command += argv[i];
+        command += " ";
+    }
+
+    int pipefd[2];
+    if (pipe(pipefd) == -1) {
+        perror("pipe");
+        return result;
+    }
+
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("fork");
+        return result;
+    } else if (pid == 0) { // Child process
+        dup2(pipefd[1], STDOUT_FILENO); // Redirect stdout to pipe
+        dup2(pipefd[1], STDERR_FILENO); // Redirect stderr to pipe
+        close(pipefd[0]); // Close read end of the pipe in child
+        execl(path.c_str(), path.c_str(), NULL); // Execute the program
+        perror("execl"); // If execl fails
+        exit(1);
+    } else { // Parent process
+        close(pipefd[1]); // Close write end of the pipe in parent
+
+        char buffer[4096];
+        ssize_t bytesRead;
+        while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer) - 1)) > 0) {
+            buffer[bytesRead] = '\0'; // Null-terminate the string
+            result.log += buffer;
+        }
+
+        close(pipefd[0]); // Close read end of the pipe in parent
+
+        int status;
+        waitpid(pid, &status, 0); // Wait for child process to finish
+        if (WIFEXITED(status)) {
+            result.exit_code = WEXITSTATUS(status);
+        } else {
+            result.exit_code = -1; // Child process did not terminate normally
+            perror("waitpid");
+        }
+    }
+#endif
+    return result;
 }
 
-int main(int argc, char** argv) {
-    bool show_config = false;
-    for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
-            std::cout << "Usage: " << argv[0] << " [options]" << std::endl;
-            std::cout << "Options:" << std::endl;
-            std::cout << "  --help, -h       Show this help message" << std::endl;
-            std::cout << "  --config, -c     Show the startup configuration" << std::endl;
-            return 0;
-        } else if (strcmp(argv[i], "--config") == 0 || strcmp(argv[i], "-c") == 0) {
-            show_config = true;
-        }
+void message_box(const std::string& title, const std::string& message) {
+#ifdef WIN32
+    MessageBoxA(NULL, message.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
+#else
+    // for now, we assume linux users know how to read a log file.
+    // in the future, we might want to use a library like GTK or Qt to show a message box.
+    // for now, we will just print the message to stderr.
+    fprintf(stderr, "%s: %s\n", title.c_str(), message.c_str());
+#endif
+}
+
+int main(int argc, char* argv[]) {
+    // all this program does, is run the executable in the same directory as this one.
+    // we will also capture the stdout and stderr and write them to a file.
+    // If the program crashes with a non-zero exit code, we will show a message box with the error code and the last few lines of the log file.
+
+    const char* executable_name = SPECTRALENGINE_EXE_NAME;
+
+    // the exe should be in the same directory as this one
+
+    std::string path = (getexedir() / executable_name).string();
+
+    // check if the file exists
+    if (!std::filesystem::exists(path)) {
+        printf("Error: %s does not exist\n", path.c_str());
+        return 1;
+    }
+   
+    // run it while capturing the output and error code
+    ExecutableReturnInfo result = run_executable(path, argc, argv);
+    if (result.exit_code != 0) {
+        // write the output and error code to a file
+        std::string log_path = (getexedir() / "log.txt").string();
+        std::ofstream log_file(log_path);
+        log_file << "Exit code: " << result.exit_code << "\n";
+        log_file << "output:\n" << result.log << "\n";
+        log_file.close();
+
+        // show a message box with the error code and the last few lines of the log file
+        message_box("Error", "The executable crashed with exit code " + std::to_string(result.exit_code) + ".\nCheck the log file for more details.");
     }
 
-    // make the engine directory exist
-    std::filesystem::path engine_dir = getexedir() / "engine";
-    if (!std::filesystem::exists(engine_dir)) {
-        std::filesystem::create_directories(engine_dir);
-    }
-    std::filesystem::path module_config = getexedir() / "engine" / "module_config.splcfg";
-    std::unordered_map<std::string, std::string> map;
-    if (!std::filesystem::exists(module_config) || show_config) {
-        auto mods = getModuleDefs();
-
-        std::vector<std::string> mod_types;
-        for (auto& mod : mods) {
-            if (std::find(mod_types.begin(), mod_types.end(), mod.mod) == mod_types.end()) {
-                mod_types.push_back(mod.mod);
-            }
-        }
-
-        char* sel_gfx = nullptr;
-        sSelectModules("Select Graphics Module:", filterModules(mods, "gfx"), &sel_gfx);
-
-        if (sel_gfx == nullptr) {
-            std::cout << "No graphics module selected" << std::endl;
-            return 1;
-        }
-
-        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
-        auto mods_sub = getSubModules(mods);
-        auto reduced = reduceDependencies(mods_sub, findSubDef(mods_sub, "gfx", sel_gfx));
-
-        std::vector<std::string> mod_types2;
-
-        mod_types2 = getModuleTypesResolve(reduced);
-
-        if (mod_types2.size() != mod_types.size()) {
-            std::cout << "Lost some modules in the reduction" << std::endl;
-            return 1;
-        }
-
-        map = getModuleMap(reduced);
-
-        std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-        // nanoseconds
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-        std::cout << "Module selection took " << duration << "us" << std::endl;
-
-        std::ofstream file(module_config, std::ios::out | std::ios::trunc);
-        if (!file) {
-            std::cout << "Error opening file for writing: " << module_config << std::endl;
-            return 1;
-        }
-        for (auto& mod : map) {
-            file << mod.first << " " << mod.second << std::endl;
-        }
-        file.close();
-    } else {
-        std::ifstream file(module_config);
-        if (!file) {
-            std::cout << "Error opening file for reading: " << module_config << std::endl;
-            return 1;
-        }
-        std::string line;
-        while (std::getline(file, line)) {
-            size_t pos = line.find(" ");
-            if (pos == std::string::npos) {
-                std::cout << "Error parsing line: " << line << std::endl;
-                continue;
-            }
-            std::string key = line.substr(0, pos);
-            std::string value = line.substr(pos + 1);
-            map[key] = value;
-        }
-        file.close();
-    }
-
-    WindowModule winm(map["win"].c_str());
-    if (!winm.lib.valid()) return 1;
-    GraphicsModule gfxm(map["gfx"].c_str());
-    if (!gfxm.lib.valid()) return 1;
-    ShaderModule shdr(map["shdr"].c_str());
-    if (!shdr.lib.valid()) return 1;
-    TextureModule texm(map["tex"].c_str());
-    if (!texm.lib.valid()) return 1;
-    TextModule textm(map["text"].c_str());
-    if (!textm.lib.valid()) return 1;
-    AssetLoader assetm;
-    if (!assetm.lib.valid()) return 1;
-    // AudioModule audm(map["aud"].c_str());
-    // if (!audm.lib.valid()) return 1;
-    
-    // audm.init();
-
-    Game game;
-    GameContext game_context = {winm, gfxm, shdr, texm, textm, assetm};
-    int a = game.main(&game_context);
-
-    // audm.destroy();
-
-    printf("Game returned %d\n", a);
-
-    return a;
+    return result.exit_code;
 }
