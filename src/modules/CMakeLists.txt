@@ -6,6 +6,7 @@ set(SPEC_EOGLL OFF CACHE BOOL "" FORCE)
 set(SPEC_SFML OFF CACHE BOOL "" FORCE)
 set(SPEC_GLAD ON CACHE BOOL "" FORCE)
 set(SPEC_DX11 ON CACHE BOOL "" FORCE)
+set(SPEC_VULK ON CACHE BOOL "" FORCE)
 
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -146,6 +147,11 @@ if (SPEC_DX11)
     endforeach()
 endif()
 
+if (SPEC_VULK)
+    # get vulkan sdk
+    find_package(Vulkan REQUIRED)
+endif()
+
 # OpenAL
 FetchContent_Declare(
     openal
@@ -244,6 +250,13 @@ if(SPEC_DX11)
     add_module_dependency(gfx d3d11_1 shdr "hlsl,dx")
     add_module(gfx d3d11_1 gfx/d3d11_1.cpp)
     target_link_libraries(gfx_d3d11_1 d3d11 d3dcompiler dxgi)
+endif()
+if(SPEC_VULK)
+    create_module_def(gfx vulk "Vulkan" "vulk,noapi")
+    add_module_dependency(gfx vulk win "vulk,noapi")
+    add_module_dependency(gfx vulk shdr "vulk")
+    add_module(gfx vulk gfx/vulk.cpp)
+    target_link_libraries(gfx_vulk vulkan-1)
 endif()
 create_submodule_def(shdr spsl "Spectral Shader Langauge")
 add_module_subdef(shdr spsl "spsl_glsl" "glsl,gl,vulk")

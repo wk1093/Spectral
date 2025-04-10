@@ -61,6 +61,7 @@ struct sWindow {
     double lastTime;
     std::chrono::high_resolution_clock::time_point startTime;
     bool did_resize;
+    const char* origTitle;
 };
 
 // Required for compatibility with different windowing libraries
@@ -165,6 +166,7 @@ public:
         w->width = width;
         w->height = height;
         w->did_resize = false;
+        w->origTitle = name;
         return w;
     }
 
