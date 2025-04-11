@@ -172,8 +172,11 @@ sShader compile_glsl(GraphicsModule* gfxm, const char* shader, sShaderType type,
             source.replace(pos, 12, "gl_FragCoord");
         }
     }
-
+#ifdef SPECTRAL_OUTPUT_VULKAN
+    source = "#version 450\n" + source;
+#else
     source = "#version 330 core\n" + source;
+#endif
     // that is all for now
 #ifdef DEBUG_SHADER
     // write to file with same name but with .glsl extension

@@ -5,6 +5,7 @@
 #endif
 
 #include <vulkan/vulkan.h>
+#include <shaderc/shaderc.hpp>
 
 #include <optional>
 #include <set>
@@ -23,7 +24,7 @@ CEXPORT void moduleInit(sArenaAllocator* arena) {
 }
 
 CEXPORT const char* getShaderType() {
-    return "glsl";
+    return "glslv";
 }
 
 constexpr const char* validationLayers[] = {
@@ -36,8 +37,10 @@ constexpr const char* deviceExtensions[] = {
 
 #ifdef DEBUG_BUILD
 constexpr bool enableValidationLayers = true;
+constexpr bool optimizeShaders = false;
 #else
 constexpr bool enableValidationLayers = false;
+constexpr bool optimizeShaders = true;
 #endif
 
 typedef void (*WindowCreateSurfaceFunc)(sWindow, VkInstance, const VkAllocationCallbacks*, VkSurfaceKHR*);
@@ -59,6 +62,7 @@ struct sVulkanContext {
     uint32_t swapChainImageCount;
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
+    VkImageView* swapChainImageViews;
 };
 
 struct QueueFamiliyIndices {
@@ -79,6 +83,35 @@ struct SwapChainSupportDetails {
 };
 
 sVulkanContext __vk_ctx;
+
+void svkCompileShader(const char* source, size_t sourceLen, sShaderType type, uint8_t** buffer, size_t* bufferSize) {
+    shaderc::Compiler compiler;
+    shaderc::CompileOptions options;
+    options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_0);
+    if (optimizeShaders) {
+        options.SetOptimizationLevel(shaderc_optimization_level_performance);
+    }
+    shaderc_shader_kind shaderKind;
+    switch (type) {
+        case sShaderType::VERTEX:
+            shaderKind = shaderc_glsl_vertex_shader;
+            break;
+        case sShaderType::FRAGMENT:
+            shaderKind = shaderc_glsl_fragment_shader;
+            break;
+        default:
+            printf("Unknown shader type %d\n", type);
+            return;
+    }
+    shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(source, shaderKind, "<shader>", options);
+    if (result.GetCompilationStatus() != shaderc_compilation_status_success) {
+        printf("Shader compilation failed: %s\n", result.GetErrorMessage().c_str());
+        return;
+    }
+    *bufferSize = result.cend() - result.cbegin();
+    *buffer = (uint8_t*)gArena->allocate(*bufferSize);
+    memcpy(*buffer, result.cbegin(), *bufferSize);
+}
 
 inline const char* vulkanDebugSeverityName(VkDebugUtilsMessageSeverityFlagBitsEXT severity) {
     switch (severity) {
@@ -367,14 +400,6 @@ CEXPORT void init(sWindow* win) {
 
         QueueFamiliyIndices indices = findQueueFamilies(__vk_ctx.physicalDevice);
 
-        // VkDeviceQueueCreateInfo queueCreateInfo{};
-        // queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        // queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-        // queueCreateInfo.queueCount = 1;
-        // float queuePriority = 1.0f;
-        // queueCreateInfo.pQueuePriorities = &queuePriority;
-
-
         std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
         size_t numQueues = uniqueQueueFamilies.size();
 
@@ -461,9 +486,42 @@ CEXPORT void init(sWindow* win) {
         __vk_ctx.swapChainImageFormat = surfaceFormat.format;
         __vk_ctx.swapChainExtent = extent;
     }
+    {
+        __vk_ctx.swapChainImageViews = (VkImageView*)gArena->allocateArray<VkImageView>(__vk_ctx.swapChainImageCount);
+
+        for (size_t i = 0; i < __vk_ctx.swapChainImageCount; i++) {
+            VkImageViewCreateInfo createInfo{};
+            createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            createInfo.image = __vk_ctx.swapChainImages[i];
+            createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            createInfo.format = __vk_ctx.swapChainImageFormat;
+            createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            createInfo.subresourceRange.baseMipLevel = 0;
+            createInfo.subresourceRange.levelCount = 1;
+            createInfo.subresourceRange.baseArrayLayer = 0;
+            createInfo.subresourceRange.layerCount = 1;
+
+            VkResult result = vkCreateImageView(__vk_ctx.device, &createInfo, nullptr, &__vk_ctx.swapChainImageViews[i]);
+            if (result != VK_SUCCESS) {
+                printf("Failed to create image views: %d\n", result);
+                exit(1);
+            }
+        }
+    }
+    {
+
+    }
 }
 
 CEXPORT void destroy() {
+    for (size_t i = 0; i < __vk_ctx.swapChainImageCount; i++) {
+        vkDestroyImageView(__vk_ctx.device, __vk_ctx.swapChainImageViews[i], nullptr);
+    }
+
     vkDestroySwapchainKHR(__vk_ctx.device, __vk_ctx.swapChain, nullptr);
     vkDestroyDevice(__vk_ctx.device, nullptr);
 
@@ -490,8 +548,47 @@ CEXPORT void drawMesh(sMesh mesh) {
 
 }
 
-CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefinition* vertDef) {
+struct InternalShader {
+    VkShaderModule shdrMod;
+    VkPipelineShaderStageCreateInfo stageInfo;
+};
 
+CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefinition* vertDef) {
+    uint8_t* compiled;
+    size_t compiledSize;
+    svkCompileShader(source, strlen(source), type, &compiled, &compiledSize);
+    if (compiled == nullptr) {
+        printf("Failed to compile shader\n");
+        return sShader();
+    }
+    
+    sShader shdr = {};
+    shdr.internal = (void*)gArena->allocate<InternalShader>();
+    InternalShader* internal = (InternalShader*)shdr.internal;
+    VkShaderModuleCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    createInfo.codeSize = strlen(source);
+    createInfo.pCode = (const uint32_t*)source;
+    VkResult result = vkCreateShaderModule(__vk_ctx.device, &createInfo, nullptr, &internal->shdrMod);
+    if (result != VK_SUCCESS) {
+        printf("Failed to create shader module: %d\n", result);
+        exit(1);
+    }
+
+    VkPipelineShaderStageCreateInfo shaderStageInfo{};
+    shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    shaderStageInfo.stage = (type == sShaderType::VERTEX) ? VK_SHADER_STAGE_VERTEX_BIT : VK_SHADER_STAGE_FRAGMENT_BIT;
+    shaderStageInfo.module = internal->shdrMod;
+    shaderStageInfo.pName = "main";
+
+    return shdr;
+}
+
+CEXPORT void freeShader(sShader shader) {
+    InternalShader* internal = (InternalShader*)shader.internal;
+    if (internal != nullptr) {
+        vkDestroyShaderModule(__vk_ctx.device, internal->shdrMod, nullptr);
+    }
 }
 
 CEXPORT void useShaderProgram(sShaderProgram shader) {
@@ -523,10 +620,6 @@ CEXPORT void useTexture(sShaderProgram program, sTexture texture, const char* na
 }
 
 CEXPORT void freeTexture(sTexture texture) {
-
-}
-
-CEXPORT void freeShader(sShader shader) {
 
 }
 

@@ -148,8 +148,8 @@ if (SPEC_DX11)
 endif()
 
 if (SPEC_VULK)
-    # get vulkan sdk
-    find_package(Vulkan REQUIRED)
+    # get vulkan sdk as well as shaderc
+    find_package(Vulkan REQUIRED COMPONENTS shaderc_combined)
 endif()
 
 # OpenAL
@@ -266,16 +266,21 @@ if(SPEC_VULK)
     add_module_dependency(gfx vulk win "vulk")
     add_module_dependency(gfx vulk shdr "vulk")
     add_module(gfx vulk gfx/vulkan.cpp)
-    target_link_libraries(gfx_vulk Vulkan::Vulkan)
+    target_link_libraries(gfx_vulk Vulkan::Vulkan Vulkan::shaderc_combined)
 endif()
 create_submodule_def(shdr spsl "Spectral Shader Langauge")
-add_module_subdef(shdr spsl "spsl_glsl" "glsl,gl,vulk")
+add_module_subdef(shdr spsl "spsl_glsl" "glsl,gl")
+add_module_subdef(shdr spsl "spsl_glslv" "glsl,vulk")
 add_module_subdef(shdr spsl "spsl_hlsl" "hlsl,dx")
 add_module(shdr spsl_glsl shdr/spsl.cpp)
 target_compile_definitions(shdr_spsl_glsl PUBLIC "SPECTRAL_OUTPUT_GLSL")
 
 add_module(shdr spsl_hlsl shdr/spsl.cpp)
 target_compile_definitions(shdr_spsl_hlsl PUBLIC "SPECTRAL_OUTPUT_HLSL")
+
+add_module(shdr spsl_glslv shdr/spsl.cpp)
+target_compile_definitions(shdr_spsl_glslv PUBLIC "SPECTRAL_OUTPUT_GLSL")
+target_compile_definitions(shdr_spsl_glslv PUBLIC "SPECTRAL_OUTPUT_VULKAN")
 
 create_module_def(tex stb "STB" "")
 add_module(tex stb tex/stb.cpp)

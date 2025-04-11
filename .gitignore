@@ -16,3 +16,4 @@ build-*/
 bin/
 docgen/
 __pycache__/
+lines.py
