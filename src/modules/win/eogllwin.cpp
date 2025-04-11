@@ -157,3 +157,8 @@ CEXPORT void setCursorMode(sWindow window, CursorMode mode) {
 CEXPORT void setWindowTitle(sWindow window, const char* title) {
     glfwSetWindowTitle(((EogllWindow*)window.internal)->window, title);
 }
+
+CEXPORT void getInstanceExtensions(sWindow window, const char*** extensions, int* count) {
+    *extensions = nullptr;
+    *count = 0;
+}

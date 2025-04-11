@@ -22,6 +22,8 @@ struct sArenaAllocator {
     size_t offset;
     /// @brief Tracker string for debugging purposes.
     const char* tracker;
+    /// @brief Debug mode, prints every allocation and deallocation.
+    bool debugMode = false;
 
     /**
      * @brief Constructor for the arena allocator.
@@ -29,7 +31,7 @@ struct sArenaAllocator {
      * This constructor initializes the arena allocator with a specified size and tracker string.
      * It allocates memory for the arena and initializes the offset to zero.
      */
-    inline sArenaAllocator(const char* tracker, size_t size) : tracker(tracker), size(size), offset(0) {
+    inline sArenaAllocator(const char* tracker, size_t size) : tracker(strdup(tracker)), size(size), offset(0) {
         buffer = (uint8_t*)malloc(size); // Allocate memory for the arena
         memset(buffer, 0, size);         // Initialize the buffer to zero
     }
@@ -56,6 +58,9 @@ struct sArenaAllocator {
         }
         void* ptr = buffer + offset;
         offset += bytes; // Update the offset
+        if (debugMode) {
+            printf("[Allocator '%s'] Allocated %zu bytes. %zu/%zu bytes used.\n", tracker, bytes, offset, size);
+        }
         return ptr;
     }
 

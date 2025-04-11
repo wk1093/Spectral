@@ -115,7 +115,7 @@ namespace window {
     typedef void (*WindowSetMousePosition)(sWindow window, float x, float y);
     typedef void (*WindowSetCursorMode)(sWindow window, CursorMode mode);
     typedef void (*WindowSetWindowTitle)(sWindow window, const char* title);
-    typedef void (*WindowSetResizable)(sWindow window, bool resizable);
+    typedef void (*WindowGetInstanceExtensions)(sWindow window, const char*** extensions, int* count);
 }
 /// @endcond
 
@@ -144,6 +144,7 @@ private:
     window::WindowSetMousePosition internal_setMousePosition;
     window::WindowSetCursorMode internal_setCursorMode;
     window::WindowSetWindowTitle internal_setWindowTitle;
+    window::WindowGetInstanceExtensions internal_getWindowInstanceExtensions;
 
 public:
 
@@ -374,6 +375,21 @@ public:
     }
 
     /**
+     * @brief Get the instance extensions for the specified window.
+     * 
+     * @details This function retrieves the instance extensions for the specified window.
+     * 
+     * @param window A pointer to the window to get the instance extensions for.
+     * @param extensions A pointer to store the instance extensions.
+     * @param count A pointer to store the number of instance extensions.
+     * @note This may not be supported on all platforms or windowing libraries.
+     * @note This is mainly used for Vulkan.
+     */
+    inline void getInstanceExtensions(sWindow window, const char*** extensions, int* count) {
+        internal_getWindowInstanceExtensions(window, extensions, count);
+    }
+
+    /**
      * @brief Constructor for the WindowModule class.
      * 
      * @details This constructor loads the windowing library and initializes the function pointers.
@@ -395,5 +411,6 @@ public:
         internal_setMousePosition = (window::WindowSetMousePosition)lib.getSymbol("setMousePosition");
         internal_setCursorMode = (window::WindowSetCursorMode)lib.getSymbol("setCursorMode");
         internal_setWindowTitle = (window::WindowSetWindowTitle)lib.getSymbol("setWindowTitle");
+        internal_getWindowInstanceExtensions = (window::WindowGetInstanceExtensions)lib.getSymbol("getInstanceExtensions");
     }
 };

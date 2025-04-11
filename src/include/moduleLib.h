@@ -295,6 +295,7 @@ public:
             strcpy(mod, ident);
             strcat(mod, ".");
             strcat(mod, path);
+            mod[strlen(ident) + strlen(path) + 1] = '\0';
 
 
             getDesiredArenaSize = (smod::GetDesiredArenaSize)lib.getSymbol("getDesiredArenaSize");
@@ -302,6 +303,7 @@ public:
             if (getDesiredArenaSize) {
                 size_t size = getDesiredArenaSize();
                 if (size > 0) {
+                    printf("Allocating %zu bytes for module %s\n", size, mod);
                     allocator = new sArenaAllocator(mod, size);
                 } else {
                     allocator = new sArenaAllocator(mod, 0);

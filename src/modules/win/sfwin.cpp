@@ -127,3 +127,8 @@ CEXPORT void setCursorMode(sWindow window, CursorMode mode) {
 CEXPORT void setWindowTitle(sWindow window, const char* title) {
     ((sf::RenderWindow*)window.internal)->setTitle(title);
 }
+
+CEXPORT void getInstanceExtensions(sWindow window, const char*** extensions, int* count) {
+    *count = 0;
+    *extensions = nullptr;
+}

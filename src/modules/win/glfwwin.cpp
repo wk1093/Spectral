@@ -1,3 +1,7 @@
+#ifdef SPECTRAL_GLFW_VULKAN
+#define GLFW_INCLUDE_VULKAN
+#endif
+
 #include <GLFW/glfw3.h>
 #include <glfw_config.h>
 #ifdef _WIN32
@@ -19,9 +23,8 @@
 #include "module.h"
 
 sArenaAllocator* gArena = nullptr;
-
 CEXPORT size_t getDesiredArenaSize() {
-    return sizeof(sWindow);
+    return 1024;
 }
 
 CEXPORT void moduleInit(sArenaAllocator* arena) {
@@ -171,3 +174,23 @@ CEXPORT void setCursorMode(sWindow window, CursorMode mode) {
 CEXPORT void setWindowTitle(sWindow window, const char* title) {
     glfwSetWindowTitle((GLFWwindow*)window.internal, title);
 }
+
+CEXPORT void getInstanceExtensions(sWindow window, const char*** extensions, int* count) {
+    unsigned int extCount;
+    const char** exts = glfwGetRequiredInstanceExtensions(&extCount);
+    *count = extCount;
+    *extensions = (const char**)gArena->allocateArray<char*>(extCount);
+    for (unsigned int i = 0; i < extCount; i++) {
+        (*extensions)[i] = exts[i];
+    }
+}
+
+#ifdef SPECTRAL_GLFW_VULKAN
+CEXPORT void createWindowSurface(sWindow window, VkInstance instance, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface) {
+    VkResult result = glfwCreateWindowSurface(instance, (GLFWwindow*)window.internal, nullptr, surface);
+    if (result != VK_SUCCESS) {
+        printf("Failed to create window surface: %d\n", result);
+        exit(1);
+    }
+}
+#endif

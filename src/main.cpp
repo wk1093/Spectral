@@ -10,6 +10,8 @@
 #include <errno.h>
 #endif
 
+#include <fstream>
+
 
 #include "moduleLib.h"
 
@@ -126,17 +128,20 @@ int main(int argc, char* argv[]) {
    
     // run it while capturing the output and error code
     ExecutableReturnInfo result = run_executable(path, argc, argv);
+    std::string log_path = (getexedir() / "log.txt").string();
+    std::ofstream log_file(log_path);
+    log_file << "Exit code: " << result.exit_code << "\n";
+    log_file << "output:\n" << result.log << "\n";
+    log_file.close();
+
     if (result.exit_code != 0) {
         // write the output and error code to a file
-        std::string log_path = (getexedir() / "log.txt").string();
-        std::ofstream log_file(log_path);
-        log_file << "Exit code: " << result.exit_code << "\n";
-        log_file << "output:\n" << result.log << "\n";
-        log_file.close();
 
         // show a message box with the error code and the last few lines of the log file
         message_box("Error", "The executable crashed with exit code " + std::to_string(result.exit_code) + ".\nCheck the log file for more details.");
     }
+
+    printf("Engine exited with code %d\n", result.exit_code);
 
     return result.exit_code;
 }
