@@ -30,6 +30,10 @@ constexpr const char* validationLayers[] = {
     "VK_LAYER_KHRONOS_validation",
 };
 
+constexpr const char* deviceExtensions[] = {
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+};
+
 #ifdef DEBUG_BUILD
 constexpr bool enableValidationLayers = true;
 #else
@@ -39,6 +43,8 @@ constexpr bool enableValidationLayers = false;
 typedef void (*WindowCreateSurfaceFunc)(sWindow, VkInstance, const VkAllocationCallbacks*, VkSurfaceKHR*);
 
 struct sVulkanContext {
+    sWindow* window;
+
     VkInstance instance;
     VkDebugUtilsMessengerEXT debugMessenger;
     VkPhysicalDevice physicalDevice;
@@ -48,6 +54,11 @@ struct sVulkanContext {
     VkQueue graphicsQueue;
     VkQueue presentQueue;
     VkSurfaceKHR surface;
+    VkSwapchainKHR swapChain;
+    VkImage* swapChainImages;
+    uint32_t swapChainImageCount;
+    VkFormat swapChainImageFormat;
+    VkExtent2D swapChainExtent;
 };
 
 struct QueueFamiliyIndices {
@@ -57,6 +68,14 @@ struct QueueFamiliyIndices {
     bool isComplete() {
         return graphicsFamily.has_value() && presentFamily.has_value();
     }
+};
+
+struct SwapChainSupportDetails {
+    VkSurfaceCapabilitiesKHR capabilities;
+    VkSurfaceFormatKHR* formats;
+    uint32_t formatCount;
+    VkPresentModeKHR* presentModes;
+    uint32_t presentModeCount;
 };
 
 sVulkanContext __vk_ctx;
@@ -120,6 +139,51 @@ QueueFamiliyIndices findQueueFamilies(VkPhysicalDevice device) {
     return indices;
 }
 
+SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device) {
+    SwapChainSupportDetails details;
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, __vk_ctx.surface, &details.capabilities);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, __vk_ctx.surface, &details.formatCount, nullptr);
+    details.formats = (VkSurfaceFormatKHR*)gArena->allocateArray<VkSurfaceFormatKHR>(details.formatCount);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, __vk_ctx.surface, &details.formatCount, details.formats);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, __vk_ctx.surface, &details.presentModeCount, nullptr);
+    details.presentModes = (VkPresentModeKHR*)gArena->allocateArray<VkPresentModeKHR>(details.presentModeCount);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, __vk_ctx.surface, &details.presentModeCount, details.presentModes);
+    return details;
+}
+
+VkSurfaceFormatKHR chooseSwapSurfaceFormat(const VkSurfaceFormatKHR* availableFormats, uint32_t formatCount) {
+    for (size_t i = 0; i < formatCount; i++) {
+        if (availableFormats[i].format == VK_FORMAT_B8G8R8A8_SRGB && availableFormats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+            return availableFormats[i];
+        }
+    }
+    return availableFormats[0];
+}
+
+VkPresentModeKHR chooseSwapPresentMode(const VkPresentModeKHR* availablePresentModes, uint32_t presentModeCount) {
+    for (size_t i = 0; i < presentModeCount; i++) {
+        if (availablePresentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR) {
+            return availablePresentModes[i];
+        }
+    }
+    return VK_PRESENT_MODE_FIFO_KHR;
+}
+
+VkExtent2D chooseSwapExtent(VkSurfaceCapabilitiesKHR capabilities) {
+    if (capabilities.currentExtent.width != UINT32_MAX) {
+        return capabilities.currentExtent;
+    }
+    int width, height;
+    typedef void (*glfwGetFramebufferSizeFunc)(void*, int*, int*);
+    glfwGetFramebufferSizeFunc getFramebufferSize = (glfwGetFramebufferSizeFunc)__vk_ctx.window->creator->lib.getSymbol("glfwGetFramebufferSize");
+    getFramebufferSize(__vk_ctx.window->internal, &width, &height);
+    VkExtent2D actualExtent = { (uint32_t)width, (uint32_t)height };
+    actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+    actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+
+    return actualExtent;
+}
+
 inline int rankPhysicalDevice(VkPhysicalDevice device) {
     VkPhysicalDeviceProperties deviceProperties;
     vkGetPhysicalDeviceProperties(device, &deviceProperties);
@@ -129,9 +193,24 @@ inline int rankPhysicalDevice(VkPhysicalDevice device) {
     if (!indices.isComplete()) {
         return 0;
     }
+    uint32_t extensionCount;
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+    VkExtensionProperties* extensions = (VkExtensionProperties*)gArena->allocateArray<VkExtensionProperties>(extensionCount);
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, extensions);
+    std::set<std::string> requiredExtensions(deviceExtensions, deviceExtensions + sizeof(deviceExtensions) / sizeof(deviceExtensions[0]));
+    for (size_t i = 0; i < extensionCount; i++) {
+        requiredExtensions.erase(extensions[i].extensionName);
+    }
+    if (!requiredExtensions.empty()) {
+        return 0;
+    }
 
+    SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
+    if (swapChainSupport.formatCount == 0 || swapChainSupport.presentModeCount == 0) {
+        return 0;
+    }
 
-    int score = 0;
+    int score = 1;
     if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
         score += 1000;
     }
@@ -163,6 +242,7 @@ inline int pickVulkanPhysicalDevice(VkPhysicalDevice* devices, int deviceCount) 
 
 CEXPORT void init(sWindow* win) {
     __vk_ctx = {};
+    __vk_ctx.window = win;
     {
         VkApplicationInfo appInfo{};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -314,7 +394,8 @@ CEXPORT void init(sWindow* win) {
         deviceCreateInfo.pQueueCreateInfos = queueCreateInfos;
         deviceCreateInfo.queueCreateInfoCount = numQueues;
         deviceCreateInfo.pEnabledFeatures = &__vk_ctx.physicalDeviceFeatures;
-        deviceCreateInfo.enabledExtensionCount = 0;
+        deviceCreateInfo.enabledExtensionCount = sizeof(deviceExtensions) / sizeof(deviceExtensions[0]);
+        deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions;
         if (enableValidationLayers) {
             deviceCreateInfo.enabledLayerCount = sizeof(validationLayers) / sizeof(validationLayers[0]);
             deviceCreateInfo.ppEnabledLayerNames = validationLayers;
@@ -331,13 +412,59 @@ CEXPORT void init(sWindow* win) {
 
         vkGetDeviceQueue(__vk_ctx.device, indices.graphicsFamily.value(), 0, &__vk_ctx.graphicsQueue);
         vkGetDeviceQueue(__vk_ctx.device, indices.presentFamily.value(), 0, &__vk_ctx.presentQueue);
+    }
+    {
+        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(__vk_ctx.physicalDevice);
+        VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats, swapChainSupport.formatCount);
+        VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes, swapChainSupport.presentModeCount);
+        VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
+        uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
+        if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
+            imageCount = swapChainSupport.capabilities.maxImageCount;
+        }
+        VkSwapchainCreateInfoKHR swapChainCreateInfo{};
+        swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+        swapChainCreateInfo.surface = __vk_ctx.surface;
+        swapChainCreateInfo.minImageCount = imageCount;
+        swapChainCreateInfo.imageFormat = surfaceFormat.format;
+        swapChainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+        swapChainCreateInfo.imageExtent = extent;
+        swapChainCreateInfo.imageArrayLayers = 1;
+        swapChainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        QueueFamiliyIndices indices = findQueueFamilies(__vk_ctx.physicalDevice);
+        uint32_t queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentFamily.value() };
+        if (indices.graphicsFamily != indices.presentFamily) {
+            swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+            swapChainCreateInfo.queueFamilyIndexCount = 2;
+            swapChainCreateInfo.pQueueFamilyIndices = queueFamilyIndices;
+        } else {
+            swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+            swapChainCreateInfo.queueFamilyIndexCount = 0; // Optional
+            swapChainCreateInfo.pQueueFamilyIndices = nullptr; // Optional
+        }
+        swapChainCreateInfo.preTransform = swapChainSupport.capabilities.currentTransform;
+        swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+        swapChainCreateInfo.presentMode = presentMode;
+        swapChainCreateInfo.clipped = VK_TRUE;
+        swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE; // Optional
 
-        // TODO: everything else
-        // https://vulkan-tutorial.com/en/Drawing_a_triangle/Presentation/Swap_chain
+        VkResult result = vkCreateSwapchainKHR(__vk_ctx.device, &swapChainCreateInfo, nullptr, &__vk_ctx.swapChain);
+        if (result != VK_SUCCESS) {
+            printf("Failed to create swap chain: %d\n", result);
+            exit(1);
+        }
+
+        vkGetSwapchainImagesKHR(__vk_ctx.device, __vk_ctx.swapChain, &__vk_ctx.swapChainImageCount, nullptr);
+        __vk_ctx.swapChainImages = (VkImage*)gArena->allocateArray<VkImage>(__vk_ctx.swapChainImageCount);
+        vkGetSwapchainImagesKHR(__vk_ctx.device, __vk_ctx.swapChain, &__vk_ctx.swapChainImageCount, __vk_ctx.swapChainImages);
+
+        __vk_ctx.swapChainImageFormat = surfaceFormat.format;
+        __vk_ctx.swapChainExtent = extent;
     }
 }
 
 CEXPORT void destroy() {
+    vkDestroySwapchainKHR(__vk_ctx.device, __vk_ctx.swapChain, nullptr);
     vkDestroyDevice(__vk_ctx.device, nullptr);
 
     if (enableValidationLayers) {
