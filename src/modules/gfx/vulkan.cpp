@@ -7,6 +7,7 @@
 #include <vulkan/vulkan.h>
 
 #include <optional>
+#include <set>
 
 #include "module.h"
 
@@ -45,14 +46,16 @@ struct sVulkanContext {
     VkPhysicalDeviceFeatures physicalDeviceFeatures;
     VkDevice device;
     VkQueue graphicsQueue;
+    VkQueue presentQueue;
     VkSurfaceKHR surface;
 };
 
 struct QueueFamiliyIndices {
     std::optional<uint32_t> graphicsFamily;
+    std::optional<uint32_t> presentFamily;
 
     bool isComplete() {
-        return graphicsFamily.has_value();
+        return graphicsFamily.has_value() && presentFamily.has_value();
     }
 };
 
@@ -102,9 +105,15 @@ QueueFamiliyIndices findQueueFamilies(VkPhysicalDevice device) {
     VkQueueFamilyProperties* queueFamilies = (VkQueueFamilyProperties*)gArena->allocateArray<VkQueueFamilyProperties>(queueFamilyCount);
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies);
 
+    VkBool32 presentSupport = false;
+
     for (uint32_t i = 0; i < queueFamilyCount; i++) {
         if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
             indices.graphicsFamily = i;
+        }
+        vkGetPhysicalDeviceSurfaceSupportKHR(device, i, __vk_ctx.surface, &presentSupport);
+        if (presentSupport) {
+            indices.presentFamily = i;
         }
     }
 
@@ -246,6 +255,21 @@ CEXPORT void init(sWindow* win) {
         }
     }
     {
+        // our window module (which was selected by the dependency resolver) should support this
+        // it should have a function called createWindowSurface
+        WindowCreateSurfaceFunc createWindowSurface = (WindowCreateSurfaceFunc)win->creator->lib.getSymbol("createWindowSurface");
+        if (createWindowSurface == nullptr) {
+            printf("Failed to get createWindowSurface function from window module\n");
+            exit(1);
+        }
+        createWindowSurface(*win, __vk_ctx.instance, nullptr, &__vk_ctx.surface);
+        if (__vk_ctx.surface == VK_NULL_HANDLE) {
+            printf("Failed to create window surface\n");
+            exit(1);
+        }
+
+    }
+    {
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(__vk_ctx.instance, &deviceCount, nullptr);
         if (deviceCount == 0) {
@@ -263,17 +287,32 @@ CEXPORT void init(sWindow* win) {
 
         QueueFamiliyIndices indices = findQueueFamilies(__vk_ctx.physicalDevice);
 
-        VkDeviceQueueCreateInfo queueCreateInfo{};
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-        queueCreateInfo.queueCount = 1;
+        // VkDeviceQueueCreateInfo queueCreateInfo{};
+        // queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        // queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+        // queueCreateInfo.queueCount = 1;
+        // float queuePriority = 1.0f;
+        // queueCreateInfo.pQueuePriorities = &queuePriority;
+
+
+        std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+        size_t numQueues = uniqueQueueFamilies.size();
+
+
+        VkDeviceQueueCreateInfo* queueCreateInfos = (VkDeviceQueueCreateInfo*)gArena->allocateArray<VkDeviceQueueCreateInfo>(numQueues);
         float queuePriority = 1.0f;
-        queueCreateInfo.pQueuePriorities = &queuePriority;
+        for (size_t i = 0; i < numQueues; i++) {
+            queueCreateInfos[i] = {};
+            queueCreateInfos[i].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfos[i].queueFamilyIndex = *std::next(uniqueQueueFamilies.begin(), i);
+            queueCreateInfos[i].queueCount = 1;
+            queueCreateInfos[i].pQueuePriorities = &queuePriority;
+        }
 
         VkDeviceCreateInfo deviceCreateInfo{};
         deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        deviceCreateInfo.pQueueCreateInfos = &queueCreateInfo;
-        deviceCreateInfo.queueCreateInfoCount = 1;
+        deviceCreateInfo.pQueueCreateInfos = queueCreateInfos;
+        deviceCreateInfo.queueCreateInfoCount = numQueues;
         deviceCreateInfo.pEnabledFeatures = &__vk_ctx.physicalDeviceFeatures;
         deviceCreateInfo.enabledExtensionCount = 0;
         if (enableValidationLayers) {
@@ -291,21 +330,10 @@ CEXPORT void init(sWindow* win) {
         }
 
         vkGetDeviceQueue(__vk_ctx.device, indices.graphicsFamily.value(), 0, &__vk_ctx.graphicsQueue);
-    }
-    {
-        // our window module (which was selected by the dependency resolver) should support this
-        // it should have a function called createWindowSurface
-        WindowCreateSurfaceFunc createWindowSurface = (WindowCreateSurfaceFunc)win->creator->lib.getSymbol("createWindowSurface");
-        if (createWindowSurface == nullptr) {
-            printf("Failed to get createWindowSurface function from window module\n");
-            exit(1);
-        }
-        createWindowSurface(*win, __vk_ctx.instance, nullptr, &__vk_ctx.surface);
-        if (__vk_ctx.surface == VK_NULL_HANDLE) {
-            printf("Failed to create window surface\n");
-            exit(1);
-        }
+        vkGetDeviceQueue(__vk_ctx.device, indices.presentFamily.value(), 0, &__vk_ctx.presentQueue);
 
+        // TODO: everything else
+        // https://vulkan-tutorial.com/en/Drawing_a_triangle/Presentation/Swap_chain
     }
 }
 
@@ -315,7 +343,7 @@ CEXPORT void destroy() {
     if (enableValidationLayers) {
         DestroyDebugUtilsMessengerEXT(__vk_ctx.instance, __vk_ctx.debugMessenger, nullptr);
     }
-
+    vkDestroySurfaceKHR(__vk_ctx.instance, __vk_ctx.surface, nullptr);
     vkDestroyInstance(__vk_ctx.instance, nullptr);
 }
 
