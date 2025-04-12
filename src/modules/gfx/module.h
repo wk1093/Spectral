@@ -275,7 +275,7 @@ namespace graphics {
     typedef sMesh (*CreateMesh)(sShader vertexShader, void* vertices, size_t vertexSize, sIndex* indices, size_t indexSize);
     typedef void (*DrawMesh)(sMesh mesh);
     typedef void (*UseShaderProgram)(sShaderProgram shader);
-    typedef sShader (*CreateShader)(const char* source, sShaderType type, sVertexDefinition* vertDef);
+    typedef sShader (*CreateShader)(const char* source, sShaderType type, sVertexDefinition* vertDef, size_t sourceLen);
     typedef sShaderProgram (*CreateShaderProgram)(sShader* shaders, size_t count);
     typedef void (*Present)();
     typedef const char* (*GetShaderType)();
@@ -658,7 +658,24 @@ public:
      * @return The created shader.
      */
     inline sShader createShader(const char* source, sShaderType type, sVertexDefinition* vertDef=nullptr) {
-        sShader shader = internal_createShader(source, type, vertDef);
+        sShader shader = internal_createShader(source, type, vertDef, strlen(source));
+        return shader;
+    }
+
+    /**
+     * @brief Create a shader from a source array and shader type.
+     * 
+     * This function creates a shader from the specified source array and shader type, and a vertex definition if the shader is a vertex shader. This is used to create a shader that can be used in a shader program.
+     * 
+     * @param source The source array to use for the shader. This should be a pointer to the source array.
+     * @param type The type of the shader to create. This should be one of the shader types defined in sShaderType.
+     * @param vertDef The vertex definition to use for the shader. This should be a pointer to the vertex definition. This is only used if the shader is a vertex shader.
+     * @param sourceLen The length of the source array.
+     * @return The created shader.
+     * @note this is mostly used for vulkan, where the shader source is not a string, but a byte array.
+     */
+    inline sShader createShader(const char* source, sShaderType type, sVertexDefinition* vertDef, size_t sourceLen) {
+        sShader shader = internal_createShader(source, type, vertDef, sourceLen);
         return shader;
     }
 

@@ -14,11 +14,13 @@
 #include <algorithm>
 
 struct sArenaAllocator {
-    /// @brief Pointer to the memory buffer.
-    uint8_t* buffer;
-    /// @brief Size of the memory buffer.
-    size_t size;
-    /// @brief Current offset in the memory buffer.
+    /// @brief Pointer to the memory buffers.
+    uint8_t** buffers;
+    /// @brief Size of a memory buffer.
+    size_t blockSize;
+    /// @brief Number of buffers allocated.
+    size_t numBuffers;
+    /// @brief Current offset into all of the buffers, using modulo and division to find the current buffer and offset.
     size_t offset;
     /// @brief Tracker string for debugging purposes.
     const char* tracker;
@@ -31,9 +33,10 @@ struct sArenaAllocator {
      * This constructor initializes the arena allocator with a specified size and tracker string.
      * It allocates memory for the arena and initializes the offset to zero.
      */
-    inline sArenaAllocator(const char* tracker, size_t size) : tracker(strdup(tracker)), size(size), offset(0) {
-        buffer = (uint8_t*)malloc(size); // Allocate memory for the arena
-        memset(buffer, 0, size);         // Initialize the buffer to zero
+    inline sArenaAllocator(const char* tracker, size_t blocksize) : tracker(tracker), blockSize(blocksize), numBuffers(1), offset(0) {
+        buffers = (uint8_t**)malloc(sizeof(uint8_t*) * 1); // Allocate memory for the arena
+        buffers[0] = (uint8_t*)malloc(blockSize); // Allocate memory for the first buffer
+        memset(buffers[0], 0, blockSize); // Initialize the buffer to zero
     }
 
     /**
@@ -43,7 +46,10 @@ struct sArenaAllocator {
      * It is called when the arena allocator goes out of scope or is deleted.
      */
     inline ~sArenaAllocator() {
-        free(buffer); // Free the allocated memory
+        for (size_t i = 0; i < numBuffers; i++) {
+            free(buffers[i]); // Free the allocated memory for each buffer
+        }
+        free(buffers); // Free the allocated memory for the arena
     }
 
     /**
@@ -52,16 +58,32 @@ struct sArenaAllocator {
      * @return Pointer to the allocated memory, or nullptr if there is not enough space.
      */
     inline void* allocate(size_t bytes) {
-        if (offset + bytes > size) {
-            printf("Attempting to resize arena allocator '%s' from %zu bytes to %zu bytes\n", tracker, size, size + bytes);
-            resize(size + bytes); // Attempt to resize the arena, we will us
-        }
-        void* ptr = buffer + offset;
-        offset += bytes; // Update the offset
         if (debugMode) {
-            printf("[Allocator '%s'] Allocated %zu bytes. %zu/%zu bytes used.\n", tracker, bytes, offset, size);
+            printf("Arena '%s' allocating %zu bytes\n", tracker, bytes);
         }
-        return ptr;
+        if (offset + bytes > blockSize * numBuffers) {
+            if (debugMode) printf("Arena '%s' is full, attempting to resize from %zu bytes to %zu bytes\n", tracker, blockSize * numBuffers, blockSize * 2);
+            size_t newNumBuffers = (offset + bytes) / blockSize + 1; // Calculate the new number of buffers needed
+            uint8_t** newBuffers = (uint8_t**)realloc(buffers, sizeof(uint8_t*) * newNumBuffers); // Resize the buffers array
+            if (!newBuffers) {
+                printf("Arena '%s' failed to resize to %zu bytes\n", tracker, blockSize * 2);
+                return nullptr; // Failed to resize the buffer
+            }
+            buffers = newBuffers; // Update the buffers pointer
+            for (size_t i = numBuffers; i < newNumBuffers; i++) {
+                buffers[i] = (uint8_t*)malloc(blockSize); // Allocate memory for the new buffers
+                memset(buffers[i], 0, blockSize); // Initialize the new buffers to zero
+            }
+            numBuffers = newNumBuffers; // Update the number of buffers
+        }
+        // Calculate the current buffer and offset
+        size_t currentBuffer = offset / blockSize;
+        size_t currentOffset = offset % blockSize;
+        // Allocate memory from the current buffer
+        void* ptr = buffers[currentBuffer] + currentOffset;
+        offset += bytes; // Update the offset
+
+        return ptr; // Return the pointer to the allocated memory
     }
 
     /**
@@ -101,25 +123,6 @@ struct sArenaAllocator {
     inline T* allocateArray(size_t count) {
         return (T*)allocate(sizeof(T) * count); // Allocate memory for an array of type T
     }
-
-    /**
-     * @brief Resizes the arena allocator.
-     * 
-     * This function should be avoided, but if you run out of room, you can create more.
-     */
-    inline void resize(size_t newSize) {
-        if (newSize <= size) {
-            printf("Arena allocator '%s' resize requested to %zu bytes, but current size is %zu bytes\n", tracker, newSize, size);
-            return; // No need to resize if the new size is less than or equal to the current size
-        }
-        uint8_t* newBuffer = (uint8_t*)realloc(buffer, newSize);
-        if (!newBuffer) {
-            printf("Arena allocator '%s' failed to resize to %zu bytes\n", tracker, newSize);
-            return; // Failed to resize the buffer
-        }
-        buffer = newBuffer; // Update the buffer pointer
-        size = newSize;     // Update the size
-    }
 };
 
 /**
@@ -130,14 +133,18 @@ struct sArenaAllocator {
  */
 template<typename T>
 struct sTypedSmartArena {
-    /// @brief Pointer to the memory buffer.
-    T* buffer;
-    /// @brief Size of the memory buffer in number of objects, NOT bytes.
-    size_t size;
-    /// @brief List of currently allocated indices.
+    /// @brief Pointer to the memory buffers.
+    T** buffer;
+    /// @brief Size of a memory buffer in number of objects, NOT bytes.
+    size_t bufferSize;
+    /// @brief Buffer count.
+    size_t numBuffers;
+    /// @brief List of currently allocated indices. (a special type of index, similar to the offset above)
     std::vector<size_t> allocated;
     /// @brief Tracker string for debugging purposes.
     const char* tracker;
+    /// @brief Debug mode, prints every allocation and deallocation.
+    bool debugMode = false;
 
     /**
      * @brief Constructor for the smart arena.
@@ -146,12 +153,12 @@ struct sTypedSmartArena {
      * It allocates memory for the arena and initializes the size to zero.
      * 
      * @param tracker The tracker string for debugging purposes.
-     * @param num The number of objects to allocate memory for, this is the max amount of objects that you expect at any one time.
+     * @param bufferSize The number of objects to allocate memory for, this is the max amount of objects that you expect at any one time.
      */
-    inline sTypedSmartArena(const char* tracker, size_t num) : tracker(tracker), size(num) {
-        buffer = (T*)malloc(sizeof(T) * num); // Allocate memory for the arena
-        memset(buffer, 0, sizeof(T) * num);   // Initialize the buffer to zero
-        // allocated.reserve(num);               // Reserve space for the allocated indices
+    inline sTypedSmartArena(const char* tracker, size_t bufferSize) : tracker(tracker), bufferSize(bufferSize), numBuffers(1) {
+        buffer = (T**)malloc(sizeof(T*) * 1); // Allocate memory for the arena
+        buffer[0] = (T*)malloc(sizeof(T) * bufferSize); // Allocate memory for the first buffer
+        memset(buffer[0], 0, sizeof(T) * bufferSize); // Initialize the buffer to zero
     }
 
     /**
@@ -160,7 +167,7 @@ struct sTypedSmartArena {
      * This constructor initializes the smart arena with a default size of 0 and a null tracker string.
      * It allocates no memory for the arena and initializes the size to zero.
      */
-    inline sTypedSmartArena() : tracker(nullptr), size(0) {
+    inline sTypedSmartArena() : tracker(""), bufferSize(0), numBuffers(0) {
         buffer = nullptr; // No memory allocated for the arena
     }
 
@@ -171,6 +178,9 @@ struct sTypedSmartArena {
      * It is called when the smart arena goes out of scope or is deleted.
      */
     inline ~sTypedSmartArena() {
+        for (size_t i = 0; i < numBuffers; i++) {
+            free(buffer[i]); // Free the allocated memory for each buffer
+        }
         free(buffer); // Free the allocated memory for the arena
     }
 
@@ -183,20 +193,22 @@ struct sTypedSmartArena {
      * @return Pointer to the allocated memory for an object of type T.
      */
     inline T* allocate() {
-        if (allocated.size() >= size) {
-            printf("Smart arena '%s' is full, attempting to resize from %zu objects to %zu objects\n", tracker, size, size * 2);
-            resize(size * 2); // Attempt to resize the arena
-        }
-        // we have to find an index that is not in the allocated list
-        size_t index = 0;
-        for (size_t i = 0; i < size; i++) {
-            if (std::find(allocated.begin(), allocated.end(), i) == allocated.end()) {
-                index = i;
-                break;
+        if (allocated.size() >= bufferSize) {
+            // We need to allocate a new buffer
+            size_t newNumBuffers = numBuffers + 1; // Calculate the new number of buffers needed
+            T** newBuffer = (T**)realloc(buffer, sizeof(T*) * newNumBuffers); // Resize the buffers array
+            if (!newBuffer) {
+                printf("Arena '%s' failed to resize to %zu bytes\n", tracker, bufferSize * 2);
+                return nullptr; // Failed to resize the buffer
             }
+            buffer = newBuffer; // Update the buffers pointer
+            buffer[numBuffers] = (T*)malloc(sizeof(T) * bufferSize); // Allocate memory for the new buffer
+            memset(buffer[numBuffers], 0, sizeof(T) * bufferSize); // Initialize the new buffer to zero
+            numBuffers++; // Update the number of buffers
         }
+        size_t index = allocated.size(); // Get the index of the next available object
         allocated.push_back(index); // Add the index to the allocated list
-        return &buffer[index]; // Return a pointer to the allocated object
+        return &buffer[index / bufferSize][index % bufferSize]; // Return a pointer to the allocated object
     }
 
     /**
@@ -208,12 +220,16 @@ struct sTypedSmartArena {
      * @param obj Pointer to the object to free.
      */
     inline void free(T* obj) {
-        size_t index = (size_t)(obj - buffer); // Calculate the index of the object
-        auto it = std::find(allocated.begin(), allocated.end(), index); // Find the index in the allocated list
+        if (debugMode) {
+            printf("Arena '%s' freeing object at %p\n", tracker, obj);
+        }
+        // Find the index of the object in the allocated list
+        auto it = std::find(allocated.begin(), allocated.end(), (size_t)(obj - buffer[0]));
         if (it != allocated.end()) {
             allocated.erase(it); // Remove the index from the allocated list
+        } else {
+            printf("Arena '%s' failed to free object at %p\n", tracker, obj);
         }
-        memset(obj, 0, sizeof(T)); // Clear the object, not really necessary, but helps for future issues to come
     }
 
     /**
@@ -223,103 +239,5 @@ struct sTypedSmartArena {
      */
     inline void reset() {
         allocated.clear(); // Clear the allocated list
-        memset(buffer, 0, sizeof(T) * size); // Clear the buffer
-    }
-
-    /**
-     * @brief Resizes the smart arena.
-     * 
-     * This function resizes the smart arena to a new size.
-     * It is called when the smart arena goes out of scope or is deleted.
-     * 
-     * @param newSize The new size of the smart arena.
-     */
-    inline void resize(size_t newSize) {
-        if (newSize <= size) {
-            printf("Smart arena '%s' resize requested to %zu bytes, but current size is %zu bytes\n", tracker, newSize, size);
-            return; // No need to resize if the new size is less than or equal to the current size
-        }
-        T* newBuffer = (T*)realloc(buffer, sizeof(T) * newSize);
-        if (!newBuffer) {
-            printf("Smart arena '%s' failed to resize to %zu bytes\n", tracker, newSize);
-            return; // Failed to resize the buffer
-        }
-        buffer = newBuffer; // Update the buffer pointer
-        size = newSize;     // Update the size
     }
 };
-
-// ### WIP code below ###
-
-
-// struct sSmartArena {
-//     /// @brief Pointer to the memory buffer.
-//     uint8_t* buffer;
-//     /// @brief Size of the memory buffer.
-//     size_t size;
-//     struct sArenaBlock {
-//         size_t offset;
-//         size_t size;
-//     };
-//     /// @brief List of currently allocated blocks.
-//     std::vector<sArenaBlock> allocated;
-//     /// @brief Tracker string for debugging purposes.
-//     const char* tracker;
-
-//     sArenaBlock findFreeBlock(size_t bytes) {
-//         // find an area in the buffer that has no bytes contained in a current block
-//         // we will just try each offset, starting from 0 (if there is no block there) and then if it cant fit, or if a block already exists there, we go to the next closest block and try to fit it right at the end of that block
-//         size_t offset = 0;
-//         bool needsResize = false;
-//         while (true) {
-//             while (offset < size) {
-//                 // we want to check if the current offset "intersects" with any of the allocated blocks
-//                 // if it does, we add to the offset the size of the block, and check again
-//                 for (size_t i = 0; i < allocated.size(); i++) {
-//                     if (offset >= allocated[i].offset && offset < allocated[i].offset + allocated[i].size) {
-//                         offset = allocated[i].offset + allocated[i].size;
-//                         break;
-//                     }
-//                 }
-//             }
-//             // now, either we have found an empty spot, or we have reached the end of the buffer
-//             // if we have reached the end of the buffer, it is easy, we just resize and return the block.
-//             if (offset + bytes > size) {
-//                 needsResize = true;
-//                 break;
-//             }
-//             bool needRestart = false;
-//             // if we have found an empty spot, check if it is big enough, if any offset is in between offset and offset + bytes, then this check has failed and we continue finding another empty block
-//             for (size_t i = 0; i < allocated.size(); i++) {
-//                 if (offset < allocated[i].offset && offset + bytes >= allocated[i].offset) {
-//                     offset = allocated[i].offset + allocated[i].size;
-//                     needRestart = true;
-//                     break;
-//                 }
-//             }
-//             if (!needRestart) {
-//                 continue; // dang it, block isn't big enough, try again
-//             }
-
-//             // if we get here, we have found a block that is big enough, so we can return it
-//             sArenaBlock block = {offset, bytes};
-//             allocated.push_back(block); // Add the block to the allocated list
-//             return block;
-//         }
-
-//         if (needsResize) {
-//             printf("Smart arena '%s' is full, attempting to resize from %zu bytes to %zu bytes\n", tracker, size, size * 2);
-//             size_t newSize;
-//             if (size * 2 > offset + bytes) {
-//                 newSize = size * 2;
-//             } else {
-//                 newSize = offset + bytes + size / 2;
-//             }
-//             resize(newSize);
-//         }
-//         // now that it is resized, we can just create the block
-//         sArenaBlock block = {offset, bytes};
-//         allocated.push_back(block); // Add the block to the allocated list
-//         return block;
-//     }
-// };

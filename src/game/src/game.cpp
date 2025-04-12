@@ -120,7 +120,7 @@ CEXPORT int game_main(GameContext* ctx) {
     gfxm.init(win);
     textm.init(&gfxm, &shdr, &assetm);
 
-    return 0;
+    // return 0;
 
     gfxm.setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 

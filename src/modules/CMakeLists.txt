@@ -148,9 +148,10 @@ if (SPEC_DX11)
 endif()
 
 if (SPEC_VULK)
-    # get vulkan sdk as well as shaderc
-    find_package(Vulkan REQUIRED COMPONENTS shaderc_combined)
+    find_package(Vulkan REQUIRED)
 endif()
+#glslc
+find_package(Vulkan COMPONENTS glslc REQUIRED)
 
 # OpenAL
 FetchContent_Declare(
@@ -159,6 +160,18 @@ FetchContent_Declare(
     GIT_TAG 1.24.2
 )
 FetchContent_MakeAvailable(openal)
+
+# spirv-cross
+message(STATUS "VULK_SDK_VERSION: ${Vulkan_VERSION}")
+set(SPIRV_CROSS_SHARED ON CACHE BOOL "" FORCE)
+FetchContent_Declare(
+    spirv_cross
+    GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Cross
+    GIT_TAG "vulkan-sdk-${Vulkan_VERSION}"
+)
+FetchContent_MakeAvailable(spirv_cross)
+
+
 
 
 macro(add_module mod impl source)
@@ -256,7 +269,7 @@ if(SPEC_GLAD)
 endif()
 if(SPEC_DX11)
     create_module_def(gfx d3d11_1 "DirectX 11.1" "dx,noapi")
-    add_module_dependency(gfx d3d11_1 win "dx,noapi")
+    add_module_dependency(gfx d3d11_1 win "dx")
     add_module_dependency(gfx d3d11_1 shdr "hlsl,dx")
     add_module(gfx d3d11_1 gfx/d3d11_1.cpp)
     target_link_libraries(gfx_d3d11_1 d3d11 d3dcompiler dxgi)
@@ -266,7 +279,7 @@ if(SPEC_VULK)
     add_module_dependency(gfx vulk win "vulk")
     add_module_dependency(gfx vulk shdr "vulk")
     add_module(gfx vulk gfx/vulkan.cpp)
-    target_link_libraries(gfx_vulk Vulkan::Vulkan Vulkan::shaderc_combined)
+    target_link_libraries(gfx_vulk Vulkan::Vulkan)
 endif()
 create_submodule_def(shdr spsl "Spectral Shader Langauge")
 add_module_subdef(shdr spsl "spsl_glsl" "glsl,gl")
@@ -281,6 +294,34 @@ target_compile_definitions(shdr_spsl_hlsl PUBLIC "SPECTRAL_OUTPUT_HLSL")
 add_module(shdr spsl_glslv shdr/spsl.cpp)
 target_compile_definitions(shdr_spsl_glslv PUBLIC "SPECTRAL_OUTPUT_GLSL")
 target_compile_definitions(shdr_spsl_glslv PUBLIC "SPECTRAL_OUTPUT_VULKAN")
+
+create_submodule_def(shdr glsl "GLSL Shader") # This uses GLSL 450 language and uses Spirv-Cross to convert to whatever language is needed
+add_module_subdef(shdr glsl "glsl_gl330" "glsl,gl")
+add_module_subdef(shdr glsl "glsl_gl450" "glsl,gl450")
+add_module_subdef(shdr glsl "glsl_hlsl" "hlsl,dx")
+add_module_subdef(shdr glsl "glsl_spirv" "spirv,vulk")
+add_module_subdef(shdr glsl "glsl_gles" "gles,gl")
+add_module(shdr glsl_gl330 shdr/glsl.cpp)
+target_compile_definitions(shdr_glsl_gl330 PUBLIC "SPECTRAL_OUTPUT_GLSL330")
+target_link_libraries(shdr_glsl_gl330 spirv-cross-c-shared)
+target_include_directories(shdr_glsl_gl330 PUBLIC ${spirv_cross_SOURCE_DIR})
+add_module(shdr glsl_gl450 shdr/glsl.cpp)
+target_compile_definitions(shdr_glsl_gl450 PUBLIC "SPECTRAL_OUTPUT_GLSL450")
+target_link_libraries(shdr_glsl_gl450 spirv-cross-c-shared)
+target_include_directories(shdr_glsl_gl450 PUBLIC ${spirv_cross_SOURCE_DIR})
+add_module(shdr glsl_hlsl shdr/glsl.cpp)
+target_compile_definitions(shdr_glsl_hlsl PUBLIC "SPECTRAL_OUTPUT_HLSL")
+target_link_libraries(shdr_glsl_hlsl spirv-cross-c-shared)
+target_include_directories(shdr_glsl_hlsl PUBLIC ${spirv_cross_SOURCE_DIR})
+add_module(shdr glsl_spirv shdr/glsl.cpp)
+target_compile_definitions(shdr_glsl_spirv PUBLIC "SPECTRAL_OUTPUT_SPIRV")
+target_link_libraries(shdr_glsl_spirv spirv-cross-c-shared)
+target_include_directories(shdr_glsl_spirv PUBLIC ${spirv_cross_SOURCE_DIR})
+add_module(shdr glsl_gles shdr/glsl.cpp)
+target_compile_definitions(shdr_glsl_gles PUBLIC "SPECTRAL_OUTPUT_GLES")
+target_link_libraries(shdr_glsl_gles spirv-cross-c-shared)
+target_include_directories(shdr_glsl_gles PUBLIC ${spirv_cross_SOURCE_DIR})
+
 
 create_module_def(tex stb "STB" "")
 add_module(tex stb tex/stb.cpp)
