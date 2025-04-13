@@ -103,8 +103,38 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/assets")
 # not empty, we need to include stdint
 file(WRITE "${CMAKE_BINARY_DIR}/assets/assets.cpp" "#include <stdint.h>\n")
 message("Generating assets.cpp file")
+set(SPIRV_COMPILER "glslc")
 foreach(ASSET_FILE ${ASSETS_FILES})
     file(RELATIVE_PATH ASSET_NAME "${CMAKE_CURRENT_SOURCE_DIR}/assets" ${ASSET_FILE})
+    # if the file is under the shader/ directory, create a spirv file with the exact same name, but with the .spv extension
+    if(ASSET_NAME MATCHES "shader/.*")
+        set(OLD_ASSET_NAME ${ASSET_NAME})
+        set(OLD_ASSET_FILE ${ASSET_FILE})
+        set(ASSET_NAME ${ASSET_NAME}.spv)
+        set(ASSET_FILE "${CMAKE_BINARY_DIR}/assets/${ASSET_NAME}")
+
+        file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/assets/shader")
+        # add_custom_command(
+        #     COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/assets/shader"
+        #     COMMAND ${SPIRV_COMPILER} -o "${ASSET_FILE}" "${OLD_ASSET_FILE}"
+        #     DEPENDS "${OLD_ASSET_FILE}"
+        #     COMMENT "Compiling ${OLD_ASSET_NAME} to SPIR-V"
+        #     VERBATIM
+        # )
+        execute_process(
+            COMMAND ${SPIRV_COMPILER} -o "${ASSET_FILE}" "${OLD_ASSET_FILE}"
+            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/assets/shader"
+            RESULT_VARIABLE result
+            OUTPUT_VARIABLE output
+            ERROR_VARIABLE error
+        )
+        if(result EQUAL 0)
+            message("Compiled ${OLD_ASSET_NAME} to SPIR-V")
+        else()
+            message(FATAL_ERROR "Failed to compile ${OLD_ASSET_NAME} to SPIR-V: ${error}")
+        endif()
+    endif()
+
     message("  ${ASSET_NAME}")
     BIN2H(SOURCE_FILE ${ASSET_FILE} VARIABLE_NAME "asset_${ASSET_NAME}" HEADER_FILE "${CMAKE_BINARY_DIR}/assets/assets.cpp" APPEND)
 endforeach()

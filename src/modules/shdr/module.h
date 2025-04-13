@@ -9,6 +9,7 @@
 #include "gfx/module.h"
 
 #include <stdio.h>
+#include <stdint.h>
 
 /// @cond DOXYGEN_OMIT
 inline const char* combine_strs_with_delim(const char* a, const char* b, char delim) {
@@ -20,6 +21,7 @@ inline const char* combine_strs_with_delim(const char* a, const char* b, char de
 namespace shader {
      typedef sShader (*Compile)(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef);
      typedef sShader (*CreateShader)(GraphicsModule* gfxm, const char* data, size_t len, sShaderType type, sVertexDefinition* vertDef);
+     typedef const char* (*ShaderExtension)(sShaderType type);
 }
 /// @endcond
 
@@ -34,6 +36,8 @@ struct ShaderModule : Module {
 private:
     shader::Compile internal_compile;
     shader::CreateShader internal_createShader;
+    shader::ShaderExtension internal_shaderExtension;
+
 public:
 
     /**
@@ -71,6 +75,35 @@ public:
     }
 
     /**
+     * @brief Gets the shader extension for a given shader type.
+     * 
+     * @details Uses the GraphicsModule to get the shader extension. The shader extension is used to determine the file extension for the shader file.
+     * 
+     * @param type The type of shader to get the extension for.
+     * @return The shader extension.
+     */
+    inline const char* shaderExtension(sShaderType type) {
+        return internal_shaderExtension(type);
+    }
+
+    /**
+     * @brief Add a shader extension to a shader name.
+     * 
+     * @details This is used to add the shader extension to the shader name. This is used to determine the file extension for the shader file.
+     * 
+     * @param name The shader name.
+     * @param type The type of shader to get the extension for.
+     * @return The shader name with the extension added.
+     */
+    inline const char* addShaderExtension(const char* name, sShaderType type) {
+        const char* ext = shaderExtension(type);
+        size_t slen = strlen(name) + strlen(ext) + 2;
+        char* out = (char*)malloc(slen);
+        snprintf(out, slen, "%s.%s", name, ext);
+        return out;
+    }
+
+    /**
      * @brief Constructs a ShaderModule object.
      * 
      * @details The ShaderModule is a dynamic library that provides functionality for compiling and creating shaders. It uses the GraphicsModule to compile the shader. The shader is compiled from the file at the given path.
@@ -83,10 +116,12 @@ public:
     inline explicit ShaderModule(const char* dynlib, const char* dynp2) : Module(combine_strs_with_delim(dynlib, dynp2, '_'), "shdr") {
         internal_compile = (shader::Compile)lib.getSymbol("compile");
         internal_createShader = (shader::CreateShader)lib.getSymbol("createShader");
+        internal_shaderExtension = (shader::ShaderExtension)lib.getSymbol("shaderExtension");
     }
 
     inline explicit ShaderModule(const char* dynlib) : Module(dynlib, "shdr") {
         internal_compile = (shader::Compile)lib.getSymbol("compile");
         internal_createShader = (shader::CreateShader)lib.getSymbol("createShader");
+        internal_shaderExtension = (shader::ShaderExtension)lib.getSymbol("shaderExtension");
     }
 };

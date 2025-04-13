@@ -112,8 +112,8 @@ void Clay_Spectral_Init(WindowModule* winm, GraphicsModule* gfxm, TextModule* te
     __globalIUIState.rect_vert_def = rect_vert_def;
     // sShader rect_vert_shader = shdr->compile(gfxm, "spsl/iui/rect.spslv", sShaderType::VERTEX, rect_vert_def);
     // sShader rect_frag_shader = shdr->compile(gfxm, "spsl/iui/rect.spslf", sShaderType::FRAGMENT);
-    TextAssetBuffer rect_vert_abuf = assetm->loadTextAsset("spsl/iui/rect.spslv");
-    TextAssetBuffer rect_frag_abuf = assetm->loadTextAsset("spsl/iui/rect.spslf");
+    TextAssetBuffer rect_vert_abuf = assetm->loadTextAsset(shdr->addShaderExtension("shader/iui/rect", sShaderType::VERTEX));
+    TextAssetBuffer rect_frag_abuf = assetm->loadTextAsset(shdr->addShaderExtension("shader/iui/rect", sShaderType::FRAGMENT));
     sShader rect_vert_shader = shdr->createShader(gfxm, (const char*)rect_vert_abuf.data, rect_vert_abuf.len, sShaderType::VERTEX, rect_vert_def);
     sShader rect_frag_shader = shdr->createShader(gfxm, (const char*)rect_frag_abuf.data, rect_frag_abuf.len, sShaderType::FRAGMENT);
     sShaderProgram rect_shader = gfxm->createShaderProgram({rect_vert_shader, rect_frag_shader});
@@ -135,8 +135,8 @@ void Clay_Spectral_Init(WindowModule* winm, GraphicsModule* gfxm, TextModule* te
 
     // sShader rounded_rect_vert_shader = shdr->compile(gfxm, "spsl/iui/rounded_rect.spslv", sShaderType::VERTEX, rect_vert_def);
     // sShader rounded_rect_frag_shader = shdr->compile(gfxm, "spsl/iui/rounded_rect.spslf", sShaderType::FRAGMENT);
-    TextAssetBuffer rounded_rect_vert_abuf = assetm->loadTextAsset("spsl/iui/rounded_rect.spslv");
-    TextAssetBuffer rounded_rect_frag_abuf = assetm->loadTextAsset("spsl/iui/rounded_rect.spslf");
+    TextAssetBuffer rounded_rect_vert_abuf = assetm->loadTextAsset(shdr->addShaderExtension("shader/iui/rounded_rect", sShaderType::VERTEX));
+    TextAssetBuffer rounded_rect_frag_abuf = assetm->loadTextAsset(shdr->addShaderExtension("shader/iui/rounded_rect", sShaderType::FRAGMENT));
     sShader rounded_rect_vert_shader = shdr->createShader(gfxm, (const char*)rounded_rect_vert_abuf.data, rounded_rect_vert_abuf.len, sShaderType::VERTEX, rect_vert_def);
     sShader rounded_rect_frag_shader = shdr->createShader(gfxm, (const char*)rounded_rect_frag_abuf.data, rounded_rect_frag_abuf.len, sShaderType::FRAGMENT);
     sShaderProgram rounded_rect_shader = gfxm->createShaderProgram({rounded_rect_vert_shader, rounded_rect_frag_shader});

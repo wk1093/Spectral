@@ -147,11 +147,8 @@ if (SPEC_DX11)
     endforeach()
 endif()
 
-if (SPEC_VULK)
-    find_package(Vulkan REQUIRED)
-endif()
-#glslc
-find_package(Vulkan COMPONENTS glslc REQUIRED)
+
+find_package(Vulkan COMPONENTS glslang REQUIRED)
 
 # OpenAL
 FetchContent_Declare(
@@ -164,14 +161,13 @@ FetchContent_MakeAvailable(openal)
 # spirv-cross
 message(STATUS "VULK_SDK_VERSION: ${Vulkan_VERSION}")
 set(SPIRV_CROSS_SHARED ON CACHE BOOL "" FORCE)
+set(SPIRV_CROSS_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
     spirv_cross
     GIT_REPOSITORY https://github.com/KhronosGroup/SPIRV-Cross
     GIT_TAG "vulkan-sdk-${Vulkan_VERSION}"
 )
 FetchContent_MakeAvailable(spirv_cross)
-
-
 
 
 macro(add_module mod impl source)
@@ -302,24 +298,27 @@ add_module_subdef(shdr glsl "glsl_hlsl" "hlsl,dx")
 add_module_subdef(shdr glsl "glsl_spirv" "spirv,vulk")
 add_module_subdef(shdr glsl "glsl_gles" "gles,gl")
 add_module(shdr glsl_gl330 shdr/glsl.cpp)
+
+set(GLSL_SHADER_LIBS spirv-cross-c-shared)
+
 target_compile_definitions(shdr_glsl_gl330 PUBLIC "SPECTRAL_OUTPUT_GLSL330")
-target_link_libraries(shdr_glsl_gl330 spirv-cross-c-shared)
+target_link_libraries(shdr_glsl_gl330 ${GLSL_SHADER_LIBS})
 target_include_directories(shdr_glsl_gl330 PUBLIC ${spirv_cross_SOURCE_DIR})
 add_module(shdr glsl_gl450 shdr/glsl.cpp)
 target_compile_definitions(shdr_glsl_gl450 PUBLIC "SPECTRAL_OUTPUT_GLSL450")
-target_link_libraries(shdr_glsl_gl450 spirv-cross-c-shared)
+target_link_libraries(shdr_glsl_gl450 ${GLSL_SHADER_LIBS})
 target_include_directories(shdr_glsl_gl450 PUBLIC ${spirv_cross_SOURCE_DIR})
 add_module(shdr glsl_hlsl shdr/glsl.cpp)
 target_compile_definitions(shdr_glsl_hlsl PUBLIC "SPECTRAL_OUTPUT_HLSL")
-target_link_libraries(shdr_glsl_hlsl spirv-cross-c-shared)
+target_link_libraries(shdr_glsl_hlsl ${GLSL_SHADER_LIBS})
 target_include_directories(shdr_glsl_hlsl PUBLIC ${spirv_cross_SOURCE_DIR})
 add_module(shdr glsl_spirv shdr/glsl.cpp)
 target_compile_definitions(shdr_glsl_spirv PUBLIC "SPECTRAL_OUTPUT_SPIRV")
-target_link_libraries(shdr_glsl_spirv spirv-cross-c-shared)
+target_link_libraries(shdr_glsl_spirv ${GLSL_SHADER_LIBS})
 target_include_directories(shdr_glsl_spirv PUBLIC ${spirv_cross_SOURCE_DIR})
 add_module(shdr glsl_gles shdr/glsl.cpp)
 target_compile_definitions(shdr_glsl_gles PUBLIC "SPECTRAL_OUTPUT_GLES")
-target_link_libraries(shdr_glsl_gles spirv-cross-c-shared)
+target_link_libraries(shdr_glsl_gles ${GLSL_SHADER_LIBS})
 target_include_directories(shdr_glsl_gles PUBLIC ${spirv_cross_SOURCE_DIR})
 
 
@@ -340,6 +339,11 @@ add_custom_target(
         DEPENDS scrld_cpp
         DEPENDS shdr_spsl_glsl
         DEPENDS shdr_spsl_hlsl
+        DEPENDS shdr_glsl_gl330
+        DEPENDS shdr_glsl_gl450
+        DEPENDS shdr_glsl_hlsl
+        DEPENDS shdr_glsl_spirv
+        DEPENDS shdr_glsl_gles
 )
 if(SPEC_GLFW)
     add_dependencies(SpectralModules win_glfw_gl win_glfw_noapi)

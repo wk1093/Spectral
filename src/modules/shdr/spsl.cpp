@@ -13,6 +13,17 @@ CEXPORT void moduleInit(sArenaAllocator* arena) {
     gArena = arena;
 }
 
+CEXPORT const char* shaderExtension(sShaderType type) {
+    switch (type) {
+        case sShaderType::VERTEX:
+            return "spslv";
+        case sShaderType::FRAGMENT:
+            return "spslf";
+        default:
+            return nullptr;
+    }
+}
+
 // #define DEBUG_SHADER
 
 const char* hlsl_header = R"(

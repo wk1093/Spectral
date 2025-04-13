@@ -129,14 +129,14 @@ CEXPORT int game_main(GameContext* ctx) {
     sTexture tex = gfxm.createTexture(texDef);
     texm.freeTexture(texDef);
 
-    std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-    // sFont font = textm.loadFont("fonts/arial.ttf", 64, "spsl/text.spslv", "spsl/text.spslf");
-    sFont font = textm.loadFontAsset("fonts/arial.ttf", 64, "spsl/text.spslv", "spsl/text.spslf");
-    std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-    printf("Time to load font: %f\n", elapsed.count());
+    // std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+    // // sFont font = textm.loadFont("fonts/arial.ttf", 64, "spsl/text.spslv", "spsl/text.spslf");
+    // sFont font = textm.loadFontAsset("fonts/arial.ttf", 64, shdr.addShaderExtension("shader/text", sShaderType::VERTEX), shdr.addShaderExtension("shader/text", sShaderType::FRAGMENT));
+    // std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+    // std::chrono::duration<double> elapsed = end - start;
+    // printf("Time to load font: %f\n", elapsed.count());
 
-    Clay_Spectral_Init(&winm, &gfxm, &textm, &shdr, win, &font, &assetm);
+    // Clay_Spectral_Init(&winm, &gfxm, &textm, &shdr, win, &font, &assetm);
 
     sVertexDefinition* vertDef = gfxm.createVertexDefinition({3, 3, 2});
     if (vertexDefinitionSize(vertDef) != sizeof(Vertex)) {
@@ -146,8 +146,8 @@ CEXPORT int game_main(GameContext* ctx) {
     
     sShader vert{};
     sShader frag{};
-    TextAssetBuffer abufVert = assetm.loadTextAsset("spsl/basic.spslv");
-    TextAssetBuffer abufFrag = assetm.loadTextAsset("spsl/basic.spslf");
+    TextAssetBuffer abufVert = assetm.loadTextAsset(shdr.addShaderExtension("shader/basic", sShaderType::VERTEX));
+    TextAssetBuffer abufFrag = assetm.loadTextAsset(shdr.addShaderExtension("shader/basic", sShaderType::FRAGMENT));
     vert = shdr.createShader(&gfxm, (const char*)abufVert.data, abufVert.len, sShaderType::VERTEX, vertDef);
     frag = shdr.createShader(&gfxm, (const char*)abufFrag.data, abufFrag.len, sShaderType::FRAGMENT);
     sShaderProgram shader = gfxm.createShaderProgram({vert, frag});
@@ -194,7 +194,7 @@ CEXPORT int game_main(GameContext* ctx) {
     float yvel = 0.0f;
 
     double lastFPS = 0.0;
-    mat4 proj = orthographic(0, win->width, 0, win->height, -1, 1);
+    // mat4 proj = orthographic(0, win->width, 0, win->height, -1, 1);
     // textm.setTextProj(textobj, proj);
     // textm.setTextModel(textobj, translate({400, 300, 0}));
 
@@ -270,8 +270,8 @@ CEXPORT int game_main(GameContext* ctx) {
         yvel *= 0.99f * (win->dt * 60);
 
 
-        Clay_RenderCommandArray layout = createLayout();
-        Clay_Spectral_Render(win, layout, proj, identity());
+        // Clay_RenderCommandArray layout = createLayout();
+        // Clay_Spectral_Render(win, layout, proj, identity());
 
 
         gfxm.useShaderProgram(shader);
@@ -279,19 +279,19 @@ CEXPORT int game_main(GameContext* ctx) {
         shaderData.view = view(camera);
         shaderData.viewPos = camera.pos;
 
-        for (Cube& cube : cubes) {
-            gfxm.useShaderProgram(shader);
-            shaderData.model = cube.transform.matrix();
-            gfxm.setUniforms(uniforms, &shaderData);
-            gfxm.useTexture(shader, tex, "tex0");
-            cube.draw(&gfxm);
-        }
+        // for (Cube& cube : cubes) {
+        //     gfxm.useShaderProgram(shader);
+        //     shaderData.model = cube.transform.matrix();
+        //     gfxm.setUniforms(uniforms, &shaderData);
+        //     gfxm.useTexture(shader, tex, "tex0");
+        //     cube.draw(&gfxm);
+        // }
 
 
         gfxm.present();
         winm.swapBuffers(*win);
     }
-    textm.freeFont(font);
+    // textm.freeFont(font);
     gfxm.freeShaderProgram(shader);
     gfxm.freeShader(vert);
     gfxm.freeShader(frag);
