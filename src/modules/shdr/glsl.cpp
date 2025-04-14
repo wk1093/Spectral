@@ -33,7 +33,7 @@ CEXPORT sShader createShader(GraphicsModule* gfx, const char* data, size_t len, 
     const char* outputdata = nullptr;
     size_t outputLen = 0;
 
-    #ifndef SPECTRAL_OUTPUT_SPIRV
+#ifndef SPECTRAL_OUTPUT_SPIRV
     spvc_context context;
     spvc_context_create(&context);
 
@@ -50,6 +50,7 @@ CEXPORT sShader createShader(GraphicsModule* gfx, const char* data, size_t len, 
     // flatten_uniform_buffer_blocks
     spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_EMIT_UNIFORM_BUFFER_AS_PLAIN_UNIFORMS, true);
     spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_FORCE_FLATTENED_IO_BLOCKS , true);
+    spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_VULKAN_SEMANTICS, false);
 
     const spvc_reflected_resource* uniformBlocks = nullptr;
     spvc_resources resources;
@@ -60,6 +61,8 @@ CEXPORT sShader createShader(GraphicsModule* gfx, const char* data, size_t len, 
         spvc_variable_id id = uniformBlocks[i].id;
         spvc_compiler_flatten_buffer_block(compiler, id);
     }
+    // we want to disable the GL_ARB_shading_language_420pack
+    spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_ENABLE_420PACK_EXTENSION, false);
     
 #elif defined(SPECTRAL_OUTPUT_GLSL450)
     spvc_context_create_compiler(context, SPVC_BACKEND_GLSL, ir, SPVC_CAPTURE_MODE_TAKE_OWNERSHIP, &compiler);
@@ -75,7 +78,6 @@ CEXPORT sShader createShader(GraphicsModule* gfx, const char* data, size_t len, 
     spvc_context_create_compiler(context, SPVC_BACKEND_HLSL, ir, SPVC_CAPTURE_MODE_TAKE_OWNERSHIP, &compiler);
     spvc_compiler_create_compiler_options(compiler, &options);
     spvc_compiler_options_set_uint(options, SPVC_COMPILER_OPTION_HLSL_SHADER_MODEL, 50);
-    spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_HLSL_ENABLE_16BIT_TYPES, true);
 #endif
     spvc_compiler_install_compiler_options(compiler, options);
     spvc_result res = spvc_compiler_compile(compiler, (const char**)(&outputdata));
@@ -85,7 +87,12 @@ CEXPORT sShader createShader(GraphicsModule* gfx, const char* data, size_t len, 
         return {};
     }
     spirvlen = strlen(outputdata);
-    spvc_context_destroy(context);
+    char* copied_data = (char*)malloc(spirvlen + 1);
+    memcpy(copied_data, outputdata, spirvlen);
+    copied_data[spirvlen] = 0;
+    outputdata = copied_data;
+
+    spvc_context_destroy(context); // this destroys the outputdata, so we need to copy it
     printf("SHADER CONTENT:\n%s\n", outputdata);
 #else
     outputLen = spirvlen;

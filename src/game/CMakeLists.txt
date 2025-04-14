@@ -104,10 +104,14 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/assets")
 file(WRITE "${CMAKE_BINARY_DIR}/assets/assets.cpp" "#include <stdint.h>\n")
 message("Generating assets.cpp file")
 set(SPIRV_COMPILER "glslc")
+set(SPIRV_COMPILER_FLAGS --target-env=opengl -fentry-point=main -O)
+
+add_custom_target(assets_target DEPENDS "${ASSETS_FILES}")
+
 foreach(ASSET_FILE ${ASSETS_FILES})
     file(RELATIVE_PATH ASSET_NAME "${CMAKE_CURRENT_SOURCE_DIR}/assets" ${ASSET_FILE})
     # if the file is under the shader/ directory, create a spirv file with the exact same name, but with the .spv extension
-    if(ASSET_NAME MATCHES "shader/.*")
+    if(ASSET_NAME MATCHES "shader/.*\.vert" OR ASSET_NAME MATCHES "shader/.*\.frag")
         set(OLD_ASSET_NAME ${ASSET_NAME})
         set(OLD_ASSET_FILE ${ASSET_FILE})
         set(ASSET_NAME ${ASSET_NAME}.spv)
@@ -122,7 +126,7 @@ foreach(ASSET_FILE ${ASSETS_FILES})
         #     VERBATIM
         # )
         execute_process(
-            COMMAND ${SPIRV_COMPILER} -o "${ASSET_FILE}" "${OLD_ASSET_FILE}"
+            COMMAND ${SPIRV_COMPILER} -o "${ASSET_FILE}" "${OLD_ASSET_FILE}" ${SPIRV_COMPILER_FLAGS}
             WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/assets/shader"
             RESULT_VARIABLE result
             OUTPUT_VARIABLE output
@@ -134,12 +138,12 @@ foreach(ASSET_FILE ${ASSETS_FILES})
             message(FATAL_ERROR "Failed to compile ${OLD_ASSET_NAME} to SPIR-V: ${error}")
         endif()
     endif()
-
     message("  ${ASSET_NAME}")
     BIN2H(SOURCE_FILE ${ASSET_FILE} VARIABLE_NAME "asset_${ASSET_NAME}" HEADER_FILE "${CMAKE_BINARY_DIR}/assets/assets.cpp" APPEND)
 endforeach()
 
 add_library(game_assets SHARED "${CMAKE_BINARY_DIR}/assets/assets.cpp")
+add_dependencies(game_assets assets_target)
 
 set_target_properties(game_assets PROPERTIES PREFIX "")
 set_target_properties(game_assets PROPERTIES SUFFIX ".splmod")

@@ -6,12 +6,10 @@ layout(location = 2) in vec2 tex_coords;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(set = 0, binding = 0) uniform sampler2D tex0;
 
-layout(set = 0, binding = 1) uniform UBO {
-    vec3 uViewPos;
-    float uTime;
-} ubo;
+layout(location=3) uniform vec3 uViewPos;
+layout(location=4) uniform float uTime;
+layout(location=5) uniform sampler2D tex0;
 
 
 void main() {
@@ -20,7 +18,7 @@ void main() {
     vec3 ambient_color = vec3(0.3);
 
     vec3 light_dir = normalize(light_pos - vertex_pos);
-    vec3 view_dir = normalize(ubo.uViewPos - vertex_pos);
+    vec3 view_dir = normalize(uViewPos - vertex_pos);
     vec3 reflect_dir = reflect(-light_dir, normalize(normal_out));
 
     float diff = max(dot(normal_out, light_dir), 0.0);

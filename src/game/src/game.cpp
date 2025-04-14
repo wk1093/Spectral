@@ -279,13 +279,13 @@ CEXPORT int game_main(GameContext* ctx) {
         shaderData.view = view(camera);
         shaderData.viewPos = camera.pos;
 
-        // for (Cube& cube : cubes) {
-        //     gfxm.useShaderProgram(shader);
-        //     shaderData.model = cube.transform.matrix();
-        //     gfxm.setUniforms(uniforms, &shaderData);
-        //     gfxm.useTexture(shader, tex, "tex0");
-        //     cube.draw(&gfxm);
-        // }
+        for (Cube& cube : cubes) {
+            gfxm.useShaderProgram(shader);
+            shaderData.model = cube.transform.matrix();
+            gfxm.setUniforms(uniforms, &shaderData);
+            gfxm.useTexture(shader, tex, "tex0");
+            cube.draw(&gfxm);
+        }
 
 
         gfxm.present();
