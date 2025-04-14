@@ -106,9 +106,15 @@ message("Generating assets.cpp file")
 set(SPIRV_COMPILER "glslc")
 set(SPIRV_COMPILER_FLAGS -fentry-point=main)
 
-add_custom_target(assets_target DEPENDS "${ASSETS_FILES}")
+add_custom_target(assets_target)
+
+set(ASSET_NUMBER 0)
 
 foreach(ASSET_FILE ${ASSETS_FILES})
+    # add the file to the assets_target
+    add_custom_target(asset_target_${ASSET_NUMBER} DEPENDS "${ASSET_FILE}")
+    add_dependencies(assets_target asset_target_${ASSET_NUMBER})
+    math(EXPR ASSET_NUMBER "${ASSET_NUMBER} + 1")
     file(RELATIVE_PATH ASSET_NAME "${CMAKE_CURRENT_SOURCE_DIR}/assets" ${ASSET_FILE})
     # if the file is under the shader/ directory, create a spirv file with the exact same name, but with the .spv extension
     if(ASSET_NAME MATCHES "shader/.*\.vert" OR ASSET_NAME MATCHES "shader/.*\.frag")
