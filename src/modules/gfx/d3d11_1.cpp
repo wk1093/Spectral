@@ -352,7 +352,7 @@ CEXPORT void present() {
 }
 
 struct sInternalShader {
-    enum sShaderType type;
+    sShaderType type;
     ID3D11VertexShader* vertexShader;
     ID3D11PixelShader* pixelShader;
     ID3D11GeometryShader* geometryShader;
@@ -366,6 +366,8 @@ struct sInternalShaderProgram {
     // sInternalShader geometryShader;
     ID3D11InputLayout* inputLayout;
     size_t textureCount;
+    sShaderReflection vertref;
+    sShaderReflection fragref;
 };
 
 CEXPORT sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexSize, sIndex* indices, size_t indexSize) {
@@ -516,14 +518,19 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
     sInternalShader vertexShader{};
     sInternalShader fragmentShader{};
 
+    sShaderReflection vertexReflection{};
+    sShaderReflection fragmentReflection{};
+
     for (size_t i = 0; i < count; i++) {
         auto* shader = (sInternalShader*)shaders[i].internal;
         switch(shader->type) {
             case sShaderType::VERTEX:
                 vertexShader = *shader;
+                vertexReflection = shaders[i].reflection;
                 break;
             case sShaderType::FRAGMENT:
                 fragmentShader = *shader;
+                fragmentReflection = shaders[i].reflection;
                 break;
             case sShaderType::GEOMETRY:
                 printf("GEOMETRY SHADER UNIMPLEMENTED\n");
@@ -601,6 +608,8 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
     internal->fragmentShader = fragmentShader;
     internal->inputLayout = inputLayout;
     internal->textureCount = 0;
+    internal->vertref = vertexReflection;
+    internal->fragref = fragmentReflection;
     return {internal};
 }
 
@@ -619,6 +628,16 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
     internal->program = program;
     internal->fragmentPart = getPartialf(def, sShaderType::FRAGMENT);
     internal->vertexPart = getPartialf(def, sShaderType::VERTEX);
+
+    sInternalShaderProgram * shaderProgram = (sInternalShaderProgram*)program.internal;
+
+    if (internal->vertexPart.size() != shaderProgram->vertref.uniformSize) {
+        printf("Vertex uniform size mismatch\n");
+    }
+
+    if (internal->fragmentPart.size() != shaderProgram->fragref.uniformSize) {
+        printf("Fragment uniform size mismatch\n");
+    }
     
     const int fakeFragSize = internal->fragmentPart.size() + (16 - internal->fragmentPart.size() % 16);
     const int fakeVertSize = internal->vertexPart.size() + (16 - internal->vertexPart.size() % 16);

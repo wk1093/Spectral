@@ -22,7 +22,7 @@ void main() {
 
     vec3 light_dir = normalize(light_pos - vertex_pos);
     vec3 view_dir = normalize(uViewPos - vertex_pos);
-    vec3 reflect_dir = reflect(-light_dir, normalize(normal_out));
+    vec3 reflect_dir = reflect(-light_dir, normal_out);
 
     float diff = max(dot(normal_out, light_dir), 0.0);
     float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 32.0);

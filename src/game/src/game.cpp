@@ -158,15 +158,15 @@ CEXPORT int game_main(GameContext* ctx) {
     bool mouse_locked = false;
 
     sUniformDefinition uniformDef = {
-        {sShaderType::FRAGMENT, "uTime", sUniformType::FLOAT, 1},
         {sShaderType::FRAGMENT, "uViewPos", sUniformType::FLOAT, 3},
+        {sShaderType::FRAGMENT, "uTime", sUniformType::FLOAT, 1},
         {sShaderType::VERTEX, "uProj", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uModel", sUniformType::FLOAT, 4, 4}
     };
     struct ShaderData {
-        float time = 0.0f;
         vec3 viewPos = {0.0f, 0.0f, 0.0f};
+        float time = 0.0f;
         mat4 proj = perspective(fov, aspect_ratio, nearp, farp);
         mat4 view = identity();
         mat4 model = identity();

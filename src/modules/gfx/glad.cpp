@@ -66,6 +66,7 @@ CEXPORT void clear() {
 struct sInternalShader {
     unsigned int shader;
     sVertexDefinition* vertDef;
+    sShaderType type;
 };
 
 CEXPORT sMesh createMesh(sShader vertexShader, void* vertices, size_t vertexSize, sIndex* indices, size_t indexSize) {
@@ -152,12 +153,20 @@ CEXPORT sShader createShader(const char* source, sShaderType type, sVertexDefini
     sInternalShader* internal = gArena->allocate<sInternalShader>();
     internal->shader = shader;
     internal->vertDef = vertDef;
+    internal->type = type;
+    if (type == sShaderType::VERTEX) {
+        internal->vertDef = vertDef;
+    } else {
+        internal->vertDef = nullptr;
+    }
     return {internal};
 }
 
 struct sInternalShaderProgram {
     unsigned int program;
     int texcount;
+    sShaderReflection vert;
+    sShaderReflection frag;
 };
 
 CEXPORT void useShaderProgram(sShaderProgram shader) {
@@ -168,8 +177,17 @@ CEXPORT void useShaderProgram(sShaderProgram shader) {
 
 CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
     unsigned int program = glCreateProgram();
+    sShaderReflection vert;
+    sShaderReflection frag;
     for (size_t i = 0; i < count; i++) {
         glAttachShader(program, ((sInternalShader*)(shaders[i].internal))->shader);
+        sInternalShader* shader = (sInternalShader*)shaders[i].internal;
+        if (shader->type == sShaderType::VERTEX) {
+            vert = shaders[i].reflection;
+        } else if (shader->type == sShaderType::FRAGMENT) {
+            frag = shaders[i].reflection;
+        }
+        
     }
     glLinkProgram(program);
 
@@ -186,6 +204,9 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
     sInternalShaderProgram* internal = gArena->allocate<sInternalShaderProgram>();
     internal->program = program;
     internal->texcount = 0;
+    internal->vert = vert;
+    internal->frag = frag;
+
     return {internal};
 }
 
@@ -200,6 +221,8 @@ struct sInternalUniforms {
     int frag_loc;
     GLuint vert_ubo;
     GLuint frag_ubo;
+    sUniformDefinition vertdef;
+    sUniformDefinition fragdef;
 };
 
 CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def) {
@@ -207,17 +230,22 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
     sInternalUniforms* internal = gArena->allocate<sInternalUniforms>();
     internal->def = def;
     internal->program = program;
-    // internal->locations = (int*)malloc(sizeof(int) * def.count);
-    // internal->locations = gArena->allocateArray<int>(def.count);
-    // for (size_t i = 0; i < def.count; i++) {
-    //     internal->locations[i] = glGetUniformLocation(*(unsigned int*)program.internal, def.elements[i].name);
-    // }
-    // internal->vert_loc = glGetUniformLocation(*(unsigned int*)program.internal, "vert_ubo");
-    // internal->frag_loc = glGetUniformLocation(*(unsigned int*)program.internal, "frag_ubo");
-    internal->vert_loc = glGetUniformBlockIndex(*(unsigned int*)program.internal, "vert_ubo");
-    internal->frag_loc = glGetUniformBlockIndex(*(unsigned int*)program.internal, "frag_ubo");
-    glUniformBlockBinding(*(unsigned int*)program.internal, internal->vert_loc, 0);
-    glUniformBlockBinding(*(unsigned int*)program.internal, internal->frag_loc, 1);
+    internal->vertdef = getPartialf(def, sShaderType::VERTEX);
+    internal->fragdef = getPartialf(def, sShaderType::FRAGMENT);
+
+    sInternalShaderProgram* internalProgram = (sInternalShaderProgram*)program.internal;
+
+    if (internal->vertdef.size() != internalProgram->vert.uniformSize) {
+        printf("Vertex uniform size mismatch: %zu != %zu\n", internal->vertdef.size(), internalProgram->vert.uniformSize);
+    }
+    if (internal->fragdef.size() != internalProgram->frag.uniformSize) {
+        printf("Fragment uniform size mismatch: %zu != %zu\n", internal->fragdef.size(), internalProgram->frag.uniformSize);
+    }
+    
+    internal->vert_loc = glGetUniformBlockIndex(internalProgram->program, internalProgram->vert.uniformName);
+    internal->frag_loc = glGetUniformBlockIndex(internalProgram->program, internalProgram->frag.uniformName);
+    glUniformBlockBinding(internalProgram->program, internal->vert_loc, 0);
+    glUniformBlockBinding(internalProgram->program, internal->frag_loc, 1);
     
     glGenBuffers(1, &internal->vert_ubo);
     glBindBuffer(GL_UNIFORM_BUFFER, internal->vert_ubo);
@@ -234,8 +262,8 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
 
 CEXPORT void setUniforms(sUniforms uniforms, void* data) {
 
-    sInternalUniforms internal = *(sInternalUniforms*)uniforms.internal;
-    sUniformDefinition def = internal.def;
+    sInternalUniforms* internal = (sInternalUniforms*)uniforms.internal;
+    sUniformDefinition def = internal->def;
 
     // size_t offset = 0;
     // for (size_t i = 0; i < def.count; i++) {
@@ -322,16 +350,16 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
     //     }
     // }
 
-    sUniformDefinition vert = getPartialf(def, sShaderType::VERTEX);
-    sUniformDefinition frag = getPartialf(def, sShaderType::FRAGMENT);
+    const int fakeFragSize = internal->fragdef.size() + (16 - internal->fragdef.size() % 16);
+    const int fakeVertSize = internal->vertdef.size() + (16 - internal->vertdef.size() % 16);
 
-    size_t vertSize = vert.size();
-    size_t fragSize = frag.size();
+    size_t vertSize = internal->vertdef.size();
+    size_t fragSize = internal->fragdef.size();
 
-    glBindBuffer(GL_UNIFORM_BUFFER, internal.vert_ubo);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, vertSize, (char*)data+fragSize);
-    glBindBuffer(GL_UNIFORM_BUFFER, internal.frag_ubo);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, fragSize, data);
+    glBindBuffer(GL_UNIFORM_BUFFER, internal->vert_ubo);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, fakeVertSize, (char*)data+fragSize);
+    glBindBuffer(GL_UNIFORM_BUFFER, internal->frag_ubo);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, fakeFragSize, data);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     

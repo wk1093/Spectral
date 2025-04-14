@@ -33,7 +33,8 @@ CEXPORT sShader createShader(GraphicsModule* gfx, const char* data, size_t len, 
     const char* outputdata = nullptr;
     size_t outputLen = 0;
 
-#ifndef SPECTRAL_OUTPUT_SPIRV
+    sShaderReflection refl = {};
+
     spvc_context context;
     spvc_context_create(&context);
 
@@ -80,6 +81,59 @@ CEXPORT sShader createShader(GraphicsModule* gfx, const char* data, size_t len, 
     spvc_compiler_options_set_uint(options, SPVC_COMPILER_OPTION_HLSL_SHADER_MODEL, 50);
     spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_HLSL_FORCE_STORAGE_BUFFER_AS_UAV, true);
 #endif
+
+    // Reflect shader data
+    spvc_resources resources;
+    spvc_compiler_create_shader_resources(compiler, &resources);
+    size_t numUniformBlocks = 0;
+    std::vector<sUniformElement> uniformElements;
+    const spvc_reflected_resource* uniformBlocks = nullptr;
+    spvc_resources_get_resource_list_for_type(resources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, &uniformBlocks, &numUniformBlocks);
+    if (numUniformBlocks > 1) {
+        printf("Shader must have only one uniform block\n");
+        spvc_context_destroy(context);
+        return {};
+    } else if (numUniformBlocks == 1) {
+        spvc_variable_id id = uniformBlocks[0].id;
+        printf("UNIF '%s'\n", uniformBlocks[0].name);
+        refl.uniformName = strdup(uniformBlocks[0].name);
+        spvc_type_id typeId = uniformBlocks[0].type_id;
+        spvc_type baseType = spvc_compiler_get_type_handle(compiler, typeId);
+        spvc_compiler_get_declared_struct_size(compiler, baseType, &refl.uniformSize);
+        printf("UNIF SIZE %zu\n", refl.uniformSize);
+
+        std::vector<size_t> elementSizes;
+        elementSizes.push_back(0);
+        spvc_compiler_get_declared_struct_member_size(compiler, baseType, elementSizes.size()-1, &elementSizes[elementSizes.size()-1]);
+        while (elementSizes[elementSizes.size()-1] != 0) {
+            elementSizes.push_back(0);
+            spvc_compiler_get_declared_struct_member_size(compiler, baseType, elementSizes.size()-1, &elementSizes[elementSizes.size()-1]);
+            // if sum of elementSizes is equal to or greater than refl.uniformSize, break
+            size_t sum = 0;
+            for (size_t i = 0; i < elementSizes.size(); i++) {
+                sum += elementSizes[i];
+            }
+            if (sum >= refl.uniformSize) {
+                break;
+            }
+        }
+        elementSizes.pop_back();
+        size_t numElements = elementSizes.size();
+        printf("UNIF ELEMENTS %zu\n", numElements);
+        for (size_t i = 0; i < numElements; i++) {
+            printf("UNIF ELEMENT %zu SIZE %zu\n", i, elementSizes[i]);
+        }
+        
+    } else {
+        printf("No uniform blocks found\n");
+    }
+    
+
+
+#ifdef SPECTRAL_OUTPUT_SPIRV
+    outputLen = spirvlen;
+    outputdata = spirvdata;
+#else
     spvc_compiler_install_compiler_options(compiler, options);
     spvc_result res = spvc_compiler_compile(compiler, (const char**)(&outputdata));
     if (res != SPVC_SUCCESS) {
@@ -92,14 +146,14 @@ CEXPORT sShader createShader(GraphicsModule* gfx, const char* data, size_t len, 
     memcpy(copied_data, outputdata, spirvlen);
     copied_data[spirvlen] = 0;
     outputdata = copied_data;
+#endif
+
 
     spvc_context_destroy(context); // this destroys the outputdata, so we need to copy it
-    printf("SHADER CONTENT:\n%s\n", outputdata);
-#else
-    outputLen = spirvlen;
-    outputdata = spirvdata;
-#endif
+    // printf("SHADER CONTENT:\n%s\n", outputdata);
+
     sShader shader = gfx->createShader(outputdata, type, vertDef, spirvlen);
+    shader.reflection = refl;
     return shader;
 }
 

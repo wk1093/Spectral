@@ -105,13 +105,15 @@ struct sUniformElement {
     sUniformType type;
     size_t countx;
     size_t county=1;
+    size_t padding=0;
     /// @brief Construct a matrix uniform element.
     /// @param shaderType The shader that this uniform belongs to.
     /// @param name The name of the uniform in the shader.
     /// @param type The type of the uniform.
     /// @param countx The x size of the matrix (e.g. 4 for a mat4).
     /// @param county The y size of the matrix (e.g. 4 for a mat4).
-    inline sUniformElement(sShaderType shaderType, const char* name, sUniformType type, size_t countx, size_t county) : shaderType(shaderType), name(name), type(type), countx(countx), county(county) {}
+    /// @param padding The padding size of the matrix (e.g. 0 for a mat4).
+    inline sUniformElement(sShaderType shaderType, const char* name, sUniformType type, size_t countx, size_t county, size_t padding=0) : shaderType(shaderType), name(name), type(type), countx(countx), county(county), padding(padding) {}
     
     /// @brief Construct a vector or scalar uniform element.
     /// @param shaderType The shader that this uniform belongs to.
@@ -220,6 +222,11 @@ struct sMesh {
     GraphicsModule* creator;
 };
 
+struct sShaderReflection {
+    const char* uniformName;
+    size_t uniformSize;
+};
+
 /**
  * @brief Shader structure.
  * 
@@ -228,6 +235,7 @@ struct sMesh {
  */
 struct sShader {
     void* internal;
+    sShaderReflection reflection;
 };
 
 /**

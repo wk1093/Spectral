@@ -18,6 +18,7 @@ inline const char* combine_strs_with_delim(const char* a, const char* b, char de
     snprintf(out, len, "%s%c%s", a, delim, b);
     return out;
 }
+
 namespace shader {
      typedef sShader (*Compile)(GraphicsModule* gfxm, const char* path, sShaderType type, sVertexDefinition* vertDef);
      typedef sShader (*CreateShader)(GraphicsModule* gfxm, const char* data, size_t len, sShaderType type, sVertexDefinition* vertDef);
