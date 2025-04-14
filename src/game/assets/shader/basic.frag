@@ -6,7 +6,7 @@ layout(location = 2) in vec2 tex_coords;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(binding=0) uniform ViewPos {
+layout(binding=0) uniform ubo {
     vec3 uViewPos;
     float uTime;
 };
