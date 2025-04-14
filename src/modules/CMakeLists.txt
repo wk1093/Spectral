@@ -277,19 +277,19 @@ if(SPEC_VULK)
     add_module(gfx vulk gfx/vulkan.cpp)
     target_link_libraries(gfx_vulk Vulkan::Vulkan)
 endif()
-create_submodule_def(shdr spsl "Spectral Shader Langauge")
-add_module_subdef(shdr spsl "spsl_glsl" "glsl,gl")
-add_module_subdef(shdr spsl "spsl_glslv" "glsl,vulk")
-add_module_subdef(shdr spsl "spsl_hlsl" "hlsl,dx")
-add_module(shdr spsl_glsl shdr/spsl.cpp)
-target_compile_definitions(shdr_spsl_glsl PUBLIC "SPECTRAL_OUTPUT_GLSL")
+# create_submodule_def(shdr spsl "Spectral Shader Langauge")
+# add_module_subdef(shdr spsl "spsl_glsl" "glsl,gl")
+# add_module_subdef(shdr spsl "spsl_glslv" "glsl,vulk")
+# add_module_subdef(shdr spsl "spsl_hlsl" "hlsl,dx")
+# add_module(shdr spsl_glsl shdr/spsl.cpp)
+# target_compile_definitions(shdr_spsl_glsl PUBLIC "SPECTRAL_OUTPUT_GLSL")
 
-add_module(shdr spsl_hlsl shdr/spsl.cpp)
-target_compile_definitions(shdr_spsl_hlsl PUBLIC "SPECTRAL_OUTPUT_HLSL")
+# add_module(shdr spsl_hlsl shdr/spsl.cpp)
+# target_compile_definitions(shdr_spsl_hlsl PUBLIC "SPECTRAL_OUTPUT_HLSL")
 
-add_module(shdr spsl_glslv shdr/spsl.cpp)
-target_compile_definitions(shdr_spsl_glslv PUBLIC "SPECTRAL_OUTPUT_GLSL")
-target_compile_definitions(shdr_spsl_glslv PUBLIC "SPECTRAL_OUTPUT_VULKAN")
+# add_module(shdr spsl_glslv shdr/spsl.cpp)
+# target_compile_definitions(shdr_spsl_glslv PUBLIC "SPECTRAL_OUTPUT_GLSL")
+# target_compile_definitions(shdr_spsl_glslv PUBLIC "SPECTRAL_OUTPUT_VULKAN")
 
 create_submodule_def(shdr glsl "GLSL Shader") # This uses GLSL 450 language and uses Spirv-Cross to convert to whatever language is needed
 add_module_subdef(shdr glsl "glsl_gl330" "glsl,gl330")
@@ -337,8 +337,6 @@ target_link_libraries(aud_openal OpenAL)
 add_custom_target(
         SpectralModules ALL
         DEPENDS scrld_cpp
-        DEPENDS shdr_spsl_glsl
-        DEPENDS shdr_spsl_hlsl
         DEPENDS shdr_glsl_gl330
         DEPENDS shdr_glsl_gl450
         DEPENDS shdr_glsl_hlsl

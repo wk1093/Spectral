@@ -329,9 +329,9 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
     size_t fragSize = frag.size();
 
     glBindBuffer(GL_UNIFORM_BUFFER, internal.vert_ubo);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, vertSize, data);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, vertSize, (char*)data+fragSize);
     glBindBuffer(GL_UNIFORM_BUFFER, internal.frag_ubo);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, fragSize, (char*)data + vertSize);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, fragSize, data);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     
