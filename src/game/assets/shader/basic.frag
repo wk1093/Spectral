@@ -6,10 +6,13 @@ layout(location = 2) in vec2 tex_coords;
 
 layout(location = 0) out vec4 fragColor;
 
+layout(binding=0) uniform ViewPos {
+    vec3 uViewPos;
+    float uTime;
+};
 
-layout(location=3) uniform vec3 uViewPos;
-layout(location=4) uniform float uTime;
-layout(location=5) uniform sampler2D tex0;
+layout(binding=0) uniform sampler2D tex0;
+
 
 
 void main() {

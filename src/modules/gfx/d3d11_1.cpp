@@ -553,10 +553,10 @@ CEXPORT sShaderProgram createShaderProgram(sShader* shaders, size_t count) {
         unsigned int offset2 = 0;
         std::vector<std::string*> strs;
         for (int i = 0; i < vertexShader.vertDef->count; i++) {
-            std::string* str = new std::string("C_"+std::to_string(i)+"e");
+            std::string* str = new std::string("TEXCOORD"+std::to_string(i));
             strs.push_back(str);
-            inputElementDesc[i].SemanticName = str->c_str();
-            inputElementDesc[i].SemanticIndex = 0;
+            inputElementDesc[i].SemanticName = "TEXCOORD";
+            inputElementDesc[i].SemanticIndex = i;
             switch (vertexShader.vertDef->elements[i]) {
                 case 1:
                     inputElementDesc[i].Format = DXGI_FORMAT_R32_FLOAT;
@@ -638,7 +638,7 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
     subResourceData.pSysMem = fakeBuffer;
     subResourceData.SysMemPitch = 0;
     subResourceData.SysMemSlicePitch = 0;
-    HRESULT hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, &subResourceData, &internal->fragmentBuffer);
+    HRESULT hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, nullptr, &internal->fragmentBuffer);
     if (FAILED(hResult)) {
         MessageBoxA(0, "CreateBuffer() failed", "Fatal Error", MB_OK);
         printf("ERROR CODE: %lu\n", GetLastError());
@@ -649,7 +649,7 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
     uint8_t* fakeBuffer2 = (uint8_t*)gArena->allocate(fakeVertSize);
     memset(fakeBuffer2, 0, fakeVertSize);
     subResourceData.pSysMem = fakeBuffer2;
-    hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, &subResourceData, &internal->vertexBuffer);
+    hResult = __d3d11_1_context.device->CreateBuffer(&bufferDesc, nullptr, &internal->vertexBuffer);
     if (FAILED(hResult)) {
         MessageBoxA(0, "CreateBuffer() failed", "Fatal Error", MB_OK);
         printf("ERROR CODE: %lu\n", GetLastError());

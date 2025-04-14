@@ -78,6 +78,7 @@ CEXPORT sShader createShader(GraphicsModule* gfx, const char* data, size_t len, 
     spvc_context_create_compiler(context, SPVC_BACKEND_HLSL, ir, SPVC_CAPTURE_MODE_TAKE_OWNERSHIP, &compiler);
     spvc_compiler_create_compiler_options(compiler, &options);
     spvc_compiler_options_set_uint(options, SPVC_COMPILER_OPTION_HLSL_SHADER_MODEL, 50);
+    spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_HLSL_FORCE_STORAGE_BUFFER_AS_UAV, true);
 #endif
     spvc_compiler_install_compiler_options(compiler, options);
     spvc_result res = spvc_compiler_compile(compiler, (const char**)(&outputdata));

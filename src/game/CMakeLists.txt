@@ -104,7 +104,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/assets")
 file(WRITE "${CMAKE_BINARY_DIR}/assets/assets.cpp" "#include <stdint.h>\n")
 message("Generating assets.cpp file")
 set(SPIRV_COMPILER "glslc")
-set(SPIRV_COMPILER_FLAGS --target-env=opengl -fentry-point=main -O)
+set(SPIRV_COMPILER_FLAGS -fentry-point=main -O)
 
 add_custom_target(assets_target DEPENDS "${ASSETS_FILES}")
 
