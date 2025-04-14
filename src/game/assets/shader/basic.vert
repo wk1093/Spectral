@@ -8,7 +8,7 @@ layout(location=0) out vec3 vertex_pos;
 layout(location=1) out vec3 normal_out;
 layout(location=2) out vec2 tex_coords;
 
-layout(binding=0) uniform ubo {
+layout(binding=0) uniform vert_ubo {
     mat4 uProj;
     mat4 uView;
     mat4 uModel;

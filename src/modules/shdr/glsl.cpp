@@ -48,19 +48,19 @@ CEXPORT sShader createShader(GraphicsModule* gfx, const char* data, size_t len, 
     spvc_compiler_options_set_uint(options, SPVC_COMPILER_OPTION_GLSL_VERSION, 330);
     spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_ES, false);
     // flatten_uniform_buffer_blocks
-    spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_EMIT_UNIFORM_BUFFER_AS_PLAIN_UNIFORMS, true);
-    spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_FORCE_FLATTENED_IO_BLOCKS , true);
+    // spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_EMIT_UNIFORM_BUFFER_AS_PLAIN_UNIFORMS, true);
+    // spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_FORCE_FLATTENED_IO_BLOCKS , true);
     spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_VULKAN_SEMANTICS, false);
 
-    const spvc_reflected_resource* uniformBlocks = nullptr;
-    spvc_resources resources;
-    spvc_compiler_create_shader_resources(compiler, &resources);
-    size_t numUniformBlocks = 0;
-    spvc_resources_get_resource_list_for_type(resources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, &uniformBlocks, &numUniformBlocks);
-    for (size_t i = 0; i < numUniformBlocks; i++) {
-        spvc_variable_id id = uniformBlocks[i].id;
-        spvc_compiler_flatten_buffer_block(compiler, id);
-    }
+    // const spvc_reflected_resource* uniformBlocks = nullptr;
+    // spvc_resources resources;
+    // spvc_compiler_create_shader_resources(compiler, &resources);
+    // size_t numUniformBlocks = 0;
+    // spvc_resources_get_resource_list_for_type(resources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, &uniformBlocks, &numUniformBlocks);
+    // for (size_t i = 0; i < numUniformBlocks; i++) {
+    //     spvc_variable_id id = uniformBlocks[i].id;
+    //     spvc_compiler_flatten_buffer_block(compiler, id);
+    // }
     // we want to disable the GL_ARB_shading_language_420pack
     spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_ENABLE_420PACK_EXTENSION, false);
     

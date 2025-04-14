@@ -196,7 +196,10 @@ CEXPORT void present() {
 struct sInternalUniforms {
     sUniformDefinition def;
     sShaderProgram program;
-    int* locations;
+    int vert_loc;
+    int frag_loc;
+    GLuint vert_ubo;
+    GLuint frag_ubo;
 };
 
 CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def) {
@@ -205,10 +208,27 @@ CEXPORT sUniforms createUniforms(sShaderProgram program, sUniformDefinition def)
     internal->def = def;
     internal->program = program;
     // internal->locations = (int*)malloc(sizeof(int) * def.count);
-    internal->locations = gArena->allocateArray<int>(def.count);
-    for (size_t i = 0; i < def.count; i++) {
-        internal->locations[i] = glGetUniformLocation(*(unsigned int*)program.internal, def.elements[i].name);
-    }
+    // internal->locations = gArena->allocateArray<int>(def.count);
+    // for (size_t i = 0; i < def.count; i++) {
+    //     internal->locations[i] = glGetUniformLocation(*(unsigned int*)program.internal, def.elements[i].name);
+    // }
+    // internal->vert_loc = glGetUniformLocation(*(unsigned int*)program.internal, "vert_ubo");
+    // internal->frag_loc = glGetUniformLocation(*(unsigned int*)program.internal, "frag_ubo");
+    internal->vert_loc = glGetUniformBlockIndex(*(unsigned int*)program.internal, "vert_ubo");
+    internal->frag_loc = glGetUniformBlockIndex(*(unsigned int*)program.internal, "frag_ubo");
+    glUniformBlockBinding(*(unsigned int*)program.internal, internal->vert_loc, 0);
+    glUniformBlockBinding(*(unsigned int*)program.internal, internal->frag_loc, 1);
+    
+    glGenBuffers(1, &internal->vert_ubo);
+    glBindBuffer(GL_UNIFORM_BUFFER, internal->vert_ubo);
+    glBufferData(GL_UNIFORM_BUFFER, def.size(), nullptr, GL_DYNAMIC_DRAW);
+    glGenBuffers(1, &internal->frag_ubo);
+    glBindBuffer(GL_UNIFORM_BUFFER, internal->frag_ubo);
+    glBufferData(GL_UNIFORM_BUFFER, def.size(), nullptr, GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, internal->vert_ubo);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 1, internal->frag_ubo);
+
+
     return {internal};
 }
 
@@ -217,90 +237,106 @@ CEXPORT void setUniforms(sUniforms uniforms, void* data) {
     sInternalUniforms internal = *(sInternalUniforms*)uniforms.internal;
     sUniformDefinition def = internal.def;
 
-    size_t offset = 0;
-    for (size_t i = 0; i < def.count; i++) {
-        sUniformElement element = def.elements[i];
-        int location = internal.locations[i];
-        void* curData = (void*)((size_t)data + offset);
-        switch (element.type) {
-            case sUniformType::FLOAT:
-                if (element.county == 1) {
-                    switch (element.countx) {
-                    case 1:
-                        glUniform1fv(location, 1, (float*)curData);
-                        break;
-                    case 2:
-                        glUniform2fv(location, 1, (float*)curData);
+    // size_t offset = 0;
+    // for (size_t i = 0; i < def.count; i++) {
+    //     sUniformElement element = def.elements[i];
+    //     int location = internal.locations[i];
+    //     void* curData = (void*)((size_t)data + offset);
+    //     switch (element.type) {
+    //         case sUniformType::FLOAT:
+    //             if (element.county == 1) {
+    //                 switch (element.countx) {
+    //                 case 1:
+    //                     glUniform1fv(location, 1, (float*)curData);
+    //                     break;
+    //                 case 2:
+    //                     glUniform2fv(location, 1, (float*)curData);
 
-                        break;
-                    case 3:
-                        glUniform3fv(location, 1, (float*)curData);
-                        break;
-                    case 4:
-                        glUniform4fv(location, 1, (float*)curData);
-                        break;
-                    default:
-                        glUniform1fv(location, element.countx, (float*)curData);
-                    }
-                    offset += uniformElementSize(element);
-                } else if (element.countx == element.county) {
-                    switch (element.countx) {
-                        case 2:
-                            glUniformMatrix2fv(location, 1, GL_FALSE, (float*)curData);
-                            offset += uniformElementSize(element);
-                            break;
-                        case 3:
-                            glUniformMatrix3fv(location, 1, GL_FALSE, (float*)curData);
-                            offset += uniformElementSize(element);
-                            break;
-                        case 4:
-                            glUniformMatrix4fv(location, 1, GL_FALSE, (float*)curData);
-                            offset += uniformElementSize(element);
-                            break;
-                        default:
-                            printf("Invalid matrix size\n");
-                            return;
-                    }
-                } else {
-                    printf("Invalid matrix size\n");
-                    return;
-                }
-                break;
-            case sUniformType::INT:
-                if (element.county != 1) {
-                    printf("Invalid uniform type: no int matrices\n");
-                    return;
-                }
-                switch (element.countx) {
-                    case 1:
-                        glUniform1iv(location, 1, (int*)curData);
-                        break;
-                    case 2:
-                        glUniform2iv(location, 1, (int*)curData);
-                        break;
-                    case 3:
-                        glUniform3iv(location, 1, (int*)curData);
-                        break;
-                    case 4:
-                        glUniform4iv(location, 1, (int*)curData);
-                        break;
-                    default:
-                        glUniform1iv(location, element.countx, (int*)curData);
-                }
-                offset += uniformElementSize(element);
-                break;
-            case sUniformType::BOOL:
-                if (element.county != 1) {
-                    printf("Invalid uniform type: no bool matrices\n");
-                    return;
-                }
-                glUniform1iv(location, element.countx, (int*)curData);
-                offset += uniformElementSize(element);
-                break;
-            default:
-                printf("Invalid uniform type\n");
-        }
-    }
+    //                     break;
+    //                 case 3:
+    //                     glUniform3fv(location, 1, (float*)curData);
+    //                     break;
+    //                 case 4:
+    //                     glUniform4fv(location, 1, (float*)curData);
+    //                     break;
+    //                 default:
+    //                     glUniform1fv(location, element.countx, (float*)curData);
+    //                 }
+    //                 offset += uniformElementSize(element);
+    //             } else if (element.countx == element.county) {
+    //                 switch (element.countx) {
+    //                     case 2:
+    //                         glUniformMatrix2fv(location, 1, GL_FALSE, (float*)curData);
+    //                         offset += uniformElementSize(element);
+    //                         break;
+    //                     case 3:
+    //                         glUniformMatrix3fv(location, 1, GL_FALSE, (float*)curData);
+    //                         offset += uniformElementSize(element);
+    //                         break;
+    //                     case 4:
+    //                         glUniformMatrix4fv(location, 1, GL_FALSE, (float*)curData);
+    //                         offset += uniformElementSize(element);
+    //                         break;
+    //                     default:
+    //                         printf("Invalid matrix size\n");
+    //                         return;
+    //                 }
+    //             } else {
+    //                 printf("Invalid matrix size\n");
+    //                 return;
+    //             }
+    //             break;
+    //         case sUniformType::INT:
+    //             if (element.county != 1) {
+    //                 printf("Invalid uniform type: no int matrices\n");
+    //                 return;
+    //             }
+    //             switch (element.countx) {
+    //                 case 1:
+    //                     glUniform1iv(location, 1, (int*)curData);
+    //                     break;
+    //                 case 2:
+    //                     glUniform2iv(location, 1, (int*)curData);
+    //                     break;
+    //                 case 3:
+    //                     glUniform3iv(location, 1, (int*)curData);
+    //                     break;
+    //                 case 4:
+    //                     glUniform4iv(location, 1, (int*)curData);
+    //                     break;
+    //                 default:
+    //                     glUniform1iv(location, element.countx, (int*)curData);
+    //             }
+    //             offset += uniformElementSize(element);
+    //             break;
+    //         case sUniformType::BOOL:
+    //             if (element.county != 1) {
+    //                 printf("Invalid uniform type: no bool matrices\n");
+    //                 return;
+    //             }
+    //             glUniform1iv(location, element.countx, (int*)curData);
+    //             offset += uniformElementSize(element);
+    //             break;
+    //         default:
+    //             printf("Invalid uniform type\n");
+    //     }
+    // }
+
+    sUniformDefinition vert = getPartialf(def, sShaderType::VERTEX);
+    sUniformDefinition frag = getPartialf(def, sShaderType::FRAGMENT);
+
+    size_t vertSize = vert.size();
+    size_t fragSize = frag.size();
+
+    glBindBuffer(GL_UNIFORM_BUFFER, internal.vert_ubo);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, vertSize, data);
+    glBindBuffer(GL_UNIFORM_BUFFER, internal.frag_ubo);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, fragSize, (char*)data + vertSize);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    
+
+
 }
 
 struct sInternalTexture {
