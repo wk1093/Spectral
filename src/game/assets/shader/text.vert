@@ -13,6 +13,7 @@ layout(binding=0) uniform vert_ubo {
 };
 
 void main() {
-    gl_Position = uProj * (uView * (uModel * vec4(pos, uZ, 1.0)));
+    gl_Position = (uModel * vec4(pos.x, pos.y, 0.0, 1.0));
+    // gl_Position = vec4(pos, 0.0, 1.0);
     tex_coords = uv;
 }

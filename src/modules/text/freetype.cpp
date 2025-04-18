@@ -43,7 +43,6 @@ struct TextVertex {
 
 struct TextUniforms {
     vec3 color;
-    float padding;
     mat4 proj;
     mat4 view;
     mat4 model;
@@ -152,7 +151,6 @@ void setupFont(FT_Face face, sInternalFont* internal, int size, sShader vert, sS
 
     sUniformDefinition uniformDef = {
         {sShaderType::FRAGMENT, "uColor", sUniformType::FLOAT, 3},
-        {sShaderType::FRAGMENT, "padding", sUniformType::FLOAT, 1},
         {sShaderType::VERTEX, "uProj", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uView", sUniformType::FLOAT, 4, 4},
         {sShaderType::VERTEX, "uModel", sUniformType::FLOAT, 4, 4},
@@ -261,7 +259,8 @@ CEXPORT sText createText(sFont font, const char* text) {
     double x = 0.0f;
     double y = font.size / (2);
 
-    float scale = internalFont->scale;
+    // float scale = internalFont->scale;
+    float scale = 0.01;
 
     std::vector<uint32_t> indices;
 
