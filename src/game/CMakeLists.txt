@@ -101,7 +101,7 @@ file(GLOB_RECURSE ASSETS_FILES "assets/*")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/assets")
 # make an empty cpp file called assets.cpp in the assets folder
 # not empty, we need to include stdint
-file(WRITE "${CMAKE_BINARY_DIR}/assets/assets.cpp" "#include <stdint.h>\n")
+file(WRITE "${CMAKE_BINARY_DIR}/assets/assets.cpp" "#include <stdint.h>\n#include <cstddef>\n")
 message("Generating assets.cpp file")
 set(SPIRV_COMPILER "glslc")
 set(SPIRV_COMPILER_FLAGS -fentry-point=main)

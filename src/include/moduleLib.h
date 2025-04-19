@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <cstddef>
 
 #endif
 #include <cstdio>
@@ -143,8 +144,10 @@ private:
             printf("Error: %s\n", dlerror());
 #endif
         }
-        free(path);
+#ifdef _WIN32
         free(setdlldir);
+#endif
+        free(path);
     }
 public:
 

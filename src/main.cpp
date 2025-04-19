@@ -48,51 +48,26 @@ ExecutableReturnInfo run_executable(const std::string& path, int argc, char* arg
         return result;
     }
 #else
-    // TODO: test linux code
     // Linux specific code to run the executable and capture output
     std::string command = path + " ";
     for (int i = 1; i < argc; ++i) {
         command += argv[i];
         command += " ";
     }
-
-    int pipefd[2];
-    if (pipe(pipefd) == -1) {
-        perror("pipe");
+    command += "2>&1";
+    FILE* pipe = popen(command.c_str(), "r");
+    if (!pipe) {
+        perror("popen");
         return result;
     }
-
-    pid_t pid = fork();
-    if (pid == -1) {
-        perror("fork");
+    char buffer[4096];
+    while (fgets(buffer, sizeof(buffer), pipe) != NULL) {
+        result.log += buffer;
+    }
+    result.exit_code = pclose(pipe);
+    if (result.exit_code == -1) {
+        perror("pclose");
         return result;
-    } else if (pid == 0) { // Child process
-        dup2(pipefd[1], STDOUT_FILENO); // Redirect stdout to pipe
-        dup2(pipefd[1], STDERR_FILENO); // Redirect stderr to pipe
-        close(pipefd[0]); // Close read end of the pipe in child
-        execl(path.c_str(), path.c_str(), NULL); // Execute the program
-        perror("execl"); // If execl fails
-        exit(1);
-    } else { // Parent process
-        close(pipefd[1]); // Close write end of the pipe in parent
-
-        char buffer[4096];
-        ssize_t bytesRead;
-        while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer) - 1)) > 0) {
-            buffer[bytesRead] = '\0'; // Null-terminate the string
-            result.log += buffer;
-        }
-
-        close(pipefd[0]); // Close read end of the pipe in parent
-
-        int status;
-        waitpid(pid, &status, 0); // Wait for child process to finish
-        if (WIFEXITED(status)) {
-            result.exit_code = WEXITSTATUS(status);
-        } else {
-            result.exit_code = -1; // Child process did not terminate normally
-            perror("waitpid");
-        }
     }
 #endif
     return result;

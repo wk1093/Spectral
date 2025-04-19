@@ -121,5 +121,25 @@ void sSelectModules(const char* dialog, const std::vector<sModuleDef>& gfx_mods,
     return;
 }
 #else
-#error Not Implemented!
+void sSelectModules(const char* dialog, const std::vector<sModuleDef>& gfx_mods, char** sel_impl) {
+    // a basic terminal interface
+
+    printf("%s\n", dialog);
+
+    for (size_t i = 0; i < gfx_mods.size(); i++) {
+        printf("%zu: %s\n", i, gfx_mods[i].dispname.c_str());
+    }
+
+    printf("Select a graphics module: ");
+    size_t selected = 0;
+    scanf("%zu", &selected);
+    if (selected >= gfx_mods.size()) {
+        printf("Invalid selection\n");
+        *sel_impl = NULL;
+        return;
+    }
+    *sel_impl = strdup(gfx_mods[selected].impl.c_str());
+    printf("Selected graphics module: %s\n", *sel_impl);
+    return;
+}
 #endif
