@@ -46,10 +46,10 @@ CEXPORT sShader createShader(GraphicsModule* gfx, const char* data, size_t len, 
 
     spvc_compiler compiler;
     spvc_compiler_options options;
-#ifdef SPECTRAL_OUTPUT_GLSL330
+#ifdef SPECTRAL_OUTPUT_GLSL410
     spvc_context_create_compiler(context, SPVC_BACKEND_GLSL, ir, SPVC_CAPTURE_MODE_TAKE_OWNERSHIP, &compiler);
     spvc_compiler_create_compiler_options(compiler, &options);
-    spvc_compiler_options_set_uint(options, SPVC_COMPILER_OPTION_GLSL_VERSION, 330);
+    spvc_compiler_options_set_uint(options, SPVC_COMPILER_OPTION_GLSL_VERSION, 410);
     spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_ES, false);
     // flatten_uniform_buffer_blocks
     // spvc_compiler_options_set_bool(options, SPVC_COMPILER_OPTION_GLSL_EMIT_UNIFORM_BUFFER_AS_PLAIN_UNIFORMS, true);

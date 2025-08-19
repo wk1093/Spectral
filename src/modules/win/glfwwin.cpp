@@ -71,8 +71,8 @@ CEXPORT sWindow* loadWindow(const char* title, int width, int height, sWindowFla
 #elif defined(SPECTRAL_GLFW_NOAPI)
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
-    glfwWindowHint(GLFW_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_RESIZABLE, flags.resizable ? GLFW_TRUE : GLFW_FALSE);
     GLFWwindow* internal = glfwCreateWindow(width, height, title, NULL, NULL);
     glfwMakeContextCurrent(internal);

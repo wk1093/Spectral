@@ -2,7 +2,6 @@
 include(FetchContent)
 
 set(SPEC_GLFW ON CACHE BOOL "" FORCE)
-set(SPEC_EOGLL OFF CACHE BOOL "" FORCE)
 set(SPEC_SFML OFF CACHE BOOL "" FORCE)
 set(SPEC_GLAD ON CACHE BOOL "" FORCE)
 set(SPEC_DX11 ON CACHE BOOL "" FORCE)
@@ -14,7 +13,6 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 set(CMAKE_DEBUG_POSTFIX "")
-set(EOGLL_DYNAMIC ON CACHE BOOL "" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_HOGLL OFF CACHE BOOL "" FORCE)
 set(BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -84,8 +82,9 @@ FetchContent_Declare(
         GIT_TAG 2.6.0
 )
 FetchContent_Declare(
-    eogll
-    GIT_REPOSITORY https://github.com/wk1093/EOGLL.git
+    glad
+    GIT_REPOSITORY https://github.com/Dav1dde/glad.git
+    GIT_TAG v0.1.36
 )
 FetchContent_Declare(
     nlohmann_json
@@ -94,6 +93,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
+FetchContent_Declare(
+    stb
+    GIT_REPOSITORY https://github.com/nothings/stb.git
+    GIT_TAG master
+)
 
 FetchContent_Declare(
     zip
@@ -117,16 +121,28 @@ if(SPEC_SFML)
     set_target_properties(sfml-window PROPERTIES POSITION_INDEPENDENT_CODE ON)
     set_target_properties(sfml-system PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
-if(SPEC_EOGLL)
-    FetchContent_MakeAvailable(eogll)
-elseif(SPEC_GLAD)
-    # make sure eogll is cloned, but can't use makeavailable because it will build it
-    if (NOT EXISTS ${eogll_SOURCE_DIR}/CMakeLists.txt)
-        FetchContent_Populate(eogll)
+
+if(SPEC_GLAD)
+    set(GLAD_API "gl=4.1" CACHE STRING "" FORCE)
+    set(GLAD_PROFILE "core" CACHE STRING "" FORCE)
+
+    FetchContent_GetProperties(glad)
+    if(NOT glad_POPULATED)
+        FetchContent_Populate(glad)
+        file(READ "${glad_SOURCE_DIR}/CMakeLists.txt" _cmakelists)
+        string(REGEX REPLACE "cmake_minimum_required\\([^)]*\\)" "cmake_minimum_required(VERSION 3.20)" _cmakelists "${_cmakelists}")
+        file(WRITE "${glad_SOURCE_DIR}/CMakeLists.txt" "${_cmakelists}")
     endif()
-    # Eogll normally provides GLAD, but if it is not being used, we need to provide it ourselves
-    add_subdirectory(${eogll_SOURCE_DIR}/thirdparty/glad ${CMAKE_BINARY_DIR}/glad)
+    add_subdirectory(${glad_SOURCE_DIR} ${glad_BINARY_DIR})
+    target_include_directories(glad INTERFACE ${glad_BINARY_DIR}/include)
 endif()
+
+FetchContent_GetProperties(stb)
+if(NOT stb_POPULATED)
+    FetchContent_Populate(stb)
+endif()
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
 
 Find_Package(OpenGL REQUIRED)
 
@@ -241,25 +257,11 @@ if(SPEC_SFML)
     add_module(win sf win/sfwin.cpp)
     target_link_libraries(win_sf sfml-graphics sfml-window sfml-system)
 endif()
-if(SPEC_EOGLL)
-    create_module_def(win eogll "EOGLL" "gl")
-    add_module(win eogll win/eogllwin.cpp)
-    target_link_libraries(win_eogll eogll)
-    target_include_directories(win_eogll PUBLIC ${glfw_BINARY_DIR}/src)
-
-    create_module_def(gfx eogll "EOGLL" "gl")
-    add_module_dependency(gfx eogll win "gl")
-    add_module_dependency(gfx eogll shdr "glsl,gl")
-    add_module(gfx eogll gfx/eogll.cpp)
-    target_link_libraries(gfx_eogll eogll ${OPENGL_LIB})
-else()
-    add_subdirectory(${eogll_SOURCE_DIR}/thirdparty/stb ${CMAKE_BINARY_DIR}/stb)
-endif()
 
 if(SPEC_GLAD)
-    create_module_def(gfx glad "OpenGL 3.3" "gl")
+    create_module_def(gfx glad "OpenGL 4.1" "gl")
     add_module_dependency(gfx glad win "gl")
-    add_module_dependency(gfx glad shdr "gl330")
+    add_module_dependency(gfx glad shdr "gl410")
     add_module(gfx glad gfx/glad.cpp)
     target_link_libraries(gfx_glad glad ${OPENGL_LIB})
 endif()
@@ -292,18 +294,18 @@ endif()
 # target_compile_definitions(shdr_spsl_glslv PUBLIC "SPECTRAL_OUTPUT_VULKAN")
 
 create_submodule_def(shdr glsl "GLSL Shader") # This uses GLSL 450 language and uses Spirv-Cross to convert to whatever language is needed
-add_module_subdef(shdr glsl "glsl_gl330" "glsl,gl330")
+add_module_subdef(shdr glsl "glsl_gl410" "glsl,gl410")
 add_module_subdef(shdr glsl "glsl_gl450" "glsl,gl450")
 add_module_subdef(shdr glsl "glsl_hlsl" "hlsl,dx")
 add_module_subdef(shdr glsl "glsl_spirv" "spirv,vulk")
 add_module_subdef(shdr glsl "glsl_gles" "gles,gl")
-add_module(shdr glsl_gl330 shdr/glsl.cpp)
+add_module(shdr glsl_gl410 shdr/glsl.cpp)
 
 set(GLSL_SHADER_LIBS spirv-cross-c-shared)
 
-target_compile_definitions(shdr_glsl_gl330 PUBLIC "SPECTRAL_OUTPUT_GLSL330")
-target_link_libraries(shdr_glsl_gl330 ${GLSL_SHADER_LIBS})
-target_include_directories(shdr_glsl_gl330 PUBLIC ${spirv_cross_SOURCE_DIR})
+target_compile_definitions(shdr_glsl_gl410 PUBLIC "SPECTRAL_OUTPUT_GLSL410")
+target_link_libraries(shdr_glsl_gl410 ${GLSL_SHADER_LIBS})
+target_include_directories(shdr_glsl_gl410 PUBLIC ${spirv_cross_SOURCE_DIR})
 add_module(shdr glsl_gl450 shdr/glsl.cpp)
 target_compile_definitions(shdr_glsl_gl450 PUBLIC "SPECTRAL_OUTPUT_GLSL450")
 target_link_libraries(shdr_glsl_gl450 ${GLSL_SHADER_LIBS})
@@ -337,7 +339,7 @@ target_link_libraries(aud_openal OpenAL)
 add_custom_target(
         SpectralModules ALL
         DEPENDS scrld_cpp
-        DEPENDS shdr_glsl_gl330
+        DEPENDS shdr_glsl_gl410
         DEPENDS shdr_glsl_gl450
         DEPENDS shdr_glsl_hlsl
         DEPENDS shdr_glsl_spirv
@@ -348,9 +350,6 @@ if(SPEC_GLFW)
 endif()
 if(SPEC_SFML)
     add_dependencies(SpectralModules win_sf)
-endif()
-if(SPEC_EOGLL)
-    add_dependencies(SpectralModules win_eogll gfx_eogll)
 endif()
 if(SPEC_GLAD)
     add_dependencies(SpectralModules gfx_glad)

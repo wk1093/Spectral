@@ -1,4 +1,4 @@
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include "glutils.h"
 
 #include "module.h"
@@ -32,7 +32,7 @@ CEXPORT const char* getShaderType() {
 sWindow* __window_global;
 
 CEXPORT void init(sWindow* win) {
-    if (!gladLoadGL((GLADloadfunc)getProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc)getProcAddress)) {
         printf("Error loading OpenGL\n");
         printf("Make sure you have a valid OpenGL context\n");
         printf("Using window module '%s'\n", win->creator->lib.mod_imp);

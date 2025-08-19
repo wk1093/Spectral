@@ -4,6 +4,8 @@ project(Spectral)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXE_LINKER_FLAGS "-Wl,-rpath,lib/${SPECTRAL_FULLPLAT} -Wl,-rpath-link,lib/${SPECTRAL_FULLPLAT}")
 set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-rpath,lib/${SPECTRAL_FULLPLAT} -Wl,-rpath-link,lib/${SPECTRAL_FULLPLAT}")
+# CMP0169
+cmake_policy(SET CMP0169 OLD)
 
 include_directories(src/include)
 
